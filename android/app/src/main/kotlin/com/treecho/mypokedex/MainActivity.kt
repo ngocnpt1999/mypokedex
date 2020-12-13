@@ -1,0 +1,6 @@
+package com.treecho.mypokedex
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
