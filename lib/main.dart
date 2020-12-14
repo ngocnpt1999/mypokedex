@@ -37,6 +37,7 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: Obx(() => ListView.separated(
+            controller: _listPokemonController.scrollController,
             itemCount: _listPokemonController.pokemons.length,
             itemBuilder: _buildPokemonTile,
             separatorBuilder: (context, index) => Divider(),
@@ -56,6 +57,8 @@ class MyHomePage extends StatelessWidget {
               placeholder: kTransparentImage,
               image: _listPokemonController
                   .pokemons[index].sprites.other.officialArtwork.frontDefault,
+              imageCacheWidth: 100,
+              imageCacheHeight: 100,
               width: 60,
               fit: BoxFit.fitWidth,
             ),
