@@ -21,6 +21,9 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  get: ^3.22.2
+  pokeapi_dart: ^0.0.1+1
+  transparent_image: ^1.0.0
   flutter:
     sdk: flutter
 
@@ -45,7 +48,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
