@@ -55,8 +55,7 @@ class MyHomePage extends StatelessWidget {
             padding: EdgeInsets.only(left: 5.0),
             child: FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
-              image: _listPokemonController
-                  .pokemons[index].sprites.other.officialArtwork.frontDefault,
+              image: _listPokemonController.pokemons[index].artwork,
               imageCacheWidth: 100,
               imageCacheHeight: 100,
               width: 60,

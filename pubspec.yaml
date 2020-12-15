@@ -24,6 +24,7 @@ dependencies:
   get: ^3.22.2
   pokeapi_dart: ^0.0.1+1
   transparent_image: ^1.0.0
+  http: ^0.12.2
   flutter:
     sdk: flutter
 
