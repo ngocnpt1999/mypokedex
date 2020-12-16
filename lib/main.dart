@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/controller.dart';
+import 'package:mypokedex/pokemon_detail.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 void main() {
@@ -47,6 +48,9 @@ class MyHomePage extends StatelessWidget {
 
   Widget _buildPokemonTile(BuildContext context, int index) {
     return InkWell(
+      onTap: () {
+        Get.to(PokemonDetailPage(_listPokemonController.pokemons[index].id));
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

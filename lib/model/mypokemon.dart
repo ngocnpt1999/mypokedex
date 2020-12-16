@@ -5,6 +5,7 @@ class MyPokemon {
   String name;
   String artwork;
   List<PokemonType> types;
+  int evoForm = 0;
 
-  MyPokemon({this.id, this.name, this.artwork, this.types});
+  MyPokemon({this.id, this.name, this.artwork, this.types, this.evoForm});
 }

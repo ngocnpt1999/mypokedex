@@ -57,33 +57,49 @@ class PokemonDetailController extends GetxController {
 
   Rx<Pokemon> pokemon;
 
-  var evolutions = List<List<MyPokemon>>().obs;
+  var evolutions = List<MyPokemon>().obs;
 
-  PokemonDetailController(int pokemon_id) {}
-
-  void getEvolutionData(int pokemon_id) {
-    _api.pokemonSpecies.get(id: pokemon_id).then((pokeSpec) async {
+  void getEvolutionData(int id) {
+    _api.pokemonSpecies.get(id: id).then((pokeSpec) async {
       var response = await http.get(pokeSpec.evolutionChain.url);
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = jsonDecode(response.body);
         EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
         var evo = evoChain.chain;
-        while (evo != null && evo.evolvesTo.length > 0) {
-          List<MyPokemon> pokemons = List();
-          evo.evolvesTo.forEach((value) {
-            _api.pokemon.get(name: value.species.name).then((poke) {
-              pokemons.add(MyPokemon(
-                id: poke.id,
-                name: poke.name,
-                artwork: poke.sprites.other.officialArtwork.frontDefault,
-                types: poke.types,
-              ));
-              pokemons.sort((a, b) => a.id.compareTo(b.id));
-            });
+        int form = 1;
+        do {
+          int numOfEvo = evo.evolvesTo.length;
+          int temp = form;
+          _api.pokemon.get(name: evo.species.name).then((poke) {
+            evolutions.add(MyPokemon(
+              id: poke.id,
+              name: poke.name,
+              artwork: poke.sprites.other.officialArtwork.frontDefault,
+              types: poke.types,
+              evoForm: temp,
+            ));
+            evolutions.sort((a, b) => a.id.compareTo(b.id));
           });
-          evolutions.add(pokemons);
+          form++;
+          if (numOfEvo > 1) {
+            for (int i = 1; i < numOfEvo; i++) {
+              int _temp = form;
+              _api.pokemon
+                  .get(name: evo.evolvesTo[i].species.name)
+                  .then((poke) {
+                evolutions.add(MyPokemon(
+                  id: poke.id,
+                  name: poke.name,
+                  artwork: poke.sprites.other.officialArtwork.frontDefault,
+                  types: poke.types,
+                  evoForm: _temp,
+                ));
+                evolutions.sort((a, b) => a.id.compareTo(b.id));
+              });
+            }
+          }
           evo = evo.evolvesTo[0];
-        }
+        } while (evo != null && evo.evolvesTo.length >= 0);
       } else {
         throw Exception("Failed!!!");
       }
