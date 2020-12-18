@@ -29,6 +29,48 @@ class PokemonDetailPage extends StatelessWidget {
             evoForms_3.add(pokeCard);
           }
         });
+        if (evoForms_2.length > 2) {
+          List<Widget> tempWidgets = List();
+          for (int i = 0; i < evoForms_2.length; i += 2) {
+            if (i + 1 < evoForms_2.length) {
+              tempWidgets.add(Row(
+                children: <Widget>[
+                  evoForms_2[i],
+                  evoForms_2[i + 1],
+                ],
+              ));
+            } else {
+              tempWidgets.add(Row(
+                children: <Widget>[
+                  evoForms_2[i],
+                ],
+              ));
+            }
+          }
+          evoForms_2.clear();
+          evoForms_2.addAll(tempWidgets);
+        }
+        if (evoForms_3.length > 2) {
+          List<Widget> tempWidgets = List();
+          for (int i = 0; i < evoForms_3.length; i += 2) {
+            if (i + 1 < evoForms_3.length) {
+              tempWidgets.add(Row(
+                children: <Widget>[
+                  evoForms_3[i],
+                  evoForms_3[i + 1],
+                ],
+              ));
+            } else {
+              tempWidgets.add(Row(
+                children: <Widget>[
+                  evoForms_3[i],
+                ],
+              ));
+            }
+          }
+          evoForms_3.clear();
+          evoForms_3.addAll(tempWidgets);
+        }
         List<Widget> evoWidgets = [
           Column(children: evoForms_1),
           Column(children: evoForms_2),
