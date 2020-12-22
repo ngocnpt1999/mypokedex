@@ -47,6 +47,19 @@ class MyHomePage extends StatelessWidget {
   }
 
   Widget _buildPokemonTile(BuildContext context, int index) {
+    var types = _listPokemonController.pokemons[index].types;
+    List<Widget> widgets = List();
+    types.forEach((value) => widgets.addAll([
+          Image.asset(
+            "assets/images/" + value.type.name + ".png",
+            width: 25.0,
+            height: 25.0,
+            fit: BoxFit.fitWidth,
+          ),
+          Container(
+            width: 3.0,
+          ),
+        ]));
     return InkWell(
       onTap: () {
         Get.to(PokemonDetailPage(_listPokemonController.pokemons[index].id));
@@ -60,8 +73,8 @@ class MyHomePage extends StatelessWidget {
             child: FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
               image: _listPokemonController.pokemons[index].artwork,
-              imageCacheWidth: 100,
-              imageCacheHeight: 100,
+              imageCacheWidth: 150,
+              imageCacheHeight: 150,
               width: 60,
               fit: BoxFit.fitWidth,
             ),
@@ -71,34 +84,21 @@ class MyHomePage extends StatelessWidget {
           ),
           Expanded(
             flex: 5,
-            child: Text(
-              "#" +
-                  _listPokemonController.pokemons[index].id.toString() +
-                  " - " +
-                  _listPokemonController.pokemons[index].name[0].toUpperCase() +
-                  _listPokemonController.pokemons[index].name.substring(1),
-              style: TextStyle(fontSize: 16.0),
+            child: ListTile(
+              title: Text(
+                _listPokemonController.pokemons[index].name[0].toUpperCase() +
+                    _listPokemonController.pokemons[index].name.substring(1),
+              ),
+              subtitle: Text(
+                "#" + _listPokemonController.pokemons[index].id.toString(),
+              ),
             ),
           ),
           Expanded(
             flex: 2,
-            child: Obx(() {
-              var types = _listPokemonController.pokemons[index].types;
-              List<Widget> widgets = List();
-              types.forEach((value) => widgets.addAll([
-                    Image.asset(
-                      "assets/images/" + value.type.name + ".png",
-                      width: 30.0,
-                      fit: BoxFit.fitWidth,
-                    ),
-                    Container(
-                      width: 3.0,
-                    ),
-                  ]));
-              return Row(
-                children: widgets,
-              );
-            }),
+            child: Row(
+              children: widgets,
+            ),
           ),
         ],
       ),

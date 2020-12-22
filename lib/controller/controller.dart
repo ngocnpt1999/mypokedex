@@ -69,21 +69,21 @@ class PokemonDetailController extends GetxController {
         int form = 1;
         do {
           int numOfEvo = evo.evolvesTo.length;
-          int temp = form;
+          int tempForm = form;
           _api.pokemon.get(name: evo.species.name).then((poke) {
             evolutions.add(MyPokemon(
               id: poke.id,
               name: poke.name,
               artwork: poke.sprites.other.officialArtwork.frontDefault,
               types: poke.types,
-              evoForm: temp,
+              evoForm: tempForm,
             ));
             evolutions.sort((a, b) => a.id.compareTo(b.id));
           });
           form++;
           if (numOfEvo > 1) {
             for (int i = 1; i < numOfEvo; i++) {
-              int _temp = form;
+              int _tempForm = form;
               _api.pokemon
                   .get(name: evo.evolvesTo[i].species.name)
                   .then((poke) {
@@ -92,7 +92,7 @@ class PokemonDetailController extends GetxController {
                   name: poke.name,
                   artwork: poke.sprites.other.officialArtwork.frontDefault,
                   types: poke.types,
-                  evoForm: _temp,
+                  evoForm: _tempForm,
                 ));
                 evolutions.sort((a, b) => a.id.compareTo(b.id));
               });
