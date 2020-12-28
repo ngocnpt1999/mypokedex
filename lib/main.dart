@@ -48,8 +48,8 @@ class MyHomePage extends StatelessWidget {
 
   Widget _buildPokemonTile(BuildContext context, int index) {
     var types = _listPokemonController.pokemons[index].types;
-    List<Widget> widgets = List();
-    types.forEach((value) => widgets.addAll([
+    List<Widget> typeWidgets = List();
+    types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
             width: 25.0,
@@ -97,7 +97,7 @@ class MyHomePage extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Row(
-              children: widgets,
+              children: typeWidgets,
             ),
           ),
         ],

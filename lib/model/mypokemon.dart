@@ -4,8 +4,19 @@ class MyPokemon {
   int id;
   String name;
   String artwork;
+  int height;
+  int weight;
   List<PokemonType> types;
-  int evoForm = 0;
+  List<PokemonAbility> abilities;
+  int evoForm;
 
-  MyPokemon({this.id, this.name, this.artwork, this.types, this.evoForm});
+  MyPokemon(
+      {this.id,
+      this.name,
+      this.artwork,
+      this.height,
+      this.weight,
+      this.types,
+      this.abilities,
+      this.evoForm});
 }

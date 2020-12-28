@@ -6,6 +6,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage(int id) {
+    _pageController.getPokemon(id);
     _pageController.getEvolutionData(id);
   }
 
@@ -17,10 +18,15 @@ class PokemonDetailPage extends StatelessWidget {
       backgroundColor: Color(0xFFF88379),
       appBar: AppBar(),
       body: Obx(() {
-        Widget evoExpandable = _buildEvoChainExpandable();
+        if (_pageController.pokemon.value.id == null) {
+          return Container();
+        }
+        Widget pokeCard = _buildPoke(context);
+        Widget evoCard = _buildEvoChain();
         return Column(
           children: <Widget>[
-            evoExpandable,
+            pokeCard,
+            evoCard,
           ],
         );
       }),
@@ -60,7 +66,87 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEvoChainExpandable() {
+  Widget _buildPoke(BuildContext context) {
+    var pokemon = _pageController.pokemon.value;
+    List<Widget> typeWidgets = List();
+    pokemon.types.forEach((value) => typeWidgets.add(
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Card(
+                  elevation: 3.0,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/" + value.type.name + ".png",
+                      width: 35.0,
+                      height: 35.0,
+                      fit: BoxFit.fitWidth,
+                    ),
+                    title: Text(
+                      value.type.name[0].toUpperCase() +
+                          value.type.name.substring(1),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
+    return Container(
+      child: Card(
+        elevation: 4.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            pokemon.name[0].toUpperCase() +
+                                pokemon.name.substring(1),
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "#" + pokemon.id.toString(),
+                          textAlign: TextAlign.end,
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height: 5.0,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: typeWidgets,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            FadeInImage.memoryNetwork(
+              image: pokemon.artwork,
+              placeholder: kTransparentImage,
+              height: MediaQuery.of(context).size.height / 4,
+              fit: BoxFit.fitWidth,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEvoChain() {
     List<Widget> evoForms_1 = List();
     List<Widget> evoForms_2 = List();
     List<Widget> evoForms_3 = List();

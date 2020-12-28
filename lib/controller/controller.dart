@@ -55,9 +55,21 @@ class ListPokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   var _api = PokeApi();
 
-  Rx<Pokemon> pokemon;
+  var pokemon = MyPokemon().obs;
 
   var evolutions = List<MyPokemon>().obs;
+
+  void getPokemon(int id) {
+    _api.pokemon.get(id: id).then((poke) => pokemon.value = MyPokemon(
+          id: poke.id,
+          name: poke.name,
+          artwork: poke.sprites.other.officialArtwork.frontDefault,
+          height: poke.height,
+          weight: poke.weight,
+          types: poke.types,
+          abilities: poke.abilities,
+        ));
+  }
 
   void getEvolutionData(int id) {
     _api.pokemonSpecies.get(id: id).then((pokeSpec) async {
