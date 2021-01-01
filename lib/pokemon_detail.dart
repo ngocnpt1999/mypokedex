@@ -6,7 +6,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage(int id) {
-    _pageController.getPokemon(id);
+    _pageController.getPokemonData(id);
     _pageController.getEvolutionData(id);
   }
 
@@ -16,20 +16,32 @@ class PokemonDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
-      appBar: AppBar(),
-      body: Obx(() {
-        if (_pageController.pokemon.value.id == null) {
-          return Container();
-        }
-        Widget pokeCard = _buildPoke(context);
-        Widget evoCard = _buildEvoChain();
-        return Column(
-          children: <Widget>[
-            pokeCard,
-            evoCard,
-          ],
-        );
-      }),
+      body: SafeArea(
+        child: Obx(() {
+          if (_pageController.pokemon.value.id == 0) {
+            return Container();
+          }
+          Widget pokeBar = _buildPokeBar(context);
+          Widget specCard = _buildPokeSpecies();
+          Widget abiCard = _buildPokeAbilities();
+          Widget evoCard = _buildEvoChain();
+          return Column(
+            children: <Widget>[
+              pokeBar,
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    specCard,
+                    abiCard,
+                    evoCard,
+                  ],
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -66,7 +78,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPoke(BuildContext context) {
+  Widget _buildPokeBar(BuildContext context) {
     var pokemon = _pageController.pokemon.value;
     List<Widget> typeWidgets = List();
     pokemon.types.forEach((value) => typeWidgets.add(
@@ -78,8 +90,8 @@ class PokemonDetailPage extends StatelessWidget {
                   child: ListTile(
                     leading: Image.asset(
                       "assets/images/" + value.type.name + ".png",
-                      width: 35.0,
-                      height: 35.0,
+                      width: 30.0,
+                      height: 30.0,
                       fit: BoxFit.fitWidth,
                     ),
                     title: Text(
@@ -112,7 +124,7 @@ class PokemonDetailPage extends StatelessWidget {
                             pokemon.name[0].toUpperCase() +
                                 pokemon.name.substring(1),
                             style: TextStyle(
-                              fontSize: 18.0,
+                              fontSize: 20.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -120,6 +132,7 @@ class PokemonDetailPage extends StatelessWidget {
                         Text(
                           "#" + pokemon.id.toString(),
                           textAlign: TextAlign.end,
+                          style: TextStyle(fontSize: 18.0),
                         ),
                       ],
                     ),
@@ -143,6 +156,181 @@ class PokemonDetailPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPokeSpecies() {
+    var pokemon = _pageController.pokemon.value;
+    return Column(
+      children: <Widget>[
+        Text(
+          "Species",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Card(
+          elevation: 4.0,
+          color: Color(0xFFB6B49C),
+          child: Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Card(
+                                  elevation: 3.0,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Text(
+                                      pokemon.entry,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Pokedex entry",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Card(
+                                  elevation: 3.0,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Text(
+                                      (pokemon.weight / 10.0).toString() +
+                                          " kg",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Weight",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Card(
+                                  elevation: 3.0,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5.0),
+                                    child: Text(
+                                      (pokemon.height / 10.0).toString() + " m",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Height",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPokeAbilities() {
+    var abilities = _pageController.pokemon.value.abilities;
+    List<Widget> abiCards = List();
+    abilities.forEach((value) {
+      if (value.isHidden) {
+        return;
+      }
+      abiCards.add(Row(
+        children: <Widget>[
+          Expanded(
+            child: Card(
+              elevation: 3.0,
+              child: Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  value.ability.name[0].toUpperCase() +
+                      value.ability.name.substring(1),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ));
+    });
+    return Column(
+      children: <Widget>[
+        Text(
+          "Abilities",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Card(
+          elevation: 4.0,
+          color: Color(0xFFB6B49C),
+          child: Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Column(
+              children: abiCards,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -217,20 +405,29 @@ class PokemonDetailPage extends StatelessWidget {
     if (evoForms_3.length > 0) {
       evoWidgets.insert(evoWidgets.length - 1, forwardIcon);
     }
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      elevation: 4.0,
-      color: Color(0xFFB6B49C),
-      child: Padding(
-        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: evoWidgets,
+    return Column(
+      children: <Widget>[
+        Text(
+          "Evolutions",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
+        Card(
+          elevation: 4.0,
+          color: Color(0xFFB6B49C),
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: evoWidgets,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
