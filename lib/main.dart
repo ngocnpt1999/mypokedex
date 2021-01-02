@@ -37,12 +37,19 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Obx(() => ListView.separated(
-            controller: _listPokemonController.scrollController,
-            itemCount: _listPokemonController.pokemons.length,
-            itemBuilder: _buildPokemonTile,
-            separatorBuilder: (context, index) => Divider(),
-          )),
+      body: Obx(() {
+        if (_listPokemonController.pokemons.length == 0) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return ListView.separated(
+          controller: _listPokemonController.scrollController,
+          itemCount: _listPokemonController.pokemons.length,
+          itemBuilder: _buildPokemonTile,
+          separatorBuilder: (context, index) => Divider(),
+        );
+      }),
     );
   }
 

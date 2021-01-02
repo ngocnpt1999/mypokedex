@@ -19,7 +19,9 @@ class PokemonDetailPage extends StatelessWidget {
       body: SafeArea(
         child: Obx(() {
           if (_pageController.pokemon.value.id == 0) {
-            return Container();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
           Widget pokeBar = _buildPokeBar(context);
           Widget specCard = _buildPokeSpecies();
