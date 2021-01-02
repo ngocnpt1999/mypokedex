@@ -71,8 +71,8 @@ class PokemonDetailController extends GetxController {
         abilities: poke.abilities,
       );
       _api.pokemonSpecies.get(id: id).then((spec) {
-        var temp = spec.flavorTextEntries.firstWhere(
-            (e) => e.language.name == "en" && e.version.name == "sword");
+        var temp =
+            spec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
         pokemon.value.entry = temp.flavorText;
       });
     });

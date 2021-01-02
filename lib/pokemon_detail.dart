@@ -87,17 +87,27 @@ class PokemonDetailPage extends StatelessWidget {
               Expanded(
                 child: Card(
                   elevation: 3.0,
-                  child: ListTile(
-                    leading: Image.asset(
-                      "assets/images/" + value.type.name + ".png",
-                      width: 30.0,
-                      height: 30.0,
-                      fit: BoxFit.fitWidth,
-                    ),
-                    title: Text(
-                      value.type.name[0].toUpperCase() +
-                          value.type.name.substring(1),
-                      textAlign: TextAlign.center,
+                  child: Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: Row(
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/images/" + value.type.name + ".png",
+                          width: 30.0,
+                          height: 30.0,
+                          fit: BoxFit.fitWidth,
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              value.type.name[0].toUpperCase() +
+                                  value.type.name.substring(1),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
