@@ -43,17 +43,26 @@ class MyHomePage extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         }
-        return ListView.separated(
-          controller: _listPokemonController.scrollController,
-          itemCount: _listPokemonController.pokemons.length,
-          itemBuilder: _buildPokemonTile,
-          separatorBuilder: (context, index) => Divider(),
+        return Scrollbar(
+          child: ListView.separated(
+            controller: _listPokemonController.scrollController,
+            itemCount: _listPokemonController.pokemons.length + 1,
+            itemBuilder: _buildPokemonTile,
+            separatorBuilder: (context, index) => Divider(),
+          ),
         );
       }),
     );
   }
 
   Widget _buildPokemonTile(BuildContext context, int index) {
+    if (index == _listPokemonController.pokemons.length) {
+      return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(5.0),
+        child: CircularProgressIndicator(),
+      );
+    }
     var types = _listPokemonController.pokemons[index].types;
     List<Widget> typeWidgets = List();
     types.forEach((value) => typeWidgets.addAll([
