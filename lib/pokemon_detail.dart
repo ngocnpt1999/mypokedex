@@ -5,9 +5,9 @@ import 'package:mypokedex/model/mypokemon.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PokemonDetailPage extends StatelessWidget {
-  PokemonDetailPage(int id) {
-    _pageController.getPokemonData(id);
-    _pageController.getEvolutionData(id);
+  PokemonDetailPage({int id, String name}) {
+    _pageController.getPokemonData(id: id, name: name);
+    _pageController.getEvolutionData(id: id, name: name);
   }
 
   final PokemonDetailController _pageController = PokemonDetailController();
@@ -31,13 +31,15 @@ class PokemonDetailPage extends StatelessWidget {
             children: <Widget>[
               pokeBar,
               Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    specCard,
-                    abiCard,
-                    evoCard,
-                  ],
+                child: Scrollbar(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      specCard,
+                      abiCard,
+                      evoCard,
+                    ],
+                  ),
                 ),
               ),
             ],

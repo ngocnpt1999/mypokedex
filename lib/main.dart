@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/controller.dart';
+import 'package:mypokedex/controller/search.dart';
 import 'package:mypokedex/pokemon_detail.dart';
+import 'package:pokeapi_dart/pokeapi_dart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 void main() {
@@ -32,10 +35,23 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _listPokemonController.getNewPokemons();
+    _fetchData(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              SharedPreferences.getInstance().then((prefs) {
+                showSearch(
+                  context: context,
+                  delegate: SearchPokemon(prefs),
+                );
+              });
+            },
+          ),
+        ],
       ),
       body: Obx(() {
         if (_listPokemonController.pokemons.length == 0) {
@@ -63,7 +79,8 @@ class MyHomePage extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
     }
-    var types = _listPokemonController.pokemons[index].types;
+    var pokemon = _listPokemonController.pokemons[index];
+    var types = pokemon.types;
     List<Widget> typeWidgets = List();
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
@@ -78,7 +95,7 @@ class MyHomePage extends StatelessWidget {
         ]));
     return InkWell(
       onTap: () {
-        Get.to(PokemonDetailPage(_listPokemonController.pokemons[index].id));
+        Get.to(PokemonDetailPage(id: pokemon.id));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +105,7 @@ class MyHomePage extends StatelessWidget {
             padding: EdgeInsets.only(left: 5.0),
             child: FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
-              image: _listPokemonController.pokemons[index].artwork,
+              image: pokemon.artwork,
               imageCacheWidth: 150,
               imageCacheHeight: 150,
               width: 60,
@@ -102,11 +119,10 @@ class MyHomePage extends StatelessWidget {
             flex: 5,
             child: ListTile(
               title: Text(
-                _listPokemonController.pokemons[index].name[0].toUpperCase() +
-                    _listPokemonController.pokemons[index].name.substring(1),
+                pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
               ),
               subtitle: Text(
-                "#" + _listPokemonController.pokemons[index].id.toString(),
+                "#" + pokemon.id.toString(),
               ),
             ),
           ),
@@ -119,5 +135,40 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _fetchData(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey("pokedex")) {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Text(
+                      "Fetching data...",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ));
+      var _api = PokeApi();
+      List<String> pokeNames = List();
+      _api.pokemon.getPage(offset: 0, limit: 807).then((response) {
+        response.results.forEach((value) {
+          pokeNames.add(value.name);
+        });
+        prefs.setStringList("pokedex", pokeNames).whenComplete(() {
+          Navigator.pop(context);
+          _listPokemonController.getNewPokemons();
+        });
+      });
+    } else {
+      _listPokemonController.getNewPokemons();
+    }
   }
 }

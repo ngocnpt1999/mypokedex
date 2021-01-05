@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListPokemonController extends GetxController {
   ListPokemonController() {
@@ -26,26 +27,26 @@ class ListPokemonController extends GetxController {
 
   bool _loading = false;
 
-  void getNewPokemons() {
+  void getNewPokemons() async {
     if (_loading == false) {
       _loading = true;
-      _api.pokemon
-          .getPage(offset: pokemons.length, limit: _limit)
-          .then((response) {
-        int prevlength = pokemons.length;
-        response.results.forEach((value) {
-          _api.pokemon.get(name: value.name).then((pokemon) {
-            pokemons.add(MyPokemon(
-              id: pokemon.id,
-              name: pokemon.name,
-              artwork: pokemon.sprites.other.officialArtwork.frontDefault,
-              types: pokemon.types,
-            ));
-            pokemons.sort((a, b) => a.id.compareTo(b.id));
-            if (pokemons.length - prevlength == _limit) {
-              _loading = false;
-            }
-          });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var names = prefs
+          .getStringList("pokedex")
+          .sublist(pokemons.length, pokemons.length + _limit);
+      int prevlength = pokemons.length;
+      names.forEach((name) {
+        _api.pokemon.get(name: name).then((pokemon) {
+          pokemons.add(MyPokemon(
+            id: pokemon.id,
+            name: pokemon.name,
+            artwork: pokemon.sprites.other.officialArtwork.frontDefault,
+            types: pokemon.types,
+          ));
+          pokemons.sort((a, b) => a.id.compareTo(b.id));
+          if (pokemons.length - prevlength == _limit) {
+            _loading = false;
+          }
         });
       });
     }
@@ -59,8 +60,8 @@ class PokemonDetailController extends GetxController {
 
   var evolutions = List<MyPokemon>().obs;
 
-  void getPokemonData(int id) {
-    _api.pokemon.get(id: id).then((poke) {
+  void getPokemonData({int id, String name}) {
+    _api.pokemon.get(id: id, name: name).then((poke) {
       pokemon.value = MyPokemon(
         id: poke.id,
         name: poke.name,
@@ -70,7 +71,7 @@ class PokemonDetailController extends GetxController {
         types: poke.types,
         abilities: poke.abilities,
       );
-      _api.pokemonSpecies.get(id: id).then((spec) {
+      _api.pokemonSpecies.get(id: id, name: name).then((spec) {
         var temp =
             spec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
         pokemon.value.entry = temp.flavorText;
@@ -78,8 +79,8 @@ class PokemonDetailController extends GetxController {
     });
   }
 
-  void getEvolutionData(int id) {
-    _api.pokemonSpecies.get(id: id).then((pokeSpec) async {
+  void getEvolutionData({int id, String name}) {
+    _api.pokemonSpecies.get(id: id, name: name).then((pokeSpec) async {
       var response = await http.get(pokeSpec.evolutionChain.url);
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = jsonDecode(response.body);
