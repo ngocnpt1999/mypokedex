@@ -62,19 +62,19 @@ class PokemonDetailController extends GetxController {
 
   void getPokemonData({int id, String name}) {
     _api.pokemon.get(id: id, name: name).then((poke) {
-      pokemon.value = MyPokemon(
-        id: poke.id,
-        name: poke.name,
-        artwork: poke.sprites.other.officialArtwork.frontDefault,
-        height: poke.height,
-        weight: poke.weight,
-        types: poke.types,
-        abilities: poke.abilities,
-      );
       _api.pokemonSpecies.get(id: id, name: name).then((spec) {
         var temp =
             spec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
-        pokemon.value.entry = temp.flavorText;
+        pokemon.value = MyPokemon(
+          id: poke.id,
+          name: poke.name,
+          artwork: poke.sprites.other.officialArtwork.frontDefault,
+          entry: temp.flavorText,
+          height: poke.height,
+          weight: poke.weight,
+          types: poke.types,
+          abilities: poke.abilities,
+        );
       });
     });
   }

@@ -12,13 +12,13 @@ class MyPokemon {
   int evoForm;
 
   MyPokemon(
-      {this.id = 0,
-      this.name = "",
-      this.entry = "",
-      this.artwork = "",
-      this.height = 0,
-      this.weight = 0,
+      {this.id,
+      this.name,
+      this.entry,
+      this.artwork,
+      this.height,
+      this.weight,
       this.types,
       this.abilities,
-      this.evoForm = 0});
+      this.evoForm});
 }
