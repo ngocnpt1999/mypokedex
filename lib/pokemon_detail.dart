@@ -60,19 +60,27 @@ class PokemonDetailPage extends StatelessWidget {
     );
     return Card(
       elevation: 3.0,
-      child: Container(
-        padding: EdgeInsets.all(3.0),
-        child: Column(
-          children: <Widget>[
-            FadeInImage.memoryNetwork(
-              image: pokemon.artwork,
-              placeholder: kTransparentImage,
-              width: 65.0,
-              fit: BoxFit.fitWidth,
-            ),
-            Text(pokemon.name[0].toUpperCase() + pokemon.name.substring(1)),
-            rowTypes,
-          ],
+      child: InkWell(
+        onTap: () {
+          Get.back();
+          Get.to(PokemonDetailPage(
+            id: pokemon.id,
+          ));
+        },
+        child: Container(
+          padding: EdgeInsets.all(3.0),
+          child: Column(
+            children: <Widget>[
+              FadeInImage.memoryNetwork(
+                image: pokemon.artwork,
+                placeholder: kTransparentImage,
+                width: 65.0,
+                fit: BoxFit.fitWidth,
+              ),
+              Text(pokemon.name[0].toUpperCase() + pokemon.name.substring(1)),
+              rowTypes,
+            ],
+          ),
         ),
       ),
     );

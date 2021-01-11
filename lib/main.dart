@@ -38,10 +38,24 @@ class MyHomePage extends StatelessWidget {
     _fetchData(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Image.asset("assets/icons/icon.png"),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
             onPressed: () {
               SharedPreferences.getInstance().then((prefs) {
                 showSearch(

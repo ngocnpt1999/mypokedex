@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class MyPokemon {
@@ -12,8 +13,8 @@ class MyPokemon {
   int evoForm;
 
   MyPokemon(
-      {this.id,
-      this.name,
+      {@required this.id,
+      @required this.name,
       this.entry,
       this.artwork,
       this.height,
