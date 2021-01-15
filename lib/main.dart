@@ -99,54 +99,35 @@ class MyHomePage extends StatelessWidget {
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
-            width: 25.0,
             height: 25.0,
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.fitHeight,
           ),
           Container(
             width: 3.0,
           ),
         ]));
-    return InkWell(
+    return ListTile(
       onTap: () {
         Get.to(PokemonDetailPage(id: pokemon.id));
       },
-      child: Row(
+      leading: FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: pokemon.artwork,
+        imageCacheWidth: 150,
+        imageCacheHeight: 150,
+        height: 65.0,
+        fit: BoxFit.fitHeight,
+      ),
+      title: Text(
+        pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+      ),
+      subtitle: Text(
+        "#" + pokemon.id.toString(),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 5.0),
-            child: FadeInImage.memoryNetwork(
-              placeholder: kTransparentImage,
-              image: pokemon.artwork,
-              imageCacheWidth: 150,
-              imageCacheHeight: 150,
-              width: 60,
-              fit: BoxFit.fitWidth,
-            ),
-          ),
-          Container(
-            width: 5.0,
-          ),
-          Expanded(
-            flex: 5,
-            child: ListTile(
-              title: Text(
-                pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-              ),
-              subtitle: Text(
-                "#" + pokemon.id.toString(),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Row(
-              children: typeWidgets,
-            ),
-          ),
-        ],
+        children: typeWidgets,
       ),
     );
   }
