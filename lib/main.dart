@@ -74,11 +74,10 @@ class MyHomePage extends StatelessWidget {
           );
         }
         return Scrollbar(
-          child: ListView.separated(
+          child: ListView.builder(
             controller: _listPokemonController.scrollController,
             itemCount: _listPokemonController.pokemons.length + 1,
             itemBuilder: _buildPokemonTile,
-            separatorBuilder: (context, index) => Divider(),
           ),
         );
       }),
@@ -106,28 +105,31 @@ class MyHomePage extends StatelessWidget {
             width: 3.0,
           ),
         ]));
-    return ListTile(
-      onTap: () {
-        Get.to(PokemonDetailPage(id: pokemon.id));
-      },
-      leading: FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: pokemon.artwork,
-        imageCacheWidth: 150,
-        imageCacheHeight: 150,
-        height: 65.0,
-        fit: BoxFit.fitHeight,
-      ),
-      title: Text(
-        pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-      ),
-      subtitle: Text(
-        "#" + pokemon.id.toString(),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: typeWidgets,
+    return Card(
+      elevation: 2.0,
+      child: ListTile(
+        onTap: () {
+          Get.to(PokemonDetailPage(id: pokemon.id));
+        },
+        leading: FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: pokemon.artwork,
+          imageCacheWidth: 150,
+          imageCacheHeight: 150,
+          height: 100.0,
+          fit: BoxFit.fitHeight,
+        ),
+        title: Text(
+          pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+        ),
+        subtitle: Text(
+          "#" + pokemon.id.toString(),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: typeWidgets,
+        ),
       ),
     );
   }

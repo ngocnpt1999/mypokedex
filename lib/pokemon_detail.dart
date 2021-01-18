@@ -74,7 +74,7 @@ class PokemonDetailPage extends StatelessWidget {
               FadeInImage.memoryNetwork(
                 image: pokemon.artwork,
                 placeholder: kTransparentImage,
-                width: 65.0,
+                width: 70.0,
                 fit: BoxFit.fitWidth,
               ),
               Text(pokemon.name[0].toUpperCase() + pokemon.name.substring(1)),
