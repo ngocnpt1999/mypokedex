@@ -60,6 +60,8 @@ class PokemonDetailController extends GetxController {
 
   var evolutions = List<MyPokemon>().obs;
 
+  var alternativeForms = List<MyPokemon>().obs;
+
   void getPokemonData({int id, String name}) {
     _api.pokemon.get(id: id, name: name).then((poke) {
       _api.pokemonSpecies.get(id: id, name: name).then((spec) {
@@ -86,24 +88,24 @@ class PokemonDetailController extends GetxController {
         Map<String, dynamic> jsonData = jsonDecode(response.body);
         EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
         var evo = evoChain.chain;
-        int form = 1;
+        int evoNo = 1;
         do {
           int numOfEvo = evo.evolvesTo.length;
-          int tempForm = form;
+          int tempEvoNo = evoNo;
           _api.pokemon.get(name: evo.species.name).then((poke) {
             evolutions.add(MyPokemon(
               id: poke.id,
               name: poke.name,
               artwork: poke.sprites.other.officialArtwork.frontDefault,
               types: poke.types,
-              evoForm: tempForm,
+              evolutionNo: tempEvoNo,
             ));
             evolutions.sort((a, b) => a.id.compareTo(b.id));
           });
-          form++;
+          evoNo++;
           if (numOfEvo > 1) {
             for (int i = 1; i < numOfEvo; i++) {
-              int _tempForm = form;
+              int _tempEvoNo = evoNo;
               _api.pokemon
                   .get(name: evo.evolvesTo[i].species.name)
                   .then((poke) {
@@ -112,7 +114,7 @@ class PokemonDetailController extends GetxController {
                   name: poke.name,
                   artwork: poke.sprites.other.officialArtwork.frontDefault,
                   types: poke.types,
-                  evoForm: _tempForm,
+                  evolutionNo: _tempEvoNo,
                 ));
                 evolutions.sort((a, b) => a.id.compareTo(b.id));
               });
@@ -123,6 +125,25 @@ class PokemonDetailController extends GetxController {
       } else {
         throw Exception("Failed!!!");
       }
+    });
+  }
+
+  void getAlternativeForms({int id, String name}) {
+    _api.pokemonSpecies.get(id: id, name: name).then((spec) {
+      spec.varieties.forEach((v) {
+        _api.pokemon.get(name: v.pokemon.name).then((poke) {
+          String art = poke.sprites.other.officialArtwork.frontDefault;
+          if (!art.isNullOrBlank && art.isNotEmpty) {
+            alternativeForms.add(MyPokemon(
+              id: poke.id,
+              name: poke.name,
+              artwork: art,
+              types: poke.types,
+            ));
+            alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+          }
+        });
+      });
     });
   }
 }

@@ -99,7 +99,8 @@ class MyHomePage extends StatelessWidget {
           Image.asset(
             "assets/images/" + value.type.name + ".png",
             height: 25.0,
-            fit: BoxFit.fitHeight,
+            width: 25.0,
+            fit: BoxFit.contain,
           ),
           Container(
             width: 3.0,

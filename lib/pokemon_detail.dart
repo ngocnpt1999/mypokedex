@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/controller/controller.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -8,6 +9,7 @@ class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage({int id, String name}) {
     _pageController.getPokemonData(id: id, name: name);
     _pageController.getEvolutionData(id: id, name: name);
+    _pageController.getAlternativeForms(id: id, name: name);
   }
 
   final PokemonDetailController _pageController = PokemonDetailController();
@@ -18,6 +20,7 @@ class PokemonDetailPage extends StatelessWidget {
     Widget specCard = _buildPokeSpecies();
     Widget abiCard = _buildPokeAbilities();
     Widget evoCard = _buildEvoChain();
+    Widget formsCard = _buildAlternativeForms();
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
       body: SafeArea(
@@ -32,6 +35,7 @@ class PokemonDetailPage extends StatelessWidget {
                     specCard,
                     abiCard,
                     evoCard,
+                    formsCard,
                   ],
                 ),
               ),
@@ -42,20 +46,26 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _pokemonCard(MyPokemon pokemon) {
+  Widget _pokemonCard(
+      {@required MyPokemon pokemon,
+      double imgSize = 70.0,
+      double textSize = 12.0,
+      double iconSize = 15.0}) {
     var types = pokemon.types;
     List<Widget> typeWidgets = List();
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
-            width: 15.0,
-            fit: BoxFit.fitWidth,
+            height: iconSize,
+            width: iconSize,
+            fit: BoxFit.contain,
           ),
           Container(
             width: 2.0,
           ),
         ]));
     var rowTypes = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: typeWidgets,
     );
     return Card(
@@ -74,10 +84,14 @@ class PokemonDetailPage extends StatelessWidget {
               FadeInImage.memoryNetwork(
                 image: pokemon.artwork,
                 placeholder: kTransparentImage,
-                width: 70.0,
-                fit: BoxFit.fitWidth,
+                height: imgSize,
+                width: imgSize,
+                fit: BoxFit.contain,
               ),
-              Text(pokemon.name[0].toUpperCase() + pokemon.name.substring(1)),
+              Text(
+                pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+                style: GoogleFonts.lato(fontSize: textSize),
+              ),
               rowTypes,
             ],
           ),
@@ -116,7 +130,7 @@ class PokemonDetailPage extends StatelessWidget {
                                   "assets/images/" + value.type.name + ".png",
                                   width: 30.0,
                                   height: 30.0,
-                                  fit: BoxFit.fitWidth,
+                                  fit: BoxFit.contain,
                                 ),
                                 Expanded(
                                   child: Container(
@@ -414,10 +428,10 @@ class PokemonDetailPage extends StatelessWidget {
               List<Widget> evoForms_2 = List();
               List<Widget> evoForms_3 = List();
               evolutions.forEach((pokemon) {
-                var pokeCard = _pokemonCard(pokemon);
-                if (pokemon.evoForm == 1) {
+                var pokeCard = _pokemonCard(pokemon: pokemon);
+                if (pokemon.evolutionNo == 1) {
                   evoForms_1.add(pokeCard);
-                } else if (pokemon.evoForm == 2) {
+                } else if (pokemon.evolutionNo == 2) {
                   evoForms_2.add(pokeCard);
                 } else {
                   evoForms_3.add(pokeCard);
@@ -484,8 +498,62 @@ class PokemonDetailPage extends StatelessWidget {
                 padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: evoWidgets,
+                ),
+              );
+            }
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAlternativeForms() {
+    return Column(
+      children: <Widget>[
+        Text(
+          "Alternative forms",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Card(
+          elevation: 4.0,
+          color: Color(0xFFB6B49C),
+          child: Obx(() {
+            var forms = _pageController.alternativeForms;
+            if (forms == null || forms.length == 0) {
+              return Center(
+                child: Container(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else {
+              var formWidgets = List<Widget>();
+              forms.forEach((pokemon) {
+                formWidgets.add(_pokemonCard(
+                  pokemon: pokemon,
+                  imgSize: 120.0,
+                  textSize: 15.0,
+                  iconSize: 20.0,
+                ));
+              });
+              return Padding(
+                padding: EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 15.0,
+                  left: 5.0,
+                  right: 5.0,
+                ),
+                child: GridView.count(
+                  physics: NeverScrollableScrollPhysics(),
+                  childAspectRatio: 1.0 / 1.05,
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  children: formWidgets,
                 ),
               );
             }

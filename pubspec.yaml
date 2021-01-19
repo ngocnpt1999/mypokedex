@@ -26,6 +26,7 @@ dependencies:
   transparent_image: ^1.0.0
   http: ^0.12.2
   shared_preferences: ^0.5.12+4
+  google_fonts: ^1.1.1
   flutter:
     sdk: flutter
 

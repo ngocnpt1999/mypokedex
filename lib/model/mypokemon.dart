@@ -10,7 +10,7 @@ class MyPokemon {
   int weight;
   List<PokemonType> types;
   List<PokemonAbility> abilities;
-  int evoForm;
+  int evolutionNo;
 
   MyPokemon(
       {@required this.id,
@@ -21,5 +21,5 @@ class MyPokemon {
       this.weight,
       this.types,
       this.abilities,
-      this.evoForm});
+      this.evolutionNo});
 }
