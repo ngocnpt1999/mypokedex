@@ -107,29 +107,47 @@ class MyHomePage extends StatelessWidget {
           ),
         ]));
     return Card(
-      elevation: 2.0,
-      child: ListTile(
+      elevation: 3.0,
+      child: InkWell(
         onTap: () {
           Get.to(PokemonDetailPage(id: pokemon.id));
         },
-        leading: FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: pokemon.artwork,
-          imageCacheWidth: 150,
-          imageCacheHeight: 150,
-          height: 100.0,
-          fit: BoxFit.fitHeight,
-        ),
-        title: Text(
-          pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-        ),
-        subtitle: Text(
-          "#" + pokemon.id.toString(),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: typeWidgets,
+        child: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: pokemon.artwork,
+                imageCacheWidth: 150,
+                imageCacheHeight: 150,
+                width: MediaQuery.of(context).size.width / 5,
+                height: MediaQuery.of(context).size.width / 5,
+                fit: BoxFit.contain,
+              ),
+              Container(
+                width: 3.0,
+              ),
+              Expanded(
+                flex: 3,
+                child: ListTile(
+                  title: Text(
+                    pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+                  ),
+                  subtitle: Text(
+                    "#" + pokemon.id.toString(),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: typeWidgets,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

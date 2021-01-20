@@ -19,8 +19,8 @@ class PokemonDetailPage extends StatelessWidget {
     Widget pokeBar = _buildPokeBar(context);
     Widget specCard = _buildPokeSpecies();
     Widget abiCard = _buildPokeAbilities();
-    Widget evoCard = _buildEvoChain();
-    Widget formsCard = _buildAlternativeForms();
+    Widget evoCard = _buildEvolutionChain(context);
+    Widget formsCard = _buildAlternativeForms(context);
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
       body: SafeArea(
@@ -400,7 +400,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEvoChain() {
+  Widget _buildEvolutionChain(BuildContext context) {
     return Column(
       children: <Widget>[
         Text(
@@ -424,74 +424,77 @@ class PokemonDetailPage extends StatelessWidget {
                 ),
               );
             } else {
-              List<Widget> evoForms_1 = List();
-              List<Widget> evoForms_2 = List();
-              List<Widget> evoForms_3 = List();
+              List<Widget> evoNo_1 = List();
+              List<Widget> evoNo_2 = List();
+              List<Widget> evoNo_3 = List();
               evolutions.forEach((pokemon) {
-                var pokeCard = _pokemonCard(pokemon: pokemon);
+                var pokeCard = _pokemonCard(
+                  pokemon: pokemon,
+                  imgSize: MediaQuery.of(context).size.width / 5,
+                );
                 if (pokemon.evolutionNo == 1) {
-                  evoForms_1.add(pokeCard);
+                  evoNo_1.add(pokeCard);
                 } else if (pokemon.evolutionNo == 2) {
-                  evoForms_2.add(pokeCard);
+                  evoNo_2.add(pokeCard);
                 } else {
-                  evoForms_3.add(pokeCard);
+                  evoNo_3.add(pokeCard);
                 }
               });
-              if (evoForms_2.length > 2) {
+              if (evoNo_2.length > 2) {
                 List<Widget> tempWidgets = List();
-                for (int i = 0; i < evoForms_2.length; i += 2) {
-                  if (i + 1 < evoForms_2.length) {
+                for (int i = 0; i < evoNo_2.length; i += 2) {
+                  if (i + 1 < evoNo_2.length) {
                     tempWidgets.add(Row(
                       children: <Widget>[
-                        evoForms_2[i],
-                        evoForms_2[i + 1],
+                        evoNo_2[i],
+                        evoNo_2[i + 1],
                       ],
                     ));
                   } else {
                     tempWidgets.add(Row(
                       children: <Widget>[
-                        evoForms_2[i],
+                        evoNo_2[i],
                       ],
                     ));
                   }
                 }
-                evoForms_2.clear();
-                evoForms_2.addAll(tempWidgets);
+                evoNo_2.clear();
+                evoNo_2.addAll(tempWidgets);
               }
-              if (evoForms_3.length > 2) {
+              if (evoNo_3.length > 2) {
                 List<Widget> tempWidgets = List();
-                for (int i = 0; i < evoForms_3.length; i += 2) {
-                  if (i + 1 < evoForms_3.length) {
+                for (int i = 0; i < evoNo_3.length; i += 2) {
+                  if (i + 1 < evoNo_3.length) {
                     tempWidgets.add(Row(
                       children: <Widget>[
-                        evoForms_3[i],
-                        evoForms_3[i + 1],
+                        evoNo_3[i],
+                        evoNo_3[i + 1],
                       ],
                     ));
                   } else {
                     tempWidgets.add(Row(
                       children: <Widget>[
-                        evoForms_3[i],
+                        evoNo_3[i],
                       ],
                     ));
                   }
                 }
-                evoForms_3.clear();
-                evoForms_3.addAll(tempWidgets);
+                evoNo_3.clear();
+                evoNo_3.addAll(tempWidgets);
               }
               List<Widget> evoWidgets = [
-                Column(children: evoForms_1),
-                Column(children: evoForms_2),
-                Column(children: evoForms_3),
+                Column(children: evoNo_1),
+                Column(children: evoNo_2),
+                Column(children: evoNo_3),
               ];
               var forwardIcon = Icon(
                 Icons.arrow_forward,
                 size: 20.0,
               );
-              if (evoForms_2.length > 0) {
+              if (evoNo_2.length > 0) {
                 evoWidgets.insert(1, forwardIcon);
               }
-              if (evoForms_3.length > 0) {
+              if (evoNo_3.length > 0) {
                 evoWidgets.insert(evoWidgets.length - 1, forwardIcon);
               }
               return Padding(
@@ -508,7 +511,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAlternativeForms() {
+  Widget _buildAlternativeForms(BuildContext context) {
     return Column(
       children: <Widget>[
         Text(
@@ -536,7 +539,7 @@ class PokemonDetailPage extends StatelessWidget {
               forms.forEach((pokemon) {
                 formWidgets.add(_pokemonCard(
                   pokemon: pokemon,
-                  imgSize: 120.0,
+                  imgSize: MediaQuery.of(context).size.width / 3,
                   textSize: 15.0,
                   iconSize: 20.0,
                 ));
