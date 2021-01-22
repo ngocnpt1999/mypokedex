@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/controller.dart';
 import 'package:mypokedex/controller/search.dart';
+import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/pokemon_detail.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -108,6 +109,8 @@ class MyHomePage extends StatelessWidget {
         ]));
     return Card(
       elevation: 3.0,
+      color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
+          .withOpacity(0.5),
       child: InkWell(
         onTap: () {
           Get.to(PokemonDetailPage(id: pokemon.id));
