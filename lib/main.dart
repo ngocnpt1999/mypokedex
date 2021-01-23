@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mypokedex/controller/controller.dart';
 import 'package:mypokedex/controller/search.dart';
+import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/pokemon_detail.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
@@ -31,6 +31,8 @@ class MyHomePage extends StatelessWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
+
+  final int _totalPkm = 807;
 
   final ListPokemonController _listPokemonController = ListPokemonController();
 
@@ -168,6 +170,7 @@ class MyHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     CircularProgressIndicator(),
+                    Spacer(),
                     Text(
                       "Fetching data...",
                       textAlign: TextAlign.center,
@@ -177,7 +180,7 @@ class MyHomePage extends StatelessWidget {
               ));
       var _api = PokeApi();
       List<String> pokeNames = List();
-      _api.pokemon.getPage(offset: 0, limit: 807).then((response) {
+      _api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
         response.results.forEach((value) {
           pokeNames.add(value.name);
         });
