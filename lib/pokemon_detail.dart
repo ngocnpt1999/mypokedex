@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
+import 'package:mypokedex/model/typecolors.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PokemonDetailPage extends StatelessWidget {
@@ -65,11 +66,14 @@ class PokemonDetailPage extends StatelessWidget {
           ),
         ]));
     var rowTypes = Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: typeWidgets,
     );
     return Card(
       elevation: 3.0,
+      color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
+          .withOpacity(0.5),
       child: InkWell(
         onTap: () {
           Get.back();
@@ -80,6 +84,7 @@ class PokemonDetailPage extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(3.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               FadeInImage.memoryNetwork(
                 image: pokemon.artwork,
@@ -150,48 +155,52 @@ class PokemonDetailPage extends StatelessWidget {
                     ],
                   ),
                 ));
-            return Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                pokemon.name[0].toUpperCase() +
-                                    pokemon.name.substring(1),
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
+            return Container(
+              color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
+                  .withOpacity(0.8),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  pokemon.name[0].toUpperCase() +
+                                      pokemon.name.substring(1),
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Text(
-                              "#" + pokemon.id.toString(),
-                              textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 18.0),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          height: 5.0,
-                        ),
-                        Column(
-                          children: typeWidgets,
-                        ),
-                      ],
+                              Text(
+                                "#" + pokemon.id.toString(),
+                                textAlign: TextAlign.end,
+                                style: TextStyle(fontSize: 18.0),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 5.0,
+                          ),
+                          Column(
+                            children: typeWidgets,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                FadeInImage.memoryNetwork(
-                  image: pokemon.artwork,
-                  placeholder: kTransparentImage,
-                  fit: BoxFit.contain,
-                ),
-              ],
+                  FadeInImage.memoryNetwork(
+                    image: pokemon.artwork,
+                    placeholder: kTransparentImage,
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ),
             );
           }
         }),
@@ -400,6 +409,28 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
+  void _divideEvolutionNoRow(List<Widget> evoNo) {
+    List<Widget> tempWidgets = List();
+    for (int i = 0; i < evoNo.length; i += 2) {
+      if (i + 1 < evoNo.length) {
+        tempWidgets.add(Row(
+          children: <Widget>[
+            evoNo[i],
+            evoNo[i + 1],
+          ],
+        ));
+      } else {
+        tempWidgets.add(Row(
+          children: <Widget>[
+            evoNo[i],
+          ],
+        ));
+      }
+    }
+    evoNo.clear();
+    evoNo.addAll(tempWidgets);
+  }
+
   Widget _buildEvolutionChain(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -441,46 +472,10 @@ class PokemonDetailPage extends StatelessWidget {
                 }
               });
               if (evoNo_2.length > 2) {
-                List<Widget> tempWidgets = List();
-                for (int i = 0; i < evoNo_2.length; i += 2) {
-                  if (i + 1 < evoNo_2.length) {
-                    tempWidgets.add(Row(
-                      children: <Widget>[
-                        evoNo_2[i],
-                        evoNo_2[i + 1],
-                      ],
-                    ));
-                  } else {
-                    tempWidgets.add(Row(
-                      children: <Widget>[
-                        evoNo_2[i],
-                      ],
-                    ));
-                  }
-                }
-                evoNo_2.clear();
-                evoNo_2.addAll(tempWidgets);
+                _divideEvolutionNoRow(evoNo_2);
               }
               if (evoNo_3.length > 2) {
-                List<Widget> tempWidgets = List();
-                for (int i = 0; i < evoNo_3.length; i += 2) {
-                  if (i + 1 < evoNo_3.length) {
-                    tempWidgets.add(Row(
-                      children: <Widget>[
-                        evoNo_3[i],
-                        evoNo_3[i + 1],
-                      ],
-                    ));
-                  } else {
-                    tempWidgets.add(Row(
-                      children: <Widget>[
-                        evoNo_3[i],
-                      ],
-                    ));
-                  }
-                }
-                evoNo_3.clear();
-                evoNo_3.addAll(tempWidgets);
+                _divideEvolutionNoRow(evoNo_3);
               }
               List<Widget> evoWidgets = [
                 Column(children: evoNo_1),
@@ -489,7 +484,7 @@ class PokemonDetailPage extends StatelessWidget {
               ];
               var forwardIcon = Icon(
                 Icons.arrow_forward,
-                size: 20.0,
+                size: 25.0,
               );
               if (evoNo_2.length > 0) {
                 evoWidgets.insert(1, forwardIcon);
@@ -551,12 +546,15 @@ class PokemonDetailPage extends StatelessWidget {
                   left: 5.0,
                   right: 5.0,
                 ),
-                child: GridView.count(
-                  physics: NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.0 / 1.05,
-                  shrinkWrap: true,
-                  crossAxisCount: 2,
-                  children: formWidgets,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: formWidgets,
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
