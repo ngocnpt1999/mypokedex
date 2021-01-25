@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
         accentIconTheme: IconThemeData(color: Colors.black),
         dividerColor: Colors.black12,
       ),
+      themeMode: ThemeMode.system,
       home: MyHomePage(title: 'Pokedex'),
     );
   }
