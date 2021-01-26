@@ -179,7 +179,9 @@ class MyHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     CircularProgressIndicator(),
-                    Spacer(),
+                    Container(
+                      height: 3.0,
+                    ),
                     Text(
                       "Fetching data...",
                       textAlign: TextAlign.center,
