@@ -56,6 +56,8 @@ class ListPokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   var _api = PokeApi();
 
+  int _endDex = 2000;
+
   var pokemon = MyPokemon(id: null, name: null).obs;
 
   var evolutions = List<MyPokemon>().obs;
@@ -63,87 +65,152 @@ class PokemonDetailController extends GetxController {
   var alternativeForms = List<MyPokemon>().obs;
 
   void getPokemonData({int id, String name}) {
-    _api.pokemon.get(id: id, name: name).then((poke) {
-      _api.pokemonSpecies.get(id: id, name: name).then((spec) {
-        var temp =
-            spec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
-        pokemon.value = MyPokemon(
-          id: poke.id,
-          name: poke.name,
-          artwork: poke.sprites.other.officialArtwork.frontDefault,
-          entry: temp.flavorText,
-          height: poke.height,
-          weight: poke.weight,
-          types: poke.types,
-          abilities: poke.abilities,
-        );
-      });
+    _api.pokemon.get(id: id, name: name).then((poke) async {
+      if (poke.id >= _endDex) {
+        var response = await http.get(poke.species.url);
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonData = jsonDecode(response.body);
+          PokemonSpecies pokeSpec = PokemonSpecies.fromJson(jsonData);
+          pokemon.value = MyPokemon(
+            id: pokeSpec.id,
+            name: poke.name,
+            artwork: poke.sprites.other.officialArtwork.frontDefault,
+            entry: "None",
+            height: poke.height,
+            weight: poke.weight,
+            types: poke.types,
+            abilities: poke.abilities,
+          );
+        } else {
+          print("Can't get pokemon species");
+          throw Exception("Failed!!!");
+        }
+      } else {
+        _api.pokemonSpecies.get(id: id, name: name).then((pokeSpec) {
+          var temp = pokeSpec.flavorTextEntries
+              .lastWhere((e) => e.language.name == "en");
+          pokemon.value = MyPokemon(
+            id: poke.id,
+            name: poke.name,
+            artwork: poke.sprites.other.officialArtwork.frontDefault,
+            entry: temp.flavorText,
+            height: poke.height,
+            weight: poke.weight,
+            types: poke.types,
+            abilities: poke.abilities,
+          );
+        });
+      }
     });
   }
 
-  void getEvolutionData({int id, String name}) {
-    _api.pokemonSpecies.get(id: id, name: name).then((pokeSpec) async {
-      var response = await http.get(pokeSpec.evolutionChain.url);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
-        EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
-        var evo = evoChain.chain;
-        int evoNo = 1;
-        do {
-          int numOfEvo = evo.evolvesTo.length;
-          int tempEvoNo = evoNo;
-          _api.pokemon.get(name: evo.species.name).then((poke) {
-            evolutions.add(MyPokemon(
-              id: poke.id,
-              name: poke.name,
-              artwork: poke.sprites.other.officialArtwork.frontDefault,
-              types: poke.types,
-              evolutionNo: tempEvoNo,
-            ));
-            evolutions.sort((a, b) => a.id.compareTo(b.id));
-          });
-          evoNo++;
-          if (numOfEvo > 1) {
-            for (int i = 1; i < numOfEvo; i++) {
-              int _tempEvoNo = evoNo;
-              _api.pokemon
-                  .get(name: evo.evolvesTo[i].species.name)
-                  .then((poke) {
-                evolutions.add(MyPokemon(
-                  id: poke.id,
-                  name: poke.name,
-                  artwork: poke.sprites.other.officialArtwork.frontDefault,
-                  types: poke.types,
-                  evolutionNo: _tempEvoNo,
-                ));
-                evolutions.sort((a, b) => a.id.compareTo(b.id));
-              });
-            }
+  void _divideEvolutionNo(String url) async {
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
+      var evo = evoChain.chain;
+      int evoNo = 1;
+      do {
+        int numOfEvo = evo.evolvesTo.length;
+        int tempEvoNo = evoNo;
+        _api.pokemon.get(name: evo.species.name).then((poke) {
+          evolutions.add(MyPokemon(
+            id: poke.id,
+            name: poke.name,
+            artwork: poke.sprites.other.officialArtwork.frontDefault,
+            types: poke.types,
+            evolutionNo: tempEvoNo,
+          ));
+          evolutions.sort((a, b) => a.id.compareTo(b.id));
+        });
+        evoNo++;
+        if (numOfEvo > 1) {
+          for (int i = 1; i < numOfEvo; i++) {
+            int _tempEvoNo = evoNo;
+            _api.pokemon.get(name: evo.evolvesTo[i].species.name).then((poke) {
+              evolutions.add(MyPokemon(
+                id: poke.id,
+                name: poke.name,
+                artwork: poke.sprites.other.officialArtwork.frontDefault,
+                types: poke.types,
+                evolutionNo: _tempEvoNo,
+              ));
+              evolutions.sort((a, b) => a.id.compareTo(b.id));
+            });
           }
-          evo = evo.evolvesTo[0];
-        } while (evo != null && evo.evolvesTo.length >= 0);
+        }
+        evo = evo.evolvesTo[0];
+      } while (evo != null && evo.evolvesTo.length >= 0);
+    } else {
+      print("Can't get evolution chain");
+      throw Exception("Failed!!!");
+    }
+  }
+
+  void getEvolutionData({int id, String name}) {
+    _api.pokemon.get(id: id, name: name).then((poke) async {
+      if (poke.id >= _endDex) {
+        var response = await http.get(poke.species.url);
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonData = jsonDecode(response.body);
+          PokemonSpecies pokeSpec = PokemonSpecies.fromJson(jsonData);
+          _divideEvolutionNo(pokeSpec.evolutionChain.url);
+        } else {
+          print("Can't get pokemon species");
+          throw Exception("Failed!!!");
+        }
       } else {
-        throw Exception("Failed!!!");
+        _api.pokemonSpecies.get(id: id, name: name).then((pokeSpec) {
+          _divideEvolutionNo(pokeSpec.evolutionChain.url);
+        });
       }
     });
   }
 
   void getAlternativeForms({int id, String name}) {
-    _api.pokemonSpecies.get(id: id, name: name).then((spec) {
-      spec.varieties.forEach((v) {
-        _api.pokemon.get(name: v.pokemon.name).then((poke) {
-          String art = poke.sprites.other.officialArtwork.frontDefault;
-          if (!art.isNullOrBlank && art.isNotEmpty) {
-            alternativeForms.add(MyPokemon(
-              id: poke.id,
-              name: poke.name,
-              artwork: art,
-              types: poke.types,
-            ));
-            alternativeForms.sort((a, b) => a.id.compareTo(b.id));
-          }
+    _api.pokemon.get(id: id, name: name).then((poke) async {
+      if (poke.id >= _endDex) {
+        var response = await http.get(poke.species.url);
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonData = jsonDecode(response.body);
+          PokemonSpecies pokeSpec = PokemonSpecies.fromJson(jsonData);
+          pokeSpec.varieties.forEach((v) {
+            _api.pokemon.get(name: v.pokemon.name).then((poke) {
+              String art = poke.sprites.other.officialArtwork.frontDefault;
+              if (!art.isNullOrBlank && art.isNotEmpty) {
+                alternativeForms.add(MyPokemon(
+                  id: poke.id,
+                  name: poke.name,
+                  artwork: art,
+                  types: poke.types,
+                ));
+                alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+              }
+            });
+          });
+        } else {
+          print("Can't get pokemon species");
+          throw Exception("Failed!!!");
+        }
+      } else {
+        _api.pokemonSpecies.get(id: id, name: name).then((pokeSpec) {
+          pokeSpec.varieties.forEach((v) {
+            _api.pokemon.get(name: v.pokemon.name).then((poke) {
+              String art = poke.sprites.other.officialArtwork.frontDefault;
+              if (!art.isNullOrBlank && art.isNotEmpty) {
+                alternativeForms.add(MyPokemon(
+                  id: poke.id,
+                  name: poke.name,
+                  artwork: art,
+                  types: poke.types,
+                ));
+                alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+              }
+            });
+          });
         });
-      });
+      }
     });
   }
 }
