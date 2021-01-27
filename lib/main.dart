@@ -100,7 +100,7 @@ class MyHomePage extends StatelessWidget {
     if (index == _listPokemonController.pokemons.length) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(5.0),
+        padding: EdgeInsets.all(8.0),
         child: CircularProgressIndicator(),
       );
     }
@@ -180,7 +180,7 @@ class MyHomePage extends StatelessWidget {
                   children: <Widget>[
                     CircularProgressIndicator(),
                     Container(
-                      height: 3.0,
+                      height: 5.0,
                     ),
                     Text(
                       "Fetching data...",

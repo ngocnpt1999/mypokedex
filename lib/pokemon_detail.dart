@@ -8,9 +8,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage({int id, String name}) {
-    _pageController.getPokemonData(id: id, name: name);
-    _pageController.getEvolutionData(id: id, name: name);
-    _pageController.getAlternativeForms(id: id, name: name);
+    _pageController.init(id: id, name: name);
   }
 
   final PokemonDetailController _pageController = PokemonDetailController();
@@ -229,7 +227,7 @@ class PokemonDetailPage extends StatelessWidget {
                 pokemon.entry == null) {
               return Center(
                 child: Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(25.0),
                   child: CircularProgressIndicator(),
                 ),
               );
@@ -364,7 +362,7 @@ class PokemonDetailPage extends StatelessWidget {
             if (pokemon.abilities == null) {
               return Center(
                 child: Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(25.0),
                   child: CircularProgressIndicator(),
                 ),
               );
@@ -409,7 +407,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  void _divideEvolutionNoRow(List<Widget> evoNo) {
+  void _divideEvolutionNoRows(List<Widget> evoNo) {
     List<Widget> tempWidgets = List();
     for (int i = 0; i < evoNo.length; i += 2) {
       if (i + 1 < evoNo.length) {
@@ -450,7 +448,7 @@ class PokemonDetailPage extends StatelessWidget {
             if (evolutions == null || evolutions.length == 0) {
               return Center(
                 child: Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(25.0),
                   child: CircularProgressIndicator(),
                 ),
               );
@@ -472,10 +470,10 @@ class PokemonDetailPage extends StatelessWidget {
                 }
               });
               if (evoNo_2.length > 2) {
-                _divideEvolutionNoRow(evoNo_2);
+                _divideEvolutionNoRows(evoNo_2);
               }
               if (evoNo_3.length > 2) {
-                _divideEvolutionNoRow(evoNo_3);
+                _divideEvolutionNoRows(evoNo_3);
               }
               List<Widget> evoWidgets = [
                 Column(children: evoNo_1),
@@ -525,7 +523,7 @@ class PokemonDetailPage extends StatelessWidget {
             if (forms == null || forms.length == 0) {
               return Center(
                 child: Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(25.0),
                   child: CircularProgressIndicator(),
                 ),
               );
