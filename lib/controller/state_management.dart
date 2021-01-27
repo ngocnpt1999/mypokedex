@@ -56,8 +56,6 @@ class ListPokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   var _api = PokeApi();
 
-  int _endDex = 2000;
-
   var pokemon = MyPokemon(id: null, name: null).obs;
 
   var evolutions = List<MyPokemon>().obs;
