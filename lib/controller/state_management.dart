@@ -80,8 +80,8 @@ class PokemonDetailController extends GetxController {
           types: poke.types,
           abilities: poke.abilities,
         );
-        _getEvolutionData(pokeSpec.id);
-        _getAlternativeForms(pokeSpec.id);
+        _getEvolutionData(pokeSpec);
+        _getAlternativeForms(pokeSpec);
       } else {
         print("Can't get pokemon species");
         throw Exception("Failed!!!");
@@ -89,69 +89,63 @@ class PokemonDetailController extends GetxController {
     });
   }
 
-  void _getEvolutionData(int id) {
-    _api.pokemonSpecies.get(id: id).then((pokeSpec) async {
-      var response = await http.get(pokeSpec.evolutionChain.url);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
-        EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
-        var evo = evoChain.chain;
-        int evoNo = 1;
-        do {
-          int numOfEvo = evo.evolvesTo.length;
-          int tempEvoNo = evoNo;
-          _api.pokemon.get(name: evo.species.name).then((poke) {
-            evolutions.add(MyPokemon(
-              id: poke.id,
-              name: poke.name,
-              artwork: poke.sprites.other.officialArtwork.frontDefault,
-              types: poke.types,
-              evolutionNo: tempEvoNo,
-            ));
-            evolutions.sort((a, b) => a.id.compareTo(b.id));
-          });
-          evoNo++;
-          if (numOfEvo > 1) {
-            for (int i = 1; i < numOfEvo; i++) {
-              int _tempEvoNo = evoNo;
-              _api.pokemon
-                  .get(name: evo.evolvesTo[i].species.name)
-                  .then((poke) {
-                evolutions.add(MyPokemon(
-                  id: poke.id,
-                  name: poke.name,
-                  artwork: poke.sprites.other.officialArtwork.frontDefault,
-                  types: poke.types,
-                  evolutionNo: _tempEvoNo,
-                ));
-                evolutions.sort((a, b) => a.id.compareTo(b.id));
-              });
-            }
+  void _getEvolutionData(PokemonSpecies pokeSpec) async {
+    var response = await http.get(pokeSpec.evolutionChain.url);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
+      var evo = evoChain.chain;
+      int evoNo = 1;
+      do {
+        int numOfEvo = evo.evolvesTo.length;
+        int tempEvoNo = evoNo;
+        _api.pokemon.get(name: evo.species.name).then((poke) {
+          evolutions.add(MyPokemon(
+            id: poke.id,
+            name: poke.name,
+            artwork: poke.sprites.other.officialArtwork.frontDefault,
+            types: poke.types,
+            evolutionNo: tempEvoNo,
+          ));
+          evolutions.sort((a, b) => a.id.compareTo(b.id));
+        });
+        evoNo++;
+        if (numOfEvo > 1) {
+          for (int i = 1; i < numOfEvo; i++) {
+            int _tempEvoNo = evoNo;
+            _api.pokemon.get(name: evo.evolvesTo[i].species.name).then((poke) {
+              evolutions.add(MyPokemon(
+                id: poke.id,
+                name: poke.name,
+                artwork: poke.sprites.other.officialArtwork.frontDefault,
+                types: poke.types,
+                evolutionNo: _tempEvoNo,
+              ));
+              evolutions.sort((a, b) => a.id.compareTo(b.id));
+            });
           }
-          evo = evo.evolvesTo[0];
-        } while (evo != null && evo.evolvesTo.length >= 0);
-      } else {
-        print("Can't get evolution chain");
-        throw Exception("Failed!!!");
-      }
-    });
+        }
+        evo = evo.evolvesTo[0];
+      } while (evo != null && evo.evolvesTo.length >= 0);
+    } else {
+      print("Can't get evolution chain");
+      throw Exception("Failed!!!");
+    }
   }
 
-  void _getAlternativeForms(int id) {
-    _api.pokemonSpecies.get(id: id).then((pokeSpec) {
-      pokeSpec.varieties.forEach((v) {
-        _api.pokemon.get(name: v.pokemon.name).then((poke) {
-          String art = poke.sprites.other.officialArtwork.frontDefault;
-          if (!art.isNullOrBlank && art.isNotEmpty) {
-            alternativeForms.add(MyPokemon(
-              id: poke.id,
-              name: poke.name,
-              artwork: art,
-              types: poke.types,
-            ));
-            alternativeForms.sort((a, b) => a.id.compareTo(b.id));
-          }
-        });
+  void _getAlternativeForms(PokemonSpecies pokeSpec) {
+    pokeSpec.varieties.forEach((v) {
+      _api.pokemon.get(name: v.pokemon.name).then((poke) {
+        String art = poke.sprites.other.officialArtwork.frontDefault;
+        if (!art.isNullOrBlank && art.isNotEmpty) {
+          alternativeForms.add(MyPokemon(
+            id: poke.id,
+            name: poke.name,
+            artwork: art,
+            types: poke.types,
+          ));
+          alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+        }
       });
     });
   }
