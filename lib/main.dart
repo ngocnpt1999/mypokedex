@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/controller/search.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/typecolors.dart';
@@ -19,23 +20,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'MyPokedex',
       theme: ThemeData(
-        primarySwatch: Colors.grey,
-        primaryColor: Colors.white,
-        brightness: Brightness.light,
-        backgroundColor: const Color(0xFFE5E5E5),
-        accentColor: Colors.black,
-        accentIconTheme: IconThemeData(color: Colors.white),
-        dividerColor: Colors.white54,
+        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.latoTextTheme(),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      darkTheme: ThemeData(
-        primarySwatch: Colors.grey,
-        primaryColor: Colors.black,
-        brightness: Brightness.dark,
-        backgroundColor: const Color(0xFF212121),
-        accentColor: Colors.white,
-        accentIconTheme: IconThemeData(color: Colors.black),
-        dividerColor: Colors.black12,
-      ),
+      darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
       home: MyHomePage(title: 'Pokedex'),
     );
@@ -62,11 +51,15 @@ class MyHomePage extends StatelessWidget {
           padding: EdgeInsets.all(8.0),
           child: Image.asset("assets/icons/icon.png"),
         ),
-        title: Text(title),
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.black87),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(
               Icons.search,
+              color: Colors.black87,
             ),
             onPressed: () {
               SharedPreferences.getInstance().then((prefs) {
@@ -147,12 +140,9 @@ class MyHomePage extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: ListTile(
-                  title: Text(
-                    pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-                  ),
-                  subtitle: Text(
-                    "#" + pokemon.id.toString(),
-                  ),
+                  title: Text(pokemon.name[0].toUpperCase() +
+                      pokemon.name.substring(1)),
+                  subtitle: Text(pokemon.getPokedexNo()),
                 ),
               ),
               Expanded(

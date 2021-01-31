@@ -22,4 +22,15 @@ class MyPokemon {
       this.types,
       this.abilities,
       this.evolutionNo});
+
+  //Can't use for alternative forms
+  String getPokedexNo() {
+    String pokemonNo = id.toString();
+    if (id >= 10 && id < 100) {
+      pokemonNo = "0" + pokemonNo;
+    } else if (id < 10) {
+      pokemonNo = "00" + pokemonNo;
+    }
+    return "#" + pokemonNo;
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/typecolors.dart';
@@ -45,18 +44,14 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _pokemonCard(
-      {@required MyPokemon pokemon,
-      double imgSize = 70.0,
-      double textSize = 12.0,
-      double iconSize = 15.0}) {
+  Widget _pokemonCard({@required MyPokemon pokemon, double imgSize = 70.0}) {
     var types = pokemon.types;
     List<Widget> typeWidgets = List();
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
-            height: iconSize,
-            width: iconSize,
+            height: imgSize / 5,
+            width: imgSize / 5,
             fit: BoxFit.contain,
           ),
           Container(
@@ -93,7 +88,7 @@ class PokemonDetailPage extends StatelessWidget {
               ),
               Text(
                 pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-                style: GoogleFonts.lato(fontSize: textSize),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               rowTypes,
             ],
@@ -176,7 +171,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "#" + pokemon.id.toString(),
+                                pokemon.getPokedexNo(),
                                 textAlign: TextAlign.end,
                                 style: TextStyle(fontSize: 18.0),
                               ),
@@ -533,8 +528,6 @@ class PokemonDetailPage extends StatelessWidget {
                 formWidgets.add(_pokemonCard(
                   pokemon: pokemon,
                   imgSize: MediaQuery.of(context).size.width / 3,
-                  textSize: 15.0,
-                  iconSize: 20.0,
                 ));
               });
               return Padding(
