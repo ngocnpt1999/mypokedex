@@ -140,8 +140,10 @@ class MyHomePage extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: ListTile(
-                  title: Text(pokemon.name[0].toUpperCase() +
-                      pokemon.name.substring(1)),
+                  title: Text(
+                    pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text(pokemon.getPokedexNo()),
                 ),
               ),

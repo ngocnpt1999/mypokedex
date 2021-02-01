@@ -44,7 +44,10 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _pokemonCard({@required MyPokemon pokemon, double imgSize = 70.0}) {
+  Widget _pokemonCard(
+      {@required MyPokemon pokemon,
+      double imgSize = 70.0,
+      double textNameSize = 12.0}) {
     var types = pokemon.types;
     List<Widget> typeWidgets = List();
     types.forEach((value) => typeWidgets.addAll([
@@ -88,8 +91,12 @@ class PokemonDetailPage extends StatelessWidget {
               ),
               Text(
                 pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: textNameSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              Text(pokemon.getPokedexNo()),
               rowTypes,
             ],
           ),
@@ -528,6 +535,7 @@ class PokemonDetailPage extends StatelessWidget {
                 formWidgets.add(_pokemonCard(
                   pokemon: pokemon,
                   imgSize: MediaQuery.of(context).size.width / 3,
+                  textNameSize: 15.0,
                 ));
               });
               return Padding(

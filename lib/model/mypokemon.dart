@@ -4,6 +4,7 @@ import 'package:pokeapi_dart/pokeapi_dart.dart';
 class MyPokemon {
   int id;
   String name;
+  int speciesId;
   String entry;
   String artwork;
   int height;
@@ -15,6 +16,7 @@ class MyPokemon {
   MyPokemon(
       {@required this.id,
       @required this.name,
+      this.speciesId,
       this.entry,
       this.artwork,
       this.height,
@@ -25,10 +27,10 @@ class MyPokemon {
 
   //Can't use for alternative forms
   String getPokedexNo() {
-    String pokemonNo = id.toString();
-    if (id >= 10 && id < 100) {
+    String pokemonNo = speciesId.toString();
+    if (speciesId >= 10 && speciesId < 100) {
       pokemonNo = "0" + pokemonNo;
-    } else if (id < 10) {
+    } else if (speciesId < 10) {
       pokemonNo = "00" + pokemonNo;
     }
     return "#" + pokemonNo;

@@ -40,6 +40,7 @@ class ListPokemonController extends GetxController {
           pokemons.add(MyPokemon(
             id: pokemon.id,
             name: pokemon.name,
+            speciesId: pokemon.id,
             artwork: pokemon.sprites.other.officialArtwork.frontDefault,
             types: pokemon.types,
           ));
@@ -63,16 +64,14 @@ class PokemonDetailController extends GetxController {
   var alternativeForms = List<MyPokemon>().obs;
 
   void init({int id, String name}) {
-    _api.pokemon.get(id: id, name: name).then((poke) async {
-      var response = await http.get(poke.species.url);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
-        PokemonSpecies pokeSpec = PokemonSpecies.fromJson(jsonData);
+    _api.pokemon.get(id: id, name: name).then((poke) {
+      _api.pokemonSpecies.get(name: poke.species.name).then((pokeSpec) {
         var info = pokeSpec.flavorTextEntries
             .lastWhere((e) => e.language.name == "en");
         pokemon.value = MyPokemon(
-          id: pokeSpec.id,
+          id: poke.id,
           name: poke.name,
+          speciesId: pokeSpec.id,
           artwork: poke.sprites.other.officialArtwork.frontDefault,
           entry: info.flavorText,
           height: poke.height,
@@ -82,10 +81,7 @@ class PokemonDetailController extends GetxController {
         );
         _getEvolutionData(pokeSpec);
         _getAlternativeForms(pokeSpec);
-      } else {
-        print("Can't get pokemon species");
-        throw Exception("Failed!!!");
-      }
+      });
     });
   }
 
@@ -103,6 +99,7 @@ class PokemonDetailController extends GetxController {
           evolutions.add(MyPokemon(
             id: poke.id,
             name: poke.name,
+            speciesId: pokeSpec.id,
             artwork: poke.sprites.other.officialArtwork.frontDefault,
             types: poke.types,
             evolutionNo: tempEvoNo,
@@ -117,6 +114,7 @@ class PokemonDetailController extends GetxController {
               evolutions.add(MyPokemon(
                 id: poke.id,
                 name: poke.name,
+                speciesId: pokeSpec.id,
                 artwork: poke.sprites.other.officialArtwork.frontDefault,
                 types: poke.types,
                 evolutionNo: _tempEvoNo,
@@ -141,6 +139,7 @@ class PokemonDetailController extends GetxController {
           alternativeForms.add(MyPokemon(
             id: poke.id,
             name: poke.name,
+            speciesId: pokeSpec.id,
             artwork: art,
             types: poke.types,
           ));
