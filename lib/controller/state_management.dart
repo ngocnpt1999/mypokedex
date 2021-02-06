@@ -12,7 +12,7 @@ class ListPokemonController extends GetxController {
     scrollController.addListener(() {
       double maxPosition = scrollController.position.maxScrollExtent;
       double currentPosition = scrollController.position.pixels;
-      if (maxPosition - currentPosition <= 250.0) {
+      if (maxPosition - currentPosition <= Get.height / 3) {
         getNewPokemons();
       }
     });

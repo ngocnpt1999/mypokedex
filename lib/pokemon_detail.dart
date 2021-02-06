@@ -14,11 +14,11 @@ class PokemonDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget pokeBar = _buildPokeBar(context);
+    Widget pokeBar = _buildPokeBar();
     Widget specCard = _buildPokeSpecies();
     Widget abiCard = _buildPokeAbilities();
-    Widget evoCard = _buildEvolutionChain(context);
-    Widget formsCard = _buildAlternativeForms(context);
+    Widget evoCard = _buildEvolutionChain();
+    Widget formsCard = _buildAlternativeForms();
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
       body: SafeArea(
@@ -105,9 +105,9 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPokeBar(BuildContext context) {
+  Widget _buildPokeBar() {
     return Container(
-      height: MediaQuery.of(context).size.height / 4,
+      height: Get.height / 4,
       child: Card(
         elevation: 4.0,
         child: Obx(() {
@@ -197,7 +197,7 @@ class PokemonDetailPage extends StatelessWidget {
                   FadeInImage.memoryNetwork(
                     image: pokemon.artwork,
                     placeholder: kTransparentImage,
-                    width: MediaQuery.of(context).size.height / 4,
+                    width: Get.height / 4,
                     fit: BoxFit.contain,
                   ),
                 ],
@@ -432,7 +432,7 @@ class PokemonDetailPage extends StatelessWidget {
     evoNo.addAll(tempWidgets);
   }
 
-  Widget _buildEvolutionChain(BuildContext context) {
+  Widget _buildEvolutionChain() {
     return Column(
       children: <Widget>[
         Text(
@@ -462,7 +462,7 @@ class PokemonDetailPage extends StatelessWidget {
               evolutions.forEach((pokemon) {
                 var pokeCard = _pokemonCard(
                   pokemon: pokemon,
-                  imgSize: MediaQuery.of(context).size.width / 5,
+                  imgSize: Get.width / 5,
                 );
                 if (pokemon.evolutionNo == 1) {
                   evoNo_1.add(pokeCard);
@@ -507,7 +507,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAlternativeForms(BuildContext context) {
+  Widget _buildAlternativeForms() {
     return Column(
       children: <Widget>[
         Text(
@@ -535,7 +535,7 @@ class PokemonDetailPage extends StatelessWidget {
               forms.forEach((pokemon) {
                 formWidgets.add(_pokemonCard(
                   pokemon: pokemon,
-                  imgSize: MediaQuery.of(context).size.width / 3,
+                  imgSize: Get.width / 3,
                   textNameSize: 15.0,
                 ));
               });

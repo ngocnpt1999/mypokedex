@@ -32,7 +32,7 @@ class SearchPokemon extends SearchDelegate {
       icon: Icon(Icons.arrow_back),
       onPressed: () async {
         await _prefs.setStringList("recentSearchPokemon", _recents);
-        Navigator.pop(context);
+        Get.back();
       },
     );
   }

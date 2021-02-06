@@ -42,7 +42,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _fetchData(context);
+    _fetchData();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -93,7 +93,10 @@ class MyHomePage extends StatelessWidget {
     if (index == _listPokemonController.pokemons.length) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.only(
+          top: 10.0,
+          bottom: 8.0,
+        ),
         child: CircularProgressIndicator(),
       );
     }
@@ -130,8 +133,8 @@ class MyHomePage extends StatelessWidget {
                 image: pokemon.artwork,
                 imageCacheWidth: 150,
                 imageCacheHeight: 150,
-                width: MediaQuery.of(context).size.width / 5,
-                height: MediaQuery.of(context).size.width / 5,
+                width: Get.width / 5,
+                height: Get.width / 5,
                 fit: BoxFit.contain,
               ),
               Container(
@@ -159,28 +162,28 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  void _fetchData(BuildContext context) async {
+  void _fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey("pokedex")) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Container(
-                      height: 5.0,
-                    ),
-                    Text(
-                      "Fetching data...",
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ));
+      Get.dialog(
+        AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Container(
+                height: 5.0,
+              ),
+              Text(
+                "Fetching data...",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
       var _api = PokeApi();
       List<String> pokeNames = List();
       _api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
@@ -188,7 +191,7 @@ class MyHomePage extends StatelessWidget {
           pokeNames.add(value.name);
         });
         prefs.setStringList("pokedex", pokeNames).whenComplete(() {
-          Navigator.pop(context);
+          Get.back();
           _listPokemonController.getNewPokemons();
         });
       });
