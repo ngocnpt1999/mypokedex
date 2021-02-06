@@ -10,8 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+      double maxPosition = scrollController.position.maxScrollExtent;
+      double currentPosition = scrollController.position.pixels;
+      if (maxPosition - currentPosition <= 250.0) {
         getNewPokemons();
       }
     });
@@ -34,18 +35,19 @@ class ListPokemonController extends GetxController {
       var names = prefs
           .getStringList("pokedex")
           .sublist(pokemons.length, pokemons.length + _limit);
-      int prevlength = pokemons.length;
+      var tempPokemons = List<MyPokemon>();
       names.forEach((name) {
         _api.pokemon.get(name: name).then((pokemon) {
-          pokemons.add(MyPokemon(
+          tempPokemons.add(MyPokemon(
             id: pokemon.id,
             name: pokemon.name,
             speciesId: pokemon.id,
             artwork: pokemon.sprites.other.officialArtwork.frontDefault,
             types: pokemon.types,
           ));
-          pokemons.sort((a, b) => a.id.compareTo(b.id));
-          if (pokemons.length - prevlength == _limit) {
+          if (tempPokemons.length == _limit) {
+            tempPokemons.sort((a, b) => a.id.compareTo(b.id));
+            pokemons.addAll(tempPokemons);
             _loading = false;
           }
         });
@@ -135,7 +137,7 @@ class PokemonDetailController extends GetxController {
     pokeSpec.varieties.forEach((v) {
       _api.pokemon.get(name: v.pokemon.name).then((poke) {
         String art = poke.sprites.other.officialArtwork.frontDefault;
-        if (!art.isNullOrBlank && art.isNotEmpty) {
+        if (!art.isBlank && art.isNotEmpty) {
           alternativeForms.add(MyPokemon(
             id: poke.id,
             name: poke.name,

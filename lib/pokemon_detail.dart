@@ -197,6 +197,7 @@ class PokemonDetailPage extends StatelessWidget {
                   FadeInImage.memoryNetwork(
                     image: pokemon.artwork,
                     placeholder: kTransparentImage,
+                    width: MediaQuery.of(context).size.height / 4,
                     fit: BoxFit.contain,
                   ),
                 ],
