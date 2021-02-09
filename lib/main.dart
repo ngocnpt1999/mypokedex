@@ -8,6 +8,7 @@ import 'package:mypokedex/pokemon_detail.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:mypokedex/extension/stringx.dart';
 
 void main() {
   runApp(MyApp());
@@ -144,7 +145,7 @@ class MyHomePage extends StatelessWidget {
                 flex: 3,
                 child: ListTile(
                   title: Text(
-                    pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+                    pokemon.name.capitalizeFirstofEach,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(pokemon.getPokedexNo()),

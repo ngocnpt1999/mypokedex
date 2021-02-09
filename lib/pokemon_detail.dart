@@ -4,6 +4,7 @@ import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:mypokedex/extension/stringx.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage({int id, String name}) {
@@ -14,26 +15,55 @@ class PokemonDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget pokeBar = _buildPokeBar();
-    Widget specCard = _buildPokeSpecies();
-    Widget abiCard = _buildPokeAbilities();
-    Widget evoCard = _buildEvolutionChain();
-    Widget formsCard = _buildAlternativeForms();
+    Widget pokemonBar = _buildPokeBar();
+    Widget speciesCard = _buildPokeSpecies();
+    Widget abilitiesCard = _buildPokeAbilities();
+    Widget evolutionsCard = _buildEvolutionChain();
+    Widget alternativeFormsCard = _buildAlternativeForms();
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                int specId = _pageController.pokemon.value.speciesId;
+                if (specId != null && specId > 1) {
+                  _pageController.init(id: specId - 1);
+                }
+              },
+              child: Icon(Icons.navigate_before_rounded),
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                int specId = _pageController.pokemon.value.speciesId;
+                if (specId != null) {
+                  _pageController.init(id: specId + 1);
+                }
+              },
+              child: Icon(Icons.navigate_next_rounded),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            pokeBar,
+            pokemonBar,
             Expanded(
               child: Scrollbar(
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
-                    specCard,
-                    abiCard,
-                    evoCard,
-                    formsCard,
+                    speciesCard,
+                    abilitiesCard,
+                    evolutionsCard,
+                    alternativeFormsCard,
                   ],
                 ),
               ),
@@ -72,10 +102,7 @@ class PokemonDetailPage extends StatelessWidget {
           .withOpacity(0.5),
       child: InkWell(
         onTap: () {
-          Get.back();
-          Get.to(PokemonDetailPage(
-            id: pokemon.id,
-          ));
+          _pageController.init(id: pokemon.id);
         },
         child: Container(
           padding: EdgeInsets.all(3.0),
@@ -90,7 +117,7 @@ class PokemonDetailPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Text(
-                pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+                pokemon.name.capitalizeFirstofEach,
                 style: TextStyle(
                   fontSize: textNameSize,
                   fontWeight: FontWeight.bold,
@@ -141,8 +168,7 @@ class PokemonDetailPage extends StatelessWidget {
                                   child: Container(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      value.type.name[0].toUpperCase() +
-                                          value.type.name.substring(1),
+                                      value.type.name.capitalizeFirstofEach,
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -169,8 +195,7 @@ class PokemonDetailPage extends StatelessWidget {
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  pokemon.name[0].toUpperCase() +
-                                      pokemon.name.substring(1),
+                                  pokemon.name.capitalizeFirstofEach,
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
@@ -384,8 +409,7 @@ class PokemonDetailPage extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            value.ability.name[0].toUpperCase() +
-                                value.ability.name.substring(1),
+                            value.ability.name.capitalizeFirstofEach,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18.0,

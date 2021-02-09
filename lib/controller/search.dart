@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/pokemon_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mypokedex/extension/stringx.dart';
 
 class SearchPokemon extends SearchDelegate {
   SearchPokemon(this._prefs) {
@@ -60,12 +61,12 @@ class SearchPokemon extends SearchDelegate {
             _recents.insert(0, pokeNames[index]);
           }
           await _prefs.setStringList("recentSearchPokemon", _recents);
-          Navigator.pop(context);
+          Get.back();
           Get.to(PokemonDetailPage(name: pokeNames[index]));
         },
         leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
         title: Text(
-          pokeNames[index][0].toUpperCase() + pokeNames[index].substring(1),
+          pokeNames[index].capitalizeFirstofEach,
         ),
       ),
       separatorBuilder: (context, index) => Divider(),

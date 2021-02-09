@@ -16,7 +16,7 @@ class MyPokemon {
   MyPokemon(
       {@required this.id,
       @required this.name,
-      this.speciesId,
+      @required this.speciesId,
       this.entry,
       this.artwork,
       this.height,

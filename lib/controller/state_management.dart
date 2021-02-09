@@ -59,13 +59,17 @@ class ListPokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   var _api = PokeApi();
 
-  var pokemon = MyPokemon(id: null, name: null).obs;
+  var pokemon = MyPokemon(id: null, name: null, speciesId: null).obs;
 
   var evolutions = List<MyPokemon>().obs;
 
   var alternativeForms = List<MyPokemon>().obs;
 
   void init({int id, String name}) {
+    pokemon.value = MyPokemon(id: null, name: null, speciesId: null);
+    evolutions.clear();
+    alternativeForms.clear();
+    //
     _api.pokemon.get(id: id, name: name).then((poke) {
       _api.pokemonSpecies.get(name: poke.species.name).then((pokeSpec) {
         var info = pokeSpec.flavorTextEntries
