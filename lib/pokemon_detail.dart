@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/typecolors.dart';
@@ -22,53 +23,49 @@ class PokemonDetailPage extends StatelessWidget {
     Widget alternativeFormsCard = _buildAlternativeForms();
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton(
-              heroTag: null,
-              onPressed: () {
-                int specId = _pageController.pokemon.value.speciesId;
-                if (specId != null && specId > 1) {
-                  _pageController.init(id: specId - 1);
-                }
-              },
-              child: Icon(Icons.navigate_before_rounded),
-            ),
-            FloatingActionButton(
-              heroTag: null,
-              onPressed: () {
-                int specId = _pageController.pokemon.value.speciesId;
-                if (specId != null) {
-                  _pageController.init(id: specId + 1);
-                }
-              },
-              child: Icon(Icons.navigate_next_rounded),
-            ),
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            pokemonBar,
-            Expanded(
-              child: Scrollbar(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    speciesCard,
-                    abilitiesCard,
-                    evolutionsCard,
-                    alternativeFormsCard,
-                  ],
+      body: HawkFabMenu(
+        icon: AnimatedIcons.menu_close,
+        items: <HawkFabMenuItem>[
+          HawkFabMenuItem(
+            ontap: () {
+              int specId = _pageController.pokemon.value.speciesId;
+              if (specId != null && specId > 1) {
+                _pageController.init(id: specId - 1);
+              }
+            },
+            icon: Icon(Icons.arrow_back_rounded),
+            label: "Previous Pokemon",
+          ),
+          HawkFabMenuItem(
+            ontap: () {
+              int specId = _pageController.pokemon.value.speciesId;
+              if (specId != null) {
+                _pageController.init(id: specId + 1);
+              }
+            },
+            icon: Icon(Icons.arrow_forward_rounded),
+            label: "Next Pokemon",
+          ),
+        ],
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              pokemonBar,
+              Expanded(
+                child: Scrollbar(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      speciesCard,
+                      abilitiesCard,
+                      evolutionsCard,
+                      alternativeFormsCard,
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

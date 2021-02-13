@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mypokedex/controller/search.dart';
+import 'package:mypokedex/widget/search.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/pokemon_detail.dart';
