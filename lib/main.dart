@@ -25,8 +25,6 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.latoTextTheme(),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
       home: MyHomePage(title: 'Pokedex'),
     );
   }

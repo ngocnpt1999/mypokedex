@@ -136,10 +136,7 @@ class PokemonDetailPage extends StatelessWidget {
         elevation: 4.0,
         child: Obx(() {
           var pokemon = _pageController.pokemon.value;
-          if (pokemon.id == null ||
-              pokemon.name == null ||
-              pokemon.artwork == null ||
-              pokemon.types == null) {
+          if (pokemon.id == null) {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -247,9 +244,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
-            if (pokemon.height == null ||
-                pokemon.weight == null ||
-                pokemon.entry == null) {
+            if (pokemon.id == null) {
               return Center(
                 child: Container(
                   padding: EdgeInsets.all(25.0),
@@ -384,7 +379,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
-            if (pokemon.abilities == null) {
+            if (pokemon.id == null) {
               return Center(
                 child: Container(
                   padding: EdgeInsets.all(25.0),
