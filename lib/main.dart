@@ -113,48 +113,54 @@ class MyHomePage extends StatelessWidget {
             width: 3.0,
           ),
         ]));
-    return Card(
-      elevation: 3.0,
-      color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-          .withOpacity(0.5),
-      child: InkWell(
-        onTap: () {
-          Get.to(PokemonDetailPage(id: pokemon.id));
-        },
-        child: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: pokemon.artwork,
-                imageCacheWidth: 150,
-                imageCacheHeight: 150,
-                width: Get.width / 5,
-                height: Get.width / 5,
-                fit: BoxFit.contain,
-              ),
-              Container(
-                width: 3.0,
-              ),
-              Expanded(
-                flex: 3,
-                child: ListTile(
-                  title: Text(
-                    pokemon.name.capitalizeFirstofEach,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 5.0,
+        right: 5.0,
+      ),
+      child: Card(
+        elevation: 3.0,
+        color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
+            .withOpacity(0.5),
+        child: InkWell(
+          onTap: () {
+            Get.to(PokemonDetailPage(id: pokemon.id));
+          },
+          child: Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: pokemon.artwork,
+                  imageCacheWidth: 150,
+                  imageCacheHeight: 150,
+                  width: Get.width / 5,
+                  height: Get.width / 5,
+                  fit: BoxFit.contain,
+                ),
+                Container(
+                  width: 3.0,
+                ),
+                Expanded(
+                  flex: 3,
+                  child: ListTile(
+                    title: Text(
+                      pokemon.name.capitalizeFirstofEach,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(pokemon.getPokedexNo()),
                   ),
-                  subtitle: Text(pokemon.getPokedexNo()),
                 ),
-              ),
-              Expanded(
-                child: Row(
-                  children: typeWidgets,
+                Expanded(
+                  child: Row(
+                    children: typeWidgets,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

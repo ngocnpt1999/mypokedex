@@ -56,10 +56,15 @@ class PokemonDetailPage extends StatelessWidget {
                   child: ListView(
                     shrinkWrap: true,
                     children: <Widget>[
+                      Container(height: 5.0),
                       speciesCard,
+                      Container(height: 5.0),
                       abilitiesCard,
+                      Container(height: 5.0),
                       evolutionsCard,
+                      Container(height: 5.0),
                       alternativeFormsCard,
+                      Container(height: 5.0),
                     ],
                   ),
                 ),
@@ -130,102 +135,104 @@ class PokemonDetailPage extends StatelessWidget {
   }
 
   Widget _buildPokeBar() {
-    return Container(
-      height: Get.height / 4,
-      child: Card(
-        elevation: 4.0,
-        child: Obx(() {
-          var pokemon = _pageController.pokemon.value;
-          if (pokemon.id == null) {
-            return Center(
+    return Obx(() {
+      var pokemon = _pageController.pokemon.value;
+      if (pokemon.id == null) {
+        return Card(
+          elevation: 4.0,
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.all(30.0),
               child: CircularProgressIndicator(),
-            );
-          } else {
-            List<Widget> typeWidgets = List();
-            pokemon.types.forEach((value) => typeWidgets.add(
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Card(
-                          elevation: 3.0,
-                          child: Padding(
-                            padding: EdgeInsets.all(5.0),
-                            child: Row(
-                              children: <Widget>[
-                                Image.asset(
-                                  "assets/images/" + value.type.name + ".png",
-                                  width: 30.0,
-                                  height: 30.0,
-                                  fit: BoxFit.contain,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      value.type.name.capitalizeFirstofEach,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ));
-            return Container(
-              color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-                  .withOpacity(0.8),
-              child: Row(
+            ),
+          ),
+        );
+      } else {
+        List<Widget> typeWidgets = List();
+        pokemon.types.forEach((value) => typeWidgets.add(
+              Row(
                 children: <Widget>[
                   Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
+                    child: Card(
+                      elevation: 3.0,
+                      child: Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Row(
+                          children: <Widget>[
+                            Image.asset(
+                              "assets/images/" + value.type.name + ".png",
+                              width: 30.0,
+                              height: 30.0,
+                              fit: BoxFit.contain,
+                            ),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.center,
                                 child: Text(
-                                  pokemon.name.capitalizeFirstofEach,
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  value.type.name.capitalizeFirstofEach,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                              Text(
-                                pokemon.getPokedexNo(),
-                                textAlign: TextAlign.end,
-                                style: TextStyle(fontSize: 18.0),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            height: 5.0,
-                          ),
-                          Column(
-                            children: typeWidgets,
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  FadeInImage.memoryNetwork(
-                    image: pokemon.artwork,
-                    placeholder: kTransparentImage,
-                    width: Get.height / 4,
-                    fit: BoxFit.contain,
-                  ),
                 ],
               ),
-            );
-          }
-        }),
-      ),
-    );
+            ));
+        return Card(
+          elevation: 4.0,
+          color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
+              .withOpacity(0.8),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              pokemon.name.capitalizeFirstofEach,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            pokemon.getPokedexNo(),
+                            textAlign: TextAlign.end,
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: 5.0,
+                      ),
+                      Column(
+                        children: typeWidgets,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              FadeInImage.memoryNetwork(
+                image: pokemon.artwork,
+                placeholder: kTransparentImage,
+                width: Get.height / 5,
+                height: Get.height / 5,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   Widget _buildPokeSpecies() {
@@ -239,6 +246,7 @@ class PokemonDetailPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        Container(height: 5.0),
         Card(
           elevation: 4.0,
           color: Color(0xFFB6B49C),
@@ -374,6 +382,7 @@ class PokemonDetailPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        Container(height: 5.0),
         Card(
           elevation: 4.0,
           color: Color(0xFFB6B49C),
@@ -459,6 +468,7 @@ class PokemonDetailPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        Container(height: 5.0),
         Card(
           elevation: 4.0,
           color: Color(0xFFB6B49C),
@@ -534,6 +544,7 @@ class PokemonDetailPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        Container(height: 5.0),
         Card(
           elevation: 4.0,
           color: Color(0xFFB6B49C),
