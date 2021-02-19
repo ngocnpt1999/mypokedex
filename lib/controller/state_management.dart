@@ -74,10 +74,13 @@ class PokemonDetailController extends GetxController {
       _api.pokemonSpecies.get(name: poke.species.name).then((pokeSpec) {
         var info = pokeSpec.flavorTextEntries
             .lastWhere((e) => e.language.name == "en");
+        var category =
+            pokeSpec.genera.firstWhere((e) => e.language.name == "en");
         pokemon.value = MyPokemon(
           id: poke.id,
           name: poke.name,
           speciesId: pokeSpec.id,
+          genus: category.genus,
           artwork: poke.sprites.other.officialArtwork.frontDefault,
           entry: info.flavorText,
           height: poke.height,

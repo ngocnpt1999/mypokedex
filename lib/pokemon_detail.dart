@@ -76,6 +76,15 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
+  Widget _circularProgressIndicator() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(35.0),
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
   Widget _pokemonCard(
       {@required MyPokemon pokemon,
       double imgSize = 70.0,
@@ -140,12 +149,7 @@ class PokemonDetailPage extends StatelessWidget {
       if (pokemon.id == null) {
         return Card(
           elevation: 4.0,
-          child: Center(
-            child: Container(
-              padding: EdgeInsets.all(30.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
+          child: _circularProgressIndicator(),
         );
       } else {
         List<Widget> typeWidgets = List();
@@ -161,15 +165,16 @@ class PokemonDetailPage extends StatelessWidget {
                           children: <Widget>[
                             Image.asset(
                               "assets/images/" + value.type.name + ".png",
-                              width: 30.0,
-                              height: 30.0,
+                              width: 20.0,
+                              height: 20.0,
                               fit: BoxFit.contain,
                             ),
                             Expanded(
                               child: Container(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  value.type.name.capitalizeFirstofEach,
+                                  value.type.name.capitalizeFirstofEach
+                                      .toUpperCase(),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -190,7 +195,7 @@ class PokemonDetailPage extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -211,9 +216,15 @@ class PokemonDetailPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Container(
-                        height: 5.0,
+                      Container(height: 5.0),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          pokemon.genus,
+                          style: TextStyle(fontSize: 15.0),
+                        ),
                       ),
+                      Container(height: 5.0),
                       Column(
                         children: typeWidgets,
                       ),
@@ -253,12 +264,7 @@ class PokemonDetailPage extends StatelessWidget {
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
             if (pokemon.id == null) {
-              return Center(
-                child: Container(
-                  padding: EdgeInsets.all(25.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return _circularProgressIndicator();
             } else {
               return Padding(
                 padding: EdgeInsets.all(5.0),
@@ -389,12 +395,7 @@ class PokemonDetailPage extends StatelessWidget {
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
             if (pokemon.id == null) {
-              return Center(
-                child: Container(
-                  padding: EdgeInsets.all(25.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return _circularProgressIndicator();
             } else {
               var abilities = pokemon.abilities;
               List<Widget> abiCards = List();
@@ -475,12 +476,7 @@ class PokemonDetailPage extends StatelessWidget {
           child: Obx(() {
             var evolutions = _pageController.evolutions;
             if (evolutions == null || evolutions.length == 0) {
-              return Center(
-                child: Container(
-                  padding: EdgeInsets.all(25.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return _circularProgressIndicator();
             } else {
               List<Widget> evoNo_1 = List();
               List<Widget> evoNo_2 = List();
@@ -551,12 +547,7 @@ class PokemonDetailPage extends StatelessWidget {
           child: Obx(() {
             var forms = _pageController.alternativeForms;
             if (forms == null || forms.length == 0) {
-              return Center(
-                child: Container(
-                  padding: EdgeInsets.all(25.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return _circularProgressIndicator();
             } else {
               var formWidgets = List<Widget>();
               forms.forEach((pokemon) {

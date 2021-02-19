@@ -5,6 +5,7 @@ class MyPokemon {
   int id;
   String name;
   int speciesId;
+  String genus;
   String entry;
   String artwork;
   int height;
@@ -17,6 +18,7 @@ class MyPokemon {
       {@required this.id,
       @required this.name,
       @required this.speciesId,
+      this.genus,
       this.entry,
       this.artwork,
       this.height,
