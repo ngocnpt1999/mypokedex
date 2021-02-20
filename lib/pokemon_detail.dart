@@ -154,37 +154,34 @@ class PokemonDetailPage extends StatelessWidget {
       } else {
         List<Widget> typeWidgets = List();
         pokemon.types.forEach((value) => typeWidgets.add(
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Card(
-                      elevation: 3.0,
-                      child: Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Row(
-                          children: <Widget>[
-                            Image.asset(
-                              "assets/images/" + value.type.name + ".png",
-                              width: 20.0,
-                              height: 20.0,
-                              fit: BoxFit.contain,
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  value.type.name.capitalizeFirstofEach
-                                      .toUpperCase(),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ],
+              Expanded(
+                child: Card(
+                  elevation: 3.0,
+                  child: Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: Row(
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/images/" + value.type.name + ".png",
+                          width: 18.0,
+                          height: 18.0,
+                          fit: BoxFit.contain,
                         ),
-                      ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              value.type.name.capitalizeFirstofEach
+                                  .toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 12.0),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ));
         return Card(
@@ -195,37 +192,53 @@ class PokemonDetailPage extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
                   child: Column(
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              pokemon.name.capitalizeFirstofEach,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                pokemon.name.capitalizeFirstofEach,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          Text(
-                            pokemon.getPokedexNo(),
-                            textAlign: TextAlign.end,
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ],
-                      ),
-                      Container(height: 5.0),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          pokemon.genus,
-                          style: TextStyle(fontSize: 15.0),
+                            Text(
+                              pokemon.getPokedexNo(),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ],
                         ),
                       ),
                       Container(height: 5.0),
-                      Column(
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                pokemon.genus,
+                                style: TextStyle(fontSize: 15.0),
+                              ),
+                            ),
+                            Text(
+                              pokemon.getGenders(),
+                              style: TextStyle(
+                                fontSize:
+                                    pokemon.genderRate == -1 ? 15.0 : 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(height: 5.0),
+                      Row(
                         children: typeWidgets,
                       ),
                     ],

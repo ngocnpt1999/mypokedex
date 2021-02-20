@@ -87,6 +87,7 @@ class PokemonDetailController extends GetxController {
           weight: poke.weight,
           types: poke.types,
           abilities: poke.abilities,
+          genderRate: pokeSpec.genderRate,
         );
         _getEvolutionData(pokeSpec);
         _getAlternativeForms(pokeSpec);
