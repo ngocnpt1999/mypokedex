@@ -215,7 +215,7 @@ class PokemonDetailPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.0),
                         child: Row(
@@ -226,18 +226,11 @@ class PokemonDetailPage extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.0),
                               ),
                             ),
-                            Text(
-                              pokemon.getGenders(),
-                              style: TextStyle(
-                                fontSize:
-                                    pokemon.genderRate == -1 ? 15.0 : 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            pokemon.getGenders(),
                           ],
                         ),
                       ),
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       Row(
                         children: typeWidgets,
                       ),

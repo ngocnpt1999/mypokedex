@@ -35,7 +35,7 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
-  final int _totalPkm = 807;
+  final int _totalPkm = 809;
 
   final ListPokemonController _listPokemonController = ListPokemonController();
 

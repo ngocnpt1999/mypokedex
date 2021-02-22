@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class MyPokemon {
@@ -41,15 +42,37 @@ class MyPokemon {
     return "#" + pokemonNo;
   }
 
-  String getGenders() {
+  Widget getGenders() {
+    double txtSize = 15.0;
+    double iconSize = 16.0;
     if (genderRate == -1) {
-      return "Unknown";
+      return Text(
+        "Unknown",
+        style: TextStyle(fontSize: txtSize),
+      );
     } else if (genderRate == 0) {
-      return "♂";
+      return Icon(
+        MdiIcons.genderMale,
+        size: iconSize,
+      );
     } else if (genderRate == 8) {
-      return "♀";
+      return Icon(
+        MdiIcons.genderFemale,
+        size: iconSize,
+      );
     } else {
-      return "♂ ♀";
+      return Row(
+        children: <Widget>[
+          Icon(
+            MdiIcons.genderMale,
+            size: iconSize,
+          ),
+          Icon(
+            MdiIcons.genderFemale,
+            size: iconSize,
+          ),
+        ],
+      );
     }
   }
 }
