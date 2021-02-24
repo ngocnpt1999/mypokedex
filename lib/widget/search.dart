@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/pokemon_detail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
 class SearchPokemon extends SearchDelegate {
-  SearchPokemon(this._prefs) {
-    if (_prefs.containsKey("recentSearchPokemon")) {
-      _recents = _prefs.getStringList("recentSearchPokemon");
-    }
+  SearchPokemon() {
+    _recents = SharedPrefs.instance.getRecentSearch();
   }
-
-  final SharedPreferences _prefs;
 
   List<String> _recents = List();
 
@@ -32,7 +28,7 @@ class SearchPokemon extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () async {
-        await _prefs.setStringList("recentSearchPokemon", _recents);
+        await SharedPrefs.instance.setRecentSearch(_recents);
         Get.back();
       },
     );
@@ -60,7 +56,7 @@ class SearchPokemon extends SearchDelegate {
             _recents.remove(pokeNames[index]);
             _recents.insert(0, pokeNames[index]);
           }
-          await _prefs.setStringList("recentSearchPokemon", _recents);
+          await SharedPrefs.instance.setRecentSearch(_recents);
           Get.back();
           Get.to(PokemonDetailPage(name: pokeNames[index]));
         },
@@ -77,8 +73,8 @@ class SearchPokemon extends SearchDelegate {
     if (query.isEmpty) {
       pokeNames.addAll(_recents);
     } else {
-      pokeNames.addAll(_prefs
-          .getStringList("pokedex")
+      pokeNames.addAll(SharedPrefs.instance
+          .getPokedex()
           .where((e) => e.startsWith(query.toLowerCase()))
           .take(20));
     }

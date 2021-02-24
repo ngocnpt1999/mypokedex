@@ -198,6 +198,24 @@ class PokemonDetailPage extends StatelessWidget {
                         padding: EdgeInsets.only(left: 8.0, right: 8.0),
                         child: Row(
                           children: <Widget>[
+                            InkWell(
+                              onTap: () {
+                                if (pokemon.isLiked.value) {
+                                  pokemon.unlike();
+                                } else {
+                                  pokemon.like();
+                                }
+                              },
+                              child: Image.asset(
+                                pokemon.isLiked.value
+                                    ? "assets/icons/pokeball_1.png"
+                                    : "assets/icons/pokeball.png",
+                                width: 18.0,
+                                height: 18.0,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Container(width: 5.0),
                             Expanded(
                               child: Text(
                                 pokemon.name.capitalizeFirstofEach,

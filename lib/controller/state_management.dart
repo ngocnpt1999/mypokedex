@@ -2,10 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mypokedex/list_pokemon.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+class HomeController extends GetxController {
+  HomeController();
+
+  var pages = <Widget>[
+    ListPokemonPage(),
+  ];
+
+  var selectedIndex = 0.obs;
+}
 
 class ListPokemonController extends GetxController {
   ListPokemonController() {

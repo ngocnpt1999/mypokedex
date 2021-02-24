@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class MyPokemon {
@@ -15,6 +17,7 @@ class MyPokemon {
   List<PokemonAbility> abilities;
   int genderRate; //The chance of this Pokémon being female, in eighths; or -1 for genderless
   int evolutionNo;
+  var isLiked = false.obs;
 
   MyPokemon({
     @required this.id,
@@ -29,7 +32,15 @@ class MyPokemon {
     this.abilities,
     this.genderRate,
     this.evolutionNo,
-  });
+  }) {
+    if (SharedPrefs.instance
+        .getFavoritesPokemon()
+        .contains(speciesId.toString())) {
+      isLiked.value = true;
+    } else {
+      isLiked.value = false;
+    }
+  }
 
   //Can't use for alternative forms
   String getPokedexNo() {
@@ -73,6 +84,26 @@ class MyPokemon {
           ),
         ],
       );
+    }
+  }
+
+  void like() {
+    var favorites = SharedPrefs.instance.getFavoritesPokemon();
+    if (!favorites.contains(speciesId.toString())) {
+      favorites.add(speciesId.toString());
+      SharedPrefs.instance
+          .setFavoritesPokemon(favorites)
+          .then((e) => isLiked.value = true);
+    }
+  }
+
+  void unlike() {
+    var favorites = SharedPrefs.instance.getFavoritesPokemon();
+    if (favorites.contains(speciesId.toString())) {
+      favorites.remove(speciesId.toString());
+      SharedPrefs.instance
+          .setFavoritesPokemon(favorites)
+          .then((e) => isLiked.value = false);
     }
   }
 }
