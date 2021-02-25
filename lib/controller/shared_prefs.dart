@@ -8,7 +8,9 @@ class SharedPrefs {
   SharedPreferences _prefs;
 
   Future<SharedPreferences> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    if (_prefs == null) {
+      _prefs = await SharedPreferences.getInstance();
+    }
     return _prefs;
   }
 

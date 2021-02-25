@@ -15,9 +15,12 @@ class ListFavoritePokemonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _pageController.getNewFavoritePokemons();
+    if (_pageController.favoritePokemons.length == 0) {
+      _pageController.getNewFavoritePokemons();
+    }
     return Obx(() {
-      if (SharedPrefs.instance.getFavoritesPokemon().length == 0) {
+      if (_pageController.favoritePokemons.length == 0 &&
+          SharedPrefs.instance.getFavoritesPokemon().length == 0) {
         return Center(
           child: Text("No results"),
         );
@@ -63,7 +66,9 @@ class ListFavoritePokemonPage extends StatelessWidget {
             .withOpacity(0.5),
         child: InkWell(
           onTap: () {
-            Get.to(PokemonDetailPage(id: pokemon.id));
+            Get.to(PokemonDetailPage(id: pokemon.id)).then((value) {
+              _pageController.refresh();
+            });
           },
           child: Padding(
             padding: EdgeInsets.all(5.0),

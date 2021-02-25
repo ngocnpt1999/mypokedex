@@ -18,6 +18,10 @@ class HomeController extends GetxController {
   ];
 
   var selectedIndex = 0.obs;
+
+  void changeTab(int index) {
+    selectedIndex.value = index;
+  }
 }
 
 class ListPokemonController extends GetxController {
@@ -53,6 +57,10 @@ class ListPokemonController extends GetxController {
           : SharedPrefs.instance
               .getPokedex()
               .sublist(pokemons.length, pokemons.length + _limit);
+      if (names.length == 0) {
+        _loading = false;
+        return;
+      }
       var tempPokemons = List<MyPokemon>();
       names.forEach((name) {
         _api.pokemon.get(name: name).then((pokemon) {
@@ -99,6 +107,9 @@ class ListFavoritePokemonController extends GetxController {
   bool _loading = false;
 
   void getNewFavoritePokemons() async {
+    if (SharedPrefs.instance.getFavoritesPokemon().length == 0) {
+      return;
+    }
     if (_loading == false) {
       _loading = true;
       int totalPkm = SharedPrefs.instance.getFavoritesPokemon().length;
@@ -108,6 +119,10 @@ class ListFavoritePokemonController extends GetxController {
               .sublist(favoritePokemons.length)
           : SharedPrefs.instance.getFavoritesPokemon().sublist(
               favoritePokemons.length, favoritePokemons.length + _limit);
+      if (ids.length == 0) {
+        _loading = false;
+        return;
+      }
       var tempPokemons = List<MyPokemon>();
       ids.forEach((id) {
         _api.pokemon.get(id: int.parse(id)).then((pokemon) {
@@ -127,9 +142,16 @@ class ListFavoritePokemonController extends GetxController {
       });
     }
   }
+
+  void refresh() {
+    favoritePokemons.clear();
+    getNewFavoritePokemons();
+  }
 }
 
 class PokemonDetailController extends GetxController {
+  PokemonDetailController();
+
   var _api = PokeApi();
 
   var pokemon = MyPokemon(id: null, name: null, speciesId: null).obs;

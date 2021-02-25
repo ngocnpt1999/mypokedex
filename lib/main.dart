@@ -74,7 +74,7 @@ class MyHomePage extends StatelessWidget {
           ],
           currentIndex: _pageController.selectedIndex.value,
           onTap: (index) {
-            _pageController.selectedIndex.value = index;
+            _pageController.changeTab(index);
           },
         ),
         body: _pageController.pages[_pageController.selectedIndex.value],

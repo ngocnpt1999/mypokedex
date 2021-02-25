@@ -135,9 +135,9 @@ class ListPokemonPage extends StatelessWidget {
           ),
           barrierDismissible: false,
         );
-        var _api = PokeApi();
+        var api = PokeApi();
         List<String> pokeNames = List();
-        _api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
+        api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
           response.results.forEach((value) {
             pokeNames.add(value.name);
           });
@@ -147,7 +147,9 @@ class ListPokemonPage extends StatelessWidget {
           });
         });
       } else {
-        _pageController.getNewPokemons();
+        if (_pageController.pokemons.length == 0) {
+          _pageController.getNewPokemons();
+        }
       }
     });
   }
