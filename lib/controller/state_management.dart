@@ -2,17 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mypokedex/controller/shared_prefs.dart';
+import 'package:mypokedex/list_favorite_pokemon.dart';
 import 'package:mypokedex/list_pokemon.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeController extends GetxController {
   HomeController();
 
   var pages = <Widget>[
     ListPokemonPage(),
+    ListFavoritePokemonPage(),
   ];
 
   var selectedIndex = 0.obs;
@@ -21,10 +23,12 @@ class HomeController extends GetxController {
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
-      double maxPosition = scrollController.position.maxScrollExtent;
-      double currentPosition = scrollController.position.pixels;
-      if (maxPosition - currentPosition <= Get.height / 3) {
-        getNewPokemons();
+      if (pokemons.length < _totalPkm) {
+        double maxPosition = scrollController.position.maxScrollExtent;
+        double currentPosition = scrollController.position.pixels;
+        if (maxPosition - currentPosition <= Get.height / 3) {
+          getNewPokemons();
+        }
       }
     });
   }
@@ -37,15 +41,18 @@ class ListPokemonController extends GetxController {
 
   int _limit = 15;
 
+  int _totalPkm = 809;
+
   bool _loading = false;
 
   void getNewPokemons() async {
     if (_loading == false) {
       _loading = true;
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var names = prefs
-          .getStringList("pokedex")
-          .sublist(pokemons.length, pokemons.length + _limit);
+      var names = pokemons.length + _limit >= _totalPkm
+          ? SharedPrefs.instance.getPokedex().sublist(pokemons.length)
+          : SharedPrefs.instance
+              .getPokedex()
+              .sublist(pokemons.length, pokemons.length + _limit);
       var tempPokemons = List<MyPokemon>();
       names.forEach((name) {
         _api.pokemon.get(name: name).then((pokemon) {
@@ -56,9 +63,64 @@ class ListPokemonController extends GetxController {
             artwork: pokemon.sprites.other.officialArtwork.frontDefault,
             types: pokemon.types,
           ));
-          if (tempPokemons.length == _limit) {
+          if (tempPokemons.length == names.length) {
             tempPokemons.sort((a, b) => a.id.compareTo(b.id));
             pokemons.addAll(tempPokemons);
+            _loading = false;
+          }
+        });
+      });
+    }
+  }
+}
+
+class ListFavoritePokemonController extends GetxController {
+  ListFavoritePokemonController() {
+    scrollController.addListener(() {
+      if (favoritePokemons.length <
+          SharedPrefs.instance.getFavoritesPokemon().length) {
+        double maxPosition = scrollController.position.maxScrollExtent;
+        double currentPosition = scrollController.position.pixels;
+        if (maxPosition - currentPosition <= Get.height / 3) {
+          getNewFavoritePokemons();
+        }
+      }
+    });
+  }
+
+  var _api = PokeApi();
+
+  var scrollController = ScrollController();
+
+  var favoritePokemons = List<MyPokemon>().obs;
+
+  int _limit = 15;
+
+  bool _loading = false;
+
+  void getNewFavoritePokemons() async {
+    if (_loading == false) {
+      _loading = true;
+      int totalPkm = SharedPrefs.instance.getFavoritesPokemon().length;
+      var ids = favoritePokemons.length + _limit >= totalPkm
+          ? SharedPrefs.instance
+              .getFavoritesPokemon()
+              .sublist(favoritePokemons.length)
+          : SharedPrefs.instance.getFavoritesPokemon().sublist(
+              favoritePokemons.length, favoritePokemons.length + _limit);
+      var tempPokemons = List<MyPokemon>();
+      ids.forEach((id) {
+        _api.pokemon.get(id: int.parse(id)).then((pokemon) {
+          tempPokemons.add(MyPokemon(
+            id: pokemon.id,
+            name: pokemon.name,
+            speciesId: pokemon.id,
+            artwork: pokemon.sprites.other.officialArtwork.frontDefault,
+            types: pokemon.types,
+          ));
+          if (tempPokemons.length == ids.length) {
+            tempPokemons.sort((a, b) => a.id.compareTo(b.id));
+            favoritePokemons.addAll(tempPokemons);
             _loading = false;
           }
         });
@@ -120,7 +182,7 @@ class PokemonDetailController extends GetxController {
           evolutions.add(MyPokemon(
             id: poke.id,
             name: poke.name,
-            speciesId: pokeSpec.id,
+            speciesId: poke.id,
             artwork: poke.sprites.other.officialArtwork.frontDefault,
             types: poke.types,
             evolutionNo: tempEvoNo,
@@ -135,7 +197,7 @@ class PokemonDetailController extends GetxController {
               evolutions.add(MyPokemon(
                 id: poke.id,
                 name: poke.name,
-                speciesId: pokeSpec.id,
+                speciesId: poke.id,
                 artwork: poke.sprites.other.officialArtwork.frontDefault,
                 types: poke.types,
                 evolutionNo: _tempEvoNo,
@@ -144,8 +206,8 @@ class PokemonDetailController extends GetxController {
             });
           }
         }
-        evo = evo.evolvesTo[0];
-      } while (evo != null && evo.evolvesTo.length >= 0);
+        evo = evo.evolvesTo.length > 0 ? evo.evolvesTo[0] : null;
+      } while (evo != null);
     } else {
       print("Can't get evolution chain");
       throw Exception("Failed!!!");

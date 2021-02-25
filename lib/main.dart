@@ -33,52 +33,52 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Image.asset("assets/icons/icon.png"),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(color: Colors.black87),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.black87,
+    return Obx(() {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Image.asset("assets/icons/icon.png"),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(color: Colors.black87),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.search,
+                color: Colors.black87,
+              ),
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: SearchPokemon(),
+                );
+              },
             ),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: SearchPokemon(),
-              );
-            },
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorite',
-          ),
-        ],
-        currentIndex: _pageController.selectedIndex.value,
-        onTap: (index) {
-          _pageController.selectedIndex.value = index;
-        },
-      ),
-      body: Obx(() {
-        return _pageController.pages[_pageController.selectedIndex.value];
-      }),
-    );
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorite',
+            ),
+          ],
+          currentIndex: _pageController.selectedIndex.value,
+          onTap: (index) {
+            _pageController.selectedIndex.value = index;
+          },
+        ),
+        body: _pageController.pages[_pageController.selectedIndex.value],
+      );
+    });
   }
 }
