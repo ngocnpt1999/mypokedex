@@ -76,7 +76,7 @@ class ListPokemonController extends GetxController {
             pokemons.addAll(tempPokemons);
             _loading = false;
           }
-        });
+        }).catchError(() => _loading = false);
       });
     }
   }
@@ -138,7 +138,7 @@ class ListFavoritePokemonController extends GetxController {
             favoritePokemons.addAll(tempPokemons);
             _loading = false;
           }
-        });
+        }).catchError(() => _loading = false);
       });
     }
   }
@@ -203,7 +203,7 @@ class PokemonDetailController extends GetxController {
         _api.pokemon.get(name: evo.species.name).then((poke) {
           evolutions.add(MyPokemon(
             id: poke.id,
-            name: poke.name,
+            name: poke.name == "deoxys" ? "deoxys-normal" : poke.name,
             speciesId: poke.id,
             artwork: poke.sprites.other.officialArtwork.frontDefault,
             types: poke.types,
@@ -228,7 +228,7 @@ class PokemonDetailController extends GetxController {
             });
           }
         }
-        evo = evo.evolvesTo.length > 0 ? evo.evolvesTo[0] : null;
+        evo = numOfEvo > 0 ? evo.evolvesTo[0] : null;
       } while (evo != null);
     } else {
       print("Can't get evolution chain");

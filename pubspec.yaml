@@ -21,12 +21,12 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  get: ^3.24.0
+  get: ^3.25.4
   pokeapi_dart: ^0.0.1+1
   transparent_image: ^1.0.0
   http: ^0.12.2
   shared_preferences: ^0.5.12+4
-  google_fonts: ^1.1.1
+  google_fonts: ^1.1.2
   hawk_fab_menu: ^0.3.2
   material_design_icons_flutter: ^4.0.5855
   flutter:
