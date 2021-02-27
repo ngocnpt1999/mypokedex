@@ -70,7 +70,7 @@ class ListPokemonPage extends StatelessWidget {
             .withOpacity(0.5),
         child: InkWell(
           onTap: () {
-            Get.to(PokemonDetailPage(id: pokemon.id));
+            Get.to(() => PokemonDetailPage(id: pokemon.id));
           },
           child: Padding(
             padding: EdgeInsets.all(5.0),

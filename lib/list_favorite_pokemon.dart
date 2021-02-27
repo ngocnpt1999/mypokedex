@@ -66,7 +66,7 @@ class ListFavoritePokemonPage extends StatelessWidget {
             .withOpacity(0.5),
         child: InkWell(
           onTap: () {
-            Get.to(PokemonDetailPage(id: pokemon.id)).then((value) {
+            Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
               _pageController.refresh();
             });
           },

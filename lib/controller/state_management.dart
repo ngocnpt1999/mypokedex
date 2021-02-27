@@ -76,7 +76,7 @@ class ListPokemonController extends GetxController {
             pokemons.addAll(tempPokemons);
             _loading = false;
           }
-        }).catchError(() => _loading = false);
+        });
       });
     }
   }
@@ -138,7 +138,7 @@ class ListFavoritePokemonController extends GetxController {
             favoritePokemons.addAll(tempPokemons);
             _loading = false;
           }
-        }).catchError(() => _loading = false);
+        });
       });
     }
   }
@@ -200,10 +200,15 @@ class PokemonDetailController extends GetxController {
       do {
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
-        _api.pokemon.get(name: evo.species.name).then((poke) {
+        _api.pokemon
+            .get(
+                name: evo.species.name == "deoxys"
+                    ? "deoxys-normal"
+                    : evo.species.name)
+            .then((poke) {
           evolutions.add(MyPokemon(
             id: poke.id,
-            name: poke.name == "deoxys" ? "deoxys-normal" : poke.name,
+            name: poke.name,
             speciesId: poke.id,
             artwork: poke.sprites.other.officialArtwork.frontDefault,
             types: poke.types,

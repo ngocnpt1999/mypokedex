@@ -58,7 +58,7 @@ class SearchPokemon extends SearchDelegate {
           }
           await SharedPrefs.instance.setRecentSearch(_recents);
           Get.back();
-          Get.to(PokemonDetailPage(name: pokeNames[index]));
+          Get.to(() => PokemonDetailPage(name: pokeNames[index]));
         },
         leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
         title: Text(
