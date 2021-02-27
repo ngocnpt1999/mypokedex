@@ -11,7 +11,7 @@ extension StringX on String {
     } else if (sub == "f") {
       sub = "♀";
       newStr = newStr.substring(0, index) + " " + sub;
-    } else if (sub == "mime" || sub == "jr") {
+    } else if (sub == "jr" || sub == "mime" || sub == "rime") {
     } else if (sub.isNotEmpty) {
       newStr = sub + " " + newStr.substring(0, index);
     }
