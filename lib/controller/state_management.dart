@@ -80,6 +80,13 @@ class ListPokemonController extends GetxController {
       });
     }
   }
+
+  bool endOfData() {
+    if (pokemons.length == _totalPkm) {
+      return true;
+    }
+    return false;
+  }
 }
 
 class ListFavoritePokemonController extends GetxController {
@@ -146,6 +153,14 @@ class ListFavoritePokemonController extends GetxController {
   void refresh() {
     favoritePokemons.clear();
     getNewFavoritePokemons();
+  }
+
+  bool endOfData() {
+    if (favoritePokemons.length ==
+        SharedPrefs.instance.getFavoritesPokemon().length) {
+      return true;
+    }
+    return false;
   }
 }
 

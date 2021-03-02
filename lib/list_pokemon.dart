@@ -42,7 +42,9 @@ class ListPokemonPage extends StatelessWidget {
           top: 10.0,
           bottom: 8.0,
         ),
-        child: CircularProgressIndicator(),
+        child: _pageController.endOfData()
+            ? Container()
+            : CircularProgressIndicator(),
       );
     }
     var pokemon = _pageController.pokemons[index];

@@ -33,7 +33,7 @@ class ListFavoritePokemonPage extends StatelessWidget {
       return Scrollbar(
         child: ListView.builder(
           controller: _pageController.scrollController,
-          itemCount: _pageController.favoritePokemons.length,
+          itemCount: _pageController.favoritePokemons.length + 1,
           itemBuilder: _buildFavoritePokemonTile,
         ),
       );
@@ -41,6 +41,18 @@ class ListFavoritePokemonPage extends StatelessWidget {
   }
 
   Widget _buildFavoritePokemonTile(BuildContext context, int index) {
+    if (index == _pageController.favoritePokemons.length) {
+      return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(
+          top: 10.0,
+          bottom: 8.0,
+        ),
+        child: _pageController.endOfData()
+            ? Container()
+            : CircularProgressIndicator(),
+      );
+    }
     var pokemon = _pageController.favoritePokemons[index];
     var types = pokemon.types;
     List<Widget> typeWidgets = List();
