@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -78,6 +79,22 @@ class ListPokemonController extends GetxController {
           }
         });
       });
+      //Loading countdown
+      int start = 10;
+      Duration oneSec = Duration(seconds: 1);
+      Timer countdown;
+      countdown = Timer.periodic(oneSec, (timer) {
+        if (tempPokemons.length == names.length) {
+          timer.cancel();
+          countdown.cancel();
+        } else if (start == 0) {
+          _loading = false;
+          timer.cancel();
+          countdown.cancel();
+        } else {
+          start--;
+        }
+      });
     }
   }
 
@@ -146,6 +163,22 @@ class ListFavoritePokemonController extends GetxController {
             _loading = false;
           }
         });
+      });
+      //Loading countdown
+      int start = 10;
+      Duration oneSec = Duration(seconds: 1);
+      Timer countdown;
+      countdown = Timer.periodic(oneSec, (timer) {
+        if (tempPokemons.length == ids.length) {
+          timer.cancel();
+          countdown.cancel();
+        } else if (start == 0) {
+          _loading = false;
+          timer.cancel();
+          countdown.cancel();
+        } else {
+          start--;
+        }
       });
     }
   }
