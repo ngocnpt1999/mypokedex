@@ -42,7 +42,7 @@ class ListPokemonController extends GetxController {
 
   var scrollController = ScrollController();
 
-  var pokemons = List<MyPokemon>().obs;
+  var pokemons = <MyPokemon>[].obs;
 
   int _limit = 15;
 
@@ -62,7 +62,7 @@ class ListPokemonController extends GetxController {
         _loading = false;
         return;
       }
-      var tempPokemons = List<MyPokemon>();
+      var tempPokemons = <MyPokemon>[];
       names.forEach((name) {
         _api.pokemon.get(name: name).then((pokemon) {
           tempPokemons.add(MyPokemon(
@@ -124,7 +124,7 @@ class ListFavoritePokemonController extends GetxController {
 
   var scrollController = ScrollController();
 
-  var favoritePokemons = List<MyPokemon>().obs;
+  var favoritePokemons = <MyPokemon>[].obs;
 
   int _limit = 15;
 
@@ -147,7 +147,7 @@ class ListFavoritePokemonController extends GetxController {
         _loading = false;
         return;
       }
-      var tempPokemons = List<MyPokemon>();
+      var tempPokemons = <MyPokemon>[];
       ids.forEach((id) {
         _api.pokemon.get(id: int.parse(id)).then((pokemon) {
           tempPokemons.add(MyPokemon(
@@ -204,9 +204,9 @@ class PokemonDetailController extends GetxController {
 
   var pokemon = MyPokemon(id: null, name: null, speciesId: null).obs;
 
-  var evolutions = List<MyPokemon>().obs;
+  var evolutions = <MyPokemon>[].obs;
 
-  var alternativeForms = List<MyPokemon>().obs;
+  var alternativeForms = <MyPokemon>[].obs;
 
   void init({int id, String name}) {
     pokemon.value = MyPokemon(id: null, name: null, speciesId: null);

@@ -9,7 +9,7 @@ class SearchPokemon extends SearchDelegate {
     _recents = SharedPrefs.instance.getRecentSearch();
   }
 
-  List<String> _recents = List();
+  List<String> _recents = [];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -41,7 +41,7 @@ class SearchPokemon extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> pokeNames = List();
+    List<String> pokeNames = [];
     _getSuggestions(pokeNames);
     return ListView.separated(
       itemCount: pokeNames.length,

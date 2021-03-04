@@ -55,7 +55,7 @@ class ListFavoritePokemonPage extends StatelessWidget {
     }
     var pokemon = _pageController.favoritePokemons[index];
     var types = pokemon.types;
-    List<Widget> typeWidgets = List();
+    List<Widget> typeWidgets = [];
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",

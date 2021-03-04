@@ -21,7 +21,7 @@ class SharedPrefs {
 
   List<String> getPokedex() {
     if (!_prefs.containsKey("pokedex")) {
-      return List<String>();
+      return <String>[];
     }
     return _prefs.getStringList("pokedex");
   }
@@ -33,7 +33,7 @@ class SharedPrefs {
 
   List<String> getRecentSearch() {
     if (!_prefs.containsKey("recentSearchPokemon")) {
-      return List<String>();
+      return <String>[];
     }
     return _prefs.getStringList("recentSearchPokemon");
   }
@@ -45,7 +45,7 @@ class SharedPrefs {
 
   List<String> getFavoritesPokemon() {
     if (!_prefs.containsKey("favoritesPokemon")) {
-      return List<String>();
+      return <String>[];
     }
     return _prefs.getStringList("favoritesPokemon");
   }

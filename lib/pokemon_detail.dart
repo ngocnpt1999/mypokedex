@@ -90,7 +90,7 @@ class PokemonDetailPage extends StatelessWidget {
       double imgSize = 70.0,
       double textNameSize = 12.0}) {
     var types = pokemon.types;
-    List<Widget> typeWidgets = List();
+    List<Widget> typeWidgets = [];
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
@@ -152,7 +152,7 @@ class PokemonDetailPage extends StatelessWidget {
           child: _circularProgressIndicator(),
         );
       } else {
-        List<Widget> typeWidgets = List();
+        List<Widget> typeWidgets = [];
         pokemon.types.forEach((value) => typeWidgets.add(
               Expanded(
                 child: Card(
@@ -422,7 +422,7 @@ class PokemonDetailPage extends StatelessWidget {
               return _circularProgressIndicator();
             } else {
               var abilities = pokemon.abilities;
-              List<Widget> abiCards = List();
+              List<Widget> abiCards = [];
               abilities.forEach((value) {
                 if (value.isHidden) {
                   return;
@@ -461,7 +461,7 @@ class PokemonDetailPage extends StatelessWidget {
   }
 
   void _divideEvolutionNoRows(List<Widget> evoNo) {
-    List<Widget> tempWidgets = List();
+    List<Widget> tempWidgets = [];
     for (int i = 0; i < evoNo.length; i += 2) {
       if (i + 1 < evoNo.length) {
         tempWidgets.add(Row(
@@ -502,9 +502,9 @@ class PokemonDetailPage extends StatelessWidget {
             if (evolutions == null || evolutions.length == 0) {
               return _circularProgressIndicator();
             } else {
-              List<Widget> evoNo_1 = List();
-              List<Widget> evoNo_2 = List();
-              List<Widget> evoNo_3 = List();
+              List<Widget> evoNo_1 = [];
+              List<Widget> evoNo_2 = [];
+              List<Widget> evoNo_3 = [];
               evolutions.forEach((pokemon) {
                 var pokeCard = _pokemonCard(
                   pokemon: pokemon,
@@ -573,7 +573,7 @@ class PokemonDetailPage extends StatelessWidget {
             if (forms == null || forms.length == 0) {
               return _circularProgressIndicator();
             } else {
-              var formWidgets = List<Widget>();
+              var formWidgets = <Widget>[];
               forms.forEach((pokemon) {
                 formWidgets.add(_pokemonCard(
                   pokemon: pokemon,

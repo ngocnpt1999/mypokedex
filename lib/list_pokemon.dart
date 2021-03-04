@@ -49,7 +49,7 @@ class ListPokemonPage extends StatelessWidget {
     }
     var pokemon = _pageController.pokemons[index];
     var types = pokemon.types;
-    List<Widget> typeWidgets = List();
+    List<Widget> typeWidgets = [];
     types.forEach((value) => typeWidgets.addAll([
           Image.asset(
             "assets/images/" + value.type.name + ".png",
@@ -138,7 +138,7 @@ class ListPokemonPage extends StatelessWidget {
           barrierDismissible: false,
         );
         var api = PokeApi();
-        List<String> pokeNames = List();
+        List<String> pokeNames = [];
         api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
           response.results.forEach((value) {
             pokeNames.add(value.name);
