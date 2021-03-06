@@ -13,7 +13,7 @@ class ListPokemonPage extends StatelessWidget {
 
   final int _totalPkm = 809;
 
-  final ListPokemonController _pageController = ListPokemonController();
+  final _pageController = Get.put(ListPokemonController());
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,10 @@ class ListPokemonPage extends StatelessWidget {
             .withOpacity(0.5),
         child: InkWell(
           onTap: () {
-            Get.to(() => PokemonDetailPage(id: pokemon.id));
+            Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
+              ListFavoritePokemonController controller = Get.find();
+              controller.refresh();
+            });
           },
           child: Padding(
             padding: EdgeInsets.all(5.0),

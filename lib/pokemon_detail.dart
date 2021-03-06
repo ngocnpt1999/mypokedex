@@ -206,13 +206,11 @@ class PokemonDetailPage extends StatelessWidget {
                                   pokemon.like();
                                 }
                               },
-                              child: Image.asset(
-                                pokemon.isLiked.value
-                                    ? "assets/icons/pokeball_1.png"
-                                    : "assets/icons/pokeball.png",
-                                width: 18.0,
-                                height: 18.0,
-                                fit: BoxFit.contain,
+                              child: Icon(
+                                Icons.star_rounded,
+                                color: pokemon.isLiked.value
+                                    ? Colors.yellow
+                                    : Colors.grey,
                               ),
                             ),
                             Container(width: 5.0),
@@ -531,7 +529,7 @@ class PokemonDetailPage extends StatelessWidget {
               ];
               var forwardIcon = Icon(
                 Icons.arrow_forward,
-                size: 25.0,
+                size: 26.0,
               );
               if (evoNo_2.length > 0) {
                 evoWidgets.insert(1, forwardIcon);

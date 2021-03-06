@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
+import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/pokemon_detail.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
@@ -58,7 +59,10 @@ class SearchPokemon extends SearchDelegate {
           }
           await SharedPrefs.instance.setRecentSearch(_recents);
           Get.back();
-          Get.to(() => PokemonDetailPage(name: pokeNames[index]));
+          Get.to(() => PokemonDetailPage(name: pokeNames[index])).then((value) {
+            ListFavoritePokemonController controller = Get.find();
+            controller.refresh();
+          });
         },
         leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
         title: Text(

@@ -10,8 +10,7 @@ import 'package:mypokedex/extension/stringx.dart';
 class ListFavoritePokemonPage extends StatelessWidget {
   ListFavoritePokemonPage();
 
-  final ListFavoritePokemonController _pageController =
-      ListFavoritePokemonController();
+  final _pageController = Get.put(ListFavoritePokemonController());
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +78,8 @@ class ListFavoritePokemonPage extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
-              _pageController.refresh();
+              ListFavoritePokemonController controller = Get.find();
+              controller.refresh();
             });
           },
           child: Padding(
