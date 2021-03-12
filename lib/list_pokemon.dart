@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
-import 'package:mypokedex/model/typecolors.dart';
-import 'package:mypokedex/pokemon_detail.dart';
+import 'package:mypokedex/widget/pokemon_tile.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:mypokedex/extension/stringx.dart';
 
 class ListPokemonPage extends StatelessWidget {
   ListPokemonPage();
@@ -19,7 +16,7 @@ class ListPokemonPage extends StatelessWidget {
   Widget build(BuildContext context) {
     _fetchData();
     return Obx(() {
-      if (_pageController.pokemons.length == 0) {
+      if (_pageController.pkmTileControllers.length == 0) {
         return Center(
           child: CircularProgressIndicator(),
         );
@@ -27,7 +24,7 @@ class ListPokemonPage extends StatelessWidget {
       return Scrollbar(
         child: ListView.builder(
           controller: _pageController.scrollController,
-          itemCount: _pageController.pokemons.length + 1,
+          itemCount: _pageController.pkmTileControllers.length + 1,
           itemBuilder: _buildPokemonTile,
         ),
       );
@@ -35,7 +32,7 @@ class ListPokemonPage extends StatelessWidget {
   }
 
   Widget _buildPokemonTile(BuildContext context, int index) {
-    if (index == _pageController.pokemons.length) {
+    if (index == _pageController.pkmTileControllers.length) {
       return Container(
         alignment: Alignment.center,
         padding: EdgeInsets.only(
@@ -46,76 +43,11 @@ class ListPokemonPage extends StatelessWidget {
             ? Container()
             : CircularProgressIndicator(),
       );
+    } else {
+      return PokemonTile(
+        tileController: _pageController.pkmTileControllers[index],
+      );
     }
-    var pokemon = _pageController.pokemons[index];
-    var types = pokemon.types;
-    List<Widget> typeWidgets = [];
-    types.forEach((value) => typeWidgets.addAll([
-          Image.asset(
-            "assets/images/" + value.type.name + ".png",
-            height: 25.0,
-            width: 25.0,
-            fit: BoxFit.contain,
-          ),
-          Container(
-            width: 3.0,
-          ),
-        ]));
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 5.0,
-        right: 5.0,
-      ),
-      child: Card(
-        elevation: 3.0,
-        color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-            .withOpacity(0.5),
-        child: InkWell(
-          onTap: () {
-            Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
-              ListFavoritePokemonController controller = Get.find();
-              controller.refresh();
-            });
-          },
-          child: Padding(
-            padding: EdgeInsets.all(5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: pokemon.artwork,
-                  imageCacheWidth: 150,
-                  imageCacheHeight: 150,
-                  width: Get.width / 5,
-                  height: Get.width / 5,
-                  fit: BoxFit.contain,
-                ),
-                Container(
-                  width: 3.0,
-                ),
-                Expanded(
-                  flex: 3,
-                  child: ListTile(
-                    title: Text(
-                      pokemon.name.capitalizeFirstofEach,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(pokemon.getPokedexNo()),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: typeWidgets,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   void _fetchData() {
@@ -152,7 +84,7 @@ class ListPokemonPage extends StatelessWidget {
           });
         });
       } else {
-        if (_pageController.pokemons.length == 0) {
+        if (_pageController.pkmTileControllers.length == 0) {
           _pageController.getNewPokemons();
         }
       }

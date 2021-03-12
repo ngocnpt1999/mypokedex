@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mypokedex/model/actions.dart';
 import 'package:mypokedex/widget/search.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
-  final HomeController _pageController = HomeController();
+  final HomeController _pageController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +59,32 @@ class MyHomePage extends StatelessWidget {
                   delegate: SearchPokemon(),
                 );
               },
+            ),
+            PopupMenuButton(
+              onSelected: (value) {
+                switch (value) {
+                  case HomeActions.hideAll:
+                    _pageController.hideAllArtwork();
+                    break;
+                  case HomeActions.revealAll:
+                    _pageController.revealAllArtwork();
+                    break;
+                  default:
+                    break;
+                }
+              },
+              itemBuilder: (context) {
+                return HomeActions.choices
+                    .map((choice) => PopupMenuItem(
+                          child: Text(choice),
+                          value: choice,
+                        ))
+                    .toList();
+              },
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: Colors.black87,
+              ),
             ),
           ],
         ),

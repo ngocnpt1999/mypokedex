@@ -4,7 +4,7 @@ import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/typecolors.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
 class PokemonDetailPage extends StatelessWidget {
@@ -85,10 +85,11 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _pokemonCard(
-      {@required MyPokemon pokemon,
-      double imgSize = 70.0,
-      double textNameSize = 12.0}) {
+  Widget _pokemonCard({
+    @required MyPokemon pokemon,
+    double imgSize = 70.0,
+    double textNameSize = 12.0,
+  }) {
     var types = pokemon.types;
     List<Widget> typeWidgets = [];
     types.forEach((value) => typeWidgets.addAll([
@@ -120,12 +121,10 @@ class PokemonDetailPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              FadeInImage.memoryNetwork(
+              PokemonArtwork(
                 image: pokemon.artwork,
-                placeholder: kTransparentImage,
                 height: imgSize,
                 width: imgSize,
-                fit: BoxFit.contain,
               ),
               Text(
                 pokemon.name.capitalizeFirstofEach,
@@ -210,7 +209,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 Icons.star_rounded,
                                 color: pokemon.isLiked.value
                                     ? Colors.yellow
-                                    : Colors.grey,
+                                    : Color(0xffd3d3d3),
                               ),
                             ),
                             Container(width: 5.0),
@@ -242,7 +241,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.0),
                               ),
                             ),
-                            pokemon.getGenders(),
+                            pokemon.getGenderWidget(),
                           ],
                         ),
                       ),
@@ -254,12 +253,16 @@ class PokemonDetailPage extends StatelessWidget {
                   ),
                 ),
               ),
-              FadeInImage.memoryNetwork(
-                image: pokemon.artwork,
-                placeholder: kTransparentImage,
-                width: Get.height / 5,
-                height: Get.height / 5,
-                fit: BoxFit.contain,
+              InkWell(
+                onTap: () {
+                  _pageController.isHideArtwork.value =
+                      !_pageController.isHideArtwork.value;
+                },
+                child: PokemonArtwork(
+                  image: pokemon.artwork,
+                  width: Get.height / 5,
+                  height: Get.height / 5,
+                ),
               ),
             ],
           ),

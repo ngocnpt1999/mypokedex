@@ -17,6 +17,7 @@ class MyPokemon {
   List<PokemonAbility> abilities;
   int genderRate; //The chance of this Pokémon being female, in eighths; or -1 for genderless
   int evolutionNo;
+  //
   var isLiked = false.obs;
 
   MyPokemon({
@@ -53,7 +54,7 @@ class MyPokemon {
     return "#" + pokemonNo;
   }
 
-  Widget getGenders() {
+  Widget getGenderWidget() {
     double txtSize = 15.0;
     double iconSize = 16.0;
     if (genderRate == -1) {
