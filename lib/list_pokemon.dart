@@ -51,7 +51,7 @@ class ListPokemonPage extends StatelessWidget {
   }
 
   void _fetchData() {
-    SharedPrefs.instance.init().then((e) {
+    SharedPrefs.instance.init().then((value) {
       if (SharedPrefs.instance.getPokedex().length == 0) {
         Get.dialog(
           AlertDialog(
@@ -73,12 +73,12 @@ class ListPokemonPage extends StatelessWidget {
           barrierDismissible: false,
         );
         var api = PokeApi();
-        List<String> pokeNames = [];
+        List<String> pkmNames = [];
         api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
-          response.results.forEach((value) {
-            pokeNames.add(value.name);
+          response.results.forEach((element) {
+            pkmNames.add(element.name);
           });
-          SharedPrefs.instance.setPokedex(pokeNames).then((e) {
+          SharedPrefs.instance.setPokedex(pkmNames).then((e) {
             Get.back();
             _pageController.getNewPokemons();
           });

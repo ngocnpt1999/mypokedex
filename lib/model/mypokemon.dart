@@ -34,12 +34,14 @@ class MyPokemon {
     this.genderRate,
     this.evolutionNo,
   }) {
-    if (SharedPrefs.instance
-        .getFavoritesPokemon()
-        .contains(speciesId.toString())) {
-      isLiked.value = true;
-    } else {
-      isLiked.value = false;
+    if (this.id != null) {
+      if (SharedPrefs.instance
+          .getFavoritesPokemon()
+          .contains(speciesId.toString())) {
+        isLiked.value = true;
+      } else {
+        isLiked.value = false;
+      }
     }
   }
 

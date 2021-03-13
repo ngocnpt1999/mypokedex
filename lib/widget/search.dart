@@ -42,31 +42,31 @@ class SearchPokemon extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> pokeNames = [];
-    _getSuggestions(pokeNames);
+    List<String> pkmNames = [];
+    _getSuggestions(pkmNames);
     return ListView.separated(
-      itemCount: pokeNames.length,
+      itemCount: pkmNames.length,
       itemBuilder: (context, index) => ListTile(
         onTap: () async {
-          if (!_recents.contains(pokeNames[index])) {
-            _recents.insert(0, pokeNames[index]);
+          if (!_recents.contains(pkmNames[index])) {
+            _recents.insert(0, pkmNames[index]);
             if (_recents.length > 20) {
               _recents.removeLast();
             }
           } else {
-            _recents.remove(pokeNames[index]);
-            _recents.insert(0, pokeNames[index]);
+            _recents.remove(pkmNames[index]);
+            _recents.insert(0, pkmNames[index]);
           }
           await SharedPrefs.instance.setRecentSearch(_recents);
           Get.back();
-          Get.to(() => PokemonDetailPage(name: pokeNames[index])).then((value) {
+          Get.to(() => PokemonDetailPage(name: pkmNames[index])).then((value) {
             ListFavoritePokemonController controller = Get.find();
             controller.refresh();
           });
         },
         leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
         title: Text(
-          pokeNames[index].capitalizeFirstofEach,
+          pkmNames[index].capitalizeFirstofEach,
         ),
       ),
       separatorBuilder: (context, index) => Divider(),

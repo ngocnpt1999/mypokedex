@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/state_management.dart';
-import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
+import 'package:mypokedex/widget/pokemon_card.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage({int id, String name}) {
     _pageController.init(id: id, name: name);
   }
 
-  final PokemonDetailController _pageController = PokemonDetailController();
+  final PokemonDetailController _pageController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -81,63 +81,6 @@ class PokemonDetailPage extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(35.0),
         child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget _pokemonCard({
-    @required MyPokemon pokemon,
-    double imgSize = 70.0,
-    double textNameSize = 12.0,
-  }) {
-    var types = pokemon.types;
-    List<Widget> typeWidgets = [];
-    types.forEach((value) => typeWidgets.addAll([
-          Image.asset(
-            "assets/images/" + value.type.name + ".png",
-            height: imgSize / 5,
-            width: imgSize / 5,
-            fit: BoxFit.contain,
-          ),
-          Container(
-            width: 2.0,
-          ),
-        ]));
-    var rowTypes = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: typeWidgets,
-    );
-    return Card(
-      elevation: 3.0,
-      color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-          .withOpacity(0.5),
-      child: InkWell(
-        onTap: () {
-          _pageController.init(id: pokemon.id);
-        },
-        child: Container(
-          padding: EdgeInsets.all(3.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              PokemonArtwork(
-                image: pokemon.artwork,
-                height: imgSize,
-                width: imgSize,
-              ),
-              Text(
-                pokemon.name.capitalizeFirstofEach,
-                style: TextStyle(
-                  fontSize: textNameSize,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(pokemon.getPokedexNo()),
-              rowTypes,
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -262,6 +205,7 @@ class PokemonDetailPage extends StatelessWidget {
                   image: pokemon.artwork,
                   width: Get.height / 5,
                   height: Get.height / 5,
+                  isHideArtwork: _pageController.isHideArtwork.value,
                 ),
               ),
             ],
@@ -507,16 +451,16 @@ class PokemonDetailPage extends StatelessWidget {
               List<Widget> evoNo_2 = [];
               List<Widget> evoNo_3 = [];
               evolutions.forEach((pokemon) {
-                var pokeCard = _pokemonCard(
+                var pkmCard = PokemonCard(
                   pokemon: pokemon,
                   imgSize: Get.width / 5,
                 );
                 if (pokemon.evolutionNo == 1) {
-                  evoNo_1.add(pokeCard);
+                  evoNo_1.add(pkmCard);
                 } else if (pokemon.evolutionNo == 2) {
-                  evoNo_2.add(pokeCard);
+                  evoNo_2.add(pkmCard);
                 } else {
-                  evoNo_3.add(pokeCard);
+                  evoNo_3.add(pkmCard);
                 }
               });
               if (evoNo_2.length > 2) {
@@ -576,7 +520,7 @@ class PokemonDetailPage extends StatelessWidget {
             } else {
               var formWidgets = <Widget>[];
               forms.forEach((pokemon) {
-                formWidgets.add(_pokemonCard(
+                formWidgets.add(PokemonCard(
                   pokemon: pokemon,
                   imgSize: Get.width / 3,
                   textNameSize: 15.0,

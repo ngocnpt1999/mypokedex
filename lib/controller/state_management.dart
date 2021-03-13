@@ -13,6 +13,9 @@ import 'package:http/http.dart' as http;
 class HomeController extends GetxController {
   HomeController();
 
+  // ignore: unused_field
+  var _pokemonDetailController = Get.put(PokemonDetailController());
+
   var pages = <Widget>[
     ListPokemonPage(),
     ListFavoritePokemonPage(),
@@ -287,53 +290,56 @@ class PokemonDetailController extends GetxController {
     evolutions.clear();
     alternativeForms.clear();
     //
-    _api.pokemon.get(id: id, name: name).then((poke) {
-      _api.pokemonSpecies.get(name: poke.species.name).then((pokeSpec) {
-        var info = pokeSpec.flavorTextEntries
-            .lastWhere((e) => e.language.name == "en");
+    _api.pokemon.get(id: id, name: name).then((pkm) {
+      _api.pokemonSpecies.get(name: pkm.species.name).then((pkmSpec) {
+        var info =
+            pkmSpec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
         var category =
-            pokeSpec.genera.firstWhere((e) => e.language.name == "en");
+            pkmSpec.genera.firstWhere((e) => e.language.name == "en");
         pokemon.value = MyPokemon(
-          id: poke.id,
-          name: poke.name,
-          speciesId: pokeSpec.id,
+          id: pkm.id,
+          name: pkm.name,
+          speciesId: pkmSpec.id,
           genus: category.genus,
-          artwork: poke.sprites.other.officialArtwork.frontDefault,
+          artwork: pkm.sprites.other.officialArtwork.frontDefault,
           entry: info.flavorText,
-          height: poke.height,
-          weight: poke.weight,
-          types: poke.types,
-          abilities: poke.abilities,
-          genderRate: pokeSpec.genderRate,
+          height: pkm.height,
+          weight: pkm.weight,
+          types: pkm.types,
+          abilities: pkm.abilities,
+          genderRate: pkmSpec.genderRate,
         );
-        _getEvolutionData(pokeSpec);
-        _getAlternativeForms(pokeSpec);
+        _getEvolutionData(pkmSpec);
+        _getAlternativeForms(pkmSpec);
       });
     });
   }
 
-  void _getEvolutionData(PokemonSpecies pokeSpec) async {
-    var response = await http.get(pokeSpec.evolutionChain.url);
+  void _getEvolutionData(PokemonSpecies pkmSpec) async {
+    var response = await http.get(pkmSpec.evolutionChain.url);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);
       EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
       var evo = evoChain.chain;
       int evoNo = 1;
       do {
+        String pkmName;
+        if (evo.species.name == "deoxys") {
+          pkmName = "deoxys-normal";
+        } else if (evo.species.name == "mimikyu") {
+          pkmName = "mimikyu-disguised";
+        } else {
+          pkmName = evo.species.name;
+        }
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
-        _api.pokemon
-            .get(
-                name: evo.species.name == "deoxys"
-                    ? "deoxys-normal"
-                    : evo.species.name)
-            .then((poke) {
+        _api.pokemon.get(name: pkmName).then((pkm) {
           evolutions.add(MyPokemon(
-            id: poke.id,
-            name: poke.name,
-            speciesId: poke.id,
-            artwork: poke.sprites.other.officialArtwork.frontDefault,
-            types: poke.types,
+            id: pkm.id,
+            name: pkm.name,
+            speciesId: pkm.id,
+            artwork: pkm.sprites.other.officialArtwork.frontDefault,
+            types: pkm.types,
             evolutionNo: tempEvoNo,
           ));
           evolutions.sort((a, b) => a.id.compareTo(b.id));
@@ -342,13 +348,13 @@ class PokemonDetailController extends GetxController {
         if (numOfEvo > 1) {
           for (int i = 1; i < numOfEvo; i++) {
             int _tempEvoNo = evoNo;
-            _api.pokemon.get(name: evo.evolvesTo[i].species.name).then((poke) {
+            _api.pokemon.get(name: evo.evolvesTo[i].species.name).then((pkm) {
               evolutions.add(MyPokemon(
-                id: poke.id,
-                name: poke.name,
-                speciesId: poke.id,
-                artwork: poke.sprites.other.officialArtwork.frontDefault,
-                types: poke.types,
+                id: pkm.id,
+                name: pkm.name,
+                speciesId: pkm.id,
+                artwork: pkm.sprites.other.officialArtwork.frontDefault,
+                types: pkm.types,
                 evolutionNo: _tempEvoNo,
               ));
               evolutions.sort((a, b) => a.id.compareTo(b.id));
@@ -363,17 +369,17 @@ class PokemonDetailController extends GetxController {
     }
   }
 
-  void _getAlternativeForms(PokemonSpecies pokeSpec) {
-    pokeSpec.varieties.forEach((v) {
-      _api.pokemon.get(name: v.pokemon.name).then((poke) {
-        String art = poke.sprites.other.officialArtwork.frontDefault;
+  void _getAlternativeForms(PokemonSpecies pkmSpec) {
+    pkmSpec.varieties.forEach((element) {
+      _api.pokemon.get(name: element.pokemon.name).then((pkm) {
+        String art = pkm.sprites.other.officialArtwork.frontDefault;
         if (!art.isBlank && art.isNotEmpty) {
           alternativeForms.add(MyPokemon(
-            id: poke.id,
-            name: poke.name,
-            speciesId: pokeSpec.id,
+            id: pkm.id,
+            name: pkm.name,
+            speciesId: pkmSpec.id,
             artwork: art,
-            types: poke.types,
+            types: pkm.types,
           ));
           alternativeForms.sort((a, b) => a.id.compareTo(b.id));
         }
