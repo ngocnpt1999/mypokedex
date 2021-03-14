@@ -315,6 +315,12 @@ class PokemonDetailController extends GetxController {
     });
   }
 
+  int getPkmIdFromUrl(String url) {
+    var re = RegExp(r'(?<=species/)(.*)(?=/)');
+    var match = re.firstMatch(url);
+    return int.parse(match.group(0));
+  }
+
   void _getEvolutionData(PokemonSpecies pkmSpec) async {
     var response = await http.get(pkmSpec.evolutionChain.url);
     if (response.statusCode == 200) {
@@ -323,17 +329,9 @@ class PokemonDetailController extends GetxController {
       var evo = evoChain.chain;
       int evoNo = 1;
       do {
-        String pkmName;
-        if (evo.species.name == "deoxys") {
-          pkmName = "deoxys-normal";
-        } else if (evo.species.name == "mimikyu") {
-          pkmName = "mimikyu-disguised";
-        } else {
-          pkmName = evo.species.name;
-        }
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
-        _api.pokemon.get(name: pkmName).then((pkm) {
+        _api.pokemon.get(id: getPkmIdFromUrl(evo.species.url)).then((pkm) {
           evolutions.add(MyPokemon(
             id: pkm.id,
             name: pkm.name,
@@ -348,7 +346,9 @@ class PokemonDetailController extends GetxController {
         if (numOfEvo > 1) {
           for (int i = 1; i < numOfEvo; i++) {
             int _tempEvoNo = evoNo;
-            _api.pokemon.get(name: evo.evolvesTo[i].species.name).then((pkm) {
+            _api.pokemon
+                .get(id: getPkmIdFromUrl(evo.evolvesTo[i].species.url))
+                .then((pkm) {
               evolutions.add(MyPokemon(
                 id: pkm.id,
                 name: pkm.name,
