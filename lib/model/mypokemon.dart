@@ -94,6 +94,7 @@ class MyPokemon {
     var favorites = SharedPrefs.instance.getFavoritesPokemon();
     if (!favorites.contains(speciesId.toString())) {
       favorites.add(speciesId.toString());
+      favorites.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
           .then((e) => isLiked.value = true);

@@ -12,6 +12,8 @@ class SearchPokemon extends SearchDelegate {
 
   List<String> _recents = [];
 
+  int _max = 30;
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
@@ -50,7 +52,7 @@ class SearchPokemon extends SearchDelegate {
         onTap: () async {
           if (!_recents.contains(pkmNames[index])) {
             _recents.insert(0, pkmNames[index]);
-            if (_recents.length > 20) {
+            if (_recents.length > _max) {
               _recents.removeLast();
             }
           } else {
@@ -68,6 +70,7 @@ class SearchPokemon extends SearchDelegate {
         title: Text(
           pkmNames[index].capitalizeFirstofEach,
         ),
+        trailing: query.isEmpty ? Icon(Icons.north_west_rounded) : null,
       ),
       separatorBuilder: (context, index) => Divider(),
     );
@@ -80,7 +83,7 @@ class SearchPokemon extends SearchDelegate {
       pokeNames.addAll(SharedPrefs.instance
           .getPokedex()
           .where((e) => e.startsWith(query.toLowerCase()))
-          .take(20));
+          .take(_max));
     }
   }
 }

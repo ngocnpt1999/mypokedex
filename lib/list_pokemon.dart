@@ -80,12 +80,12 @@ class ListPokemonPage extends StatelessWidget {
           });
           SharedPrefs.instance.setPokedex(pkmNames).then((e) {
             Get.back();
-            _pageController.getNewPokemons();
+            _pageController.loadMore();
           });
         });
       } else {
         if (_pageController.pkmTileControllers.length == 0) {
-          _pageController.getNewPokemons();
+          _pageController.loadMore();
         }
       }
     });

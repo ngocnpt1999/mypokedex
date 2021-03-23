@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/model/actions.dart';
@@ -63,10 +64,10 @@ class MyHomePage extends StatelessWidget {
             PopupMenuButton(
               onSelected: (value) {
                 switch (value) {
-                  case HomeActions.hideAll:
+                  case HomeAction.hideAll:
                     _pageController.hideAllArtwork();
                     break;
-                  case HomeActions.revealAll:
+                  case HomeAction.revealAll:
                     _pageController.revealAllArtwork();
                     break;
                   default:
@@ -74,7 +75,7 @@ class MyHomePage extends StatelessWidget {
                 }
               },
               itemBuilder: (context) {
-                return HomeActions.choices
+                return HomeAction.choices
                     .map((choice) => PopupMenuItem(
                           child: Text(choice),
                           value: choice,
@@ -104,7 +105,40 @@ class MyHomePage extends StatelessWidget {
             _pageController.changeTab(index);
           },
         ),
-        body: _pageController.pages[_pageController.selectedIndex.value],
+        body: HawkFabMenu(
+          icon: AnimatedIcons.menu_arrow,
+          items: <HawkFabMenuItem>[
+            HawkFabMenuItem(
+              label: ListFilter.ascending,
+              ontap: () {
+                _pageController.changeFilter(ListFilter.ascending);
+              },
+              icon: Icon(Icons.sort_rounded),
+            ),
+            HawkFabMenuItem(
+              label: ListFilter.descending,
+              ontap: () {
+                _pageController.changeFilter(ListFilter.descending);
+              },
+              icon: Icon(Icons.sort_rounded),
+            ),
+            HawkFabMenuItem(
+              label: ListFilter.a_to_z,
+              ontap: () {
+                _pageController.changeFilter(ListFilter.a_to_z);
+              },
+              icon: Icon(Icons.sort_by_alpha_rounded),
+            ),
+            HawkFabMenuItem(
+              label: ListFilter.z_to_a,
+              ontap: () {
+                _pageController.changeFilter(ListFilter.z_to_a);
+              },
+              icon: Icon(Icons.sort_by_alpha_rounded),
+            ),
+          ],
+          body: _pageController.pages[_pageController.selectedIndex.value],
+        ),
       );
     });
   }
