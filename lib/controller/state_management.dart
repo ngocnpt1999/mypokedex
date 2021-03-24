@@ -82,7 +82,7 @@ class ListPokemonController extends GetxController {
 
   bool _isHideAllArtwork = false;
 
-  String _filter = ListFilter.ascending;
+  String _filter = ListFilter.ascendingID;
 
   int _limit = 15;
 
@@ -93,17 +93,17 @@ class ListPokemonController extends GetxController {
   List<String> _getPkmNames() {
     List<String> names;
     switch (_filter) {
-      case ListFilter.ascending:
+      case ListFilter.ascendingID:
         names = SharedPrefs.instance.getPokedex();
         break;
-      case ListFilter.descending:
+      case ListFilter.descendingID:
         names = SharedPrefs.instance.getPokedex().reversed.toList();
         break;
-      case ListFilter.a_to_z:
+      case ListFilter.alphabetAZ:
         names = SharedPrefs.instance.getPokedex();
         names.sort((a, b) => a.compareTo(b));
         break;
-      case ListFilter.z_to_a:
+      case ListFilter.alphabetZA:
         names = SharedPrefs.instance.getPokedex();
         names.sort((b, a) => a.compareTo(b));
         break;
@@ -115,19 +115,19 @@ class ListPokemonController extends GetxController {
 
   void _sortFilter(List<PokemonTileController> controller) {
     switch (_filter) {
-      case ListFilter.ascending:
+      case ListFilter.ascendingID:
         controller
             .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
         break;
-      case ListFilter.descending:
+      case ListFilter.descendingID:
         controller
             .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
         break;
-      case ListFilter.a_to_z:
+      case ListFilter.alphabetAZ:
         controller.sort(
             (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
         break;
-      case ListFilter.z_to_a:
+      case ListFilter.alphabetZA:
         controller.sort(
             (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
         break;
@@ -246,7 +246,7 @@ class ListFavoritePokemonController extends GetxController {
 
   bool _isHideAllArtwork = false;
 
-  String _filter = ListFilter.ascending;
+  String _filter = ListFilter.ascendingID;
 
   int _limit = 15;
 
@@ -254,19 +254,19 @@ class ListFavoritePokemonController extends GetxController {
 
   void _sortFilter(List<PokemonTileController> controller) {
     switch (_filter) {
-      case ListFilter.ascending:
+      case ListFilter.ascendingID:
         controller
             .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
         break;
-      case ListFilter.descending:
+      case ListFilter.descendingID:
         controller
             .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
         break;
-      case ListFilter.a_to_z:
+      case ListFilter.alphabetAZ:
         controller.sort(
             (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
         break;
-      case ListFilter.z_to_a:
+      case ListFilter.alphabetZA:
         controller.sort(
             (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
         break;

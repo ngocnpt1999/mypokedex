@@ -8,8 +8,8 @@ class HomeAction {
 }
 
 class ListFilter {
-  static const String ascending = "Ascending";
-  static const String descending = "Descending";
-  static const String a_to_z = "A to Z";
-  static const String z_to_a = "Z to A";
+  static const String ascendingID = "Ascending ID";
+  static const String descendingID = "Descending ID";
+  static const String alphabetAZ = "Alphabet (A-Z)";
+  static const String alphabetZA = "Alphabet (Z-A)";
 }
