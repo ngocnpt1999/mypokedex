@@ -109,30 +109,30 @@ class MyHomePage extends StatelessWidget {
           icon: AnimatedIcons.menu_arrow,
           items: <HawkFabMenuItem>[
             HawkFabMenuItem(
-              label: ListFilter.ascendingID,
+              label: ListPokemonFilter.ascendingID,
               ontap: () {
-                _pageController.changeFilter(ListFilter.ascendingID);
+                _pageController.changeFilter(ListPokemonFilter.ascendingID);
               },
               icon: Icon(Icons.sort_rounded),
             ),
             HawkFabMenuItem(
-              label: ListFilter.descendingID,
+              label: ListPokemonFilter.descendingID,
               ontap: () {
-                _pageController.changeFilter(ListFilter.descendingID);
+                _pageController.changeFilter(ListPokemonFilter.descendingID);
               },
               icon: Icon(Icons.sort_rounded),
             ),
             HawkFabMenuItem(
-              label: ListFilter.alphabetAZ,
+              label: ListPokemonFilter.alphabetAZ,
               ontap: () {
-                _pageController.changeFilter(ListFilter.alphabetAZ);
+                _pageController.changeFilter(ListPokemonFilter.alphabetAZ);
               },
               icon: Icon(Icons.sort_by_alpha_rounded),
             ),
             HawkFabMenuItem(
-              label: ListFilter.alphabetZA,
+              label: ListPokemonFilter.alphabetZA,
               ontap: () {
-                _pageController.changeFilter(ListFilter.alphabetZA);
+                _pageController.changeFilter(ListPokemonFilter.alphabetZA);
               },
               icon: Icon(Icons.sort_by_alpha_rounded),
             ),

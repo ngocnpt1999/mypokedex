@@ -1,3 +1,4 @@
+import 'package:mypokedex/model/actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs {
@@ -19,11 +20,25 @@ class SharedPrefs {
     return isFinish;
   }
 
-  List<String> getPokedex() {
+  List<String> getPokedex({String filter = ListPokemonFilter.ascendingID}) {
     if (!_prefs.containsKey("pokedex")) {
       return <String>[];
     }
-    return _prefs.getStringList("pokedex");
+    var list = _prefs.getStringList("pokedex");
+    switch (filter) {
+      case ListPokemonFilter.descendingID:
+        list = list.reversed.toList();
+        break;
+      case ListPokemonFilter.alphabetAZ:
+        list.sort((a, b) => a.compareTo(b));
+        break;
+      case ListPokemonFilter.alphabetZA:
+        list.sort((b, a) => a.compareTo(b));
+        break;
+      default:
+        break;
+    }
+    return list;
   }
 
   Future<bool> setRecentSearch(List<String> recents) async {

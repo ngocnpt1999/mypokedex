@@ -82,7 +82,7 @@ class ListPokemonController extends GetxController {
 
   bool _isHideAllArtwork = false;
 
-  String _filter = ListFilter.ascendingID;
+  String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
 
@@ -90,58 +90,14 @@ class ListPokemonController extends GetxController {
 
   bool _loading = false;
 
-  List<String> _getPkmNames() {
-    List<String> names;
-    switch (_filter) {
-      case ListFilter.ascendingID:
-        names = SharedPrefs.instance.getPokedex();
-        break;
-      case ListFilter.descendingID:
-        names = SharedPrefs.instance.getPokedex().reversed.toList();
-        break;
-      case ListFilter.alphabetAZ:
-        names = SharedPrefs.instance.getPokedex();
-        names.sort((a, b) => a.compareTo(b));
-        break;
-      case ListFilter.alphabetZA:
-        names = SharedPrefs.instance.getPokedex();
-        names.sort((b, a) => a.compareTo(b));
-        break;
-      default:
-        break;
-    }
-    return names;
-  }
-
-  void _sortFilter(List<PokemonTileController> controller) {
-    switch (_filter) {
-      case ListFilter.ascendingID:
-        controller
-            .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case ListFilter.descendingID:
-        controller
-            .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case ListFilter.alphabetAZ:
-        controller.sort(
-            (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      case ListFilter.alphabetZA:
-        controller.sort(
-            (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      default:
-        break;
-    }
-  }
-
   void loadMore() async {
     if (_loading == false) {
       _loading = true;
       var pkmNames = pkmTileControllers.length + _limit >= _totalPkm
-          ? _getPkmNames().sublist(pkmTileControllers.length)
-          : _getPkmNames().sublist(
+          ? SharedPrefs.instance
+              .getPokedex(filter: _filter)
+              .sublist(pkmTileControllers.length)
+          : SharedPrefs.instance.getPokedex(filter: _filter).sublist(
               pkmTileControllers.length, pkmTileControllers.length + _limit);
       if (pkmNames.length == 0) {
         _loading = false;
@@ -161,7 +117,7 @@ class ListPokemonController extends GetxController {
             isHideArtwork: _isHideAllArtwork,
           ));
           if (tempControllers.length == pkmNames.length) {
-            _sortFilter(tempControllers);
+            ListPokemonFilter.filterSort(tempControllers, _filter);
             pkmTileControllers.addAll(tempControllers);
             _loading = false;
           }
@@ -246,34 +202,11 @@ class ListFavoritePokemonController extends GetxController {
 
   bool _isHideAllArtwork = false;
 
-  String _filter = ListFilter.ascendingID;
+  String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
 
   bool _loading = false;
-
-  void _sortFilter(List<PokemonTileController> controller) {
-    switch (_filter) {
-      case ListFilter.ascendingID:
-        controller
-            .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case ListFilter.descendingID:
-        controller
-            .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case ListFilter.alphabetAZ:
-        controller.sort(
-            (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      case ListFilter.alphabetZA:
-        controller.sort(
-            (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      default:
-        break;
-    }
-  }
 
   void loadMore() async {
     if (SharedPrefs.instance.getFavoritesPokemon().length == 0) {
@@ -306,8 +239,8 @@ class ListFavoritePokemonController extends GetxController {
             isHideArtwork: _isHideAllArtwork,
           ));
           if (tempControllers.length == pkmIds.length) {
-            _sortFilter(tempControllers);
             pkmTileControllers.addAll(tempControllers);
+            ListPokemonFilter.rxFilterSort(pkmTileControllers, _filter);
             _loading = false;
           }
         });

@@ -5,10 +5,10 @@ extension StringX on String {
     String newStr = this.replaceAll("-", " ");
     int index = newStr.indexOf(" ");
     String sub = index != -1 ? newStr.substring(index + 1) : "";
-    if (sub == "m") {
+    if (sub == "m" || sub == "male") {
       sub = "♂";
       newStr = newStr.substring(0, index) + " " + sub;
-    } else if (sub == "f") {
+    } else if (sub == "f" || sub == "female") {
       sub = "♀";
       newStr = newStr.substring(0, index) + " " + sub;
     }
