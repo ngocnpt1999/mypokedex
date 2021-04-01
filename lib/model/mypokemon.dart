@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
@@ -34,16 +35,27 @@ class MyPokemon {
     this.genderRate,
     this.evolutionNo,
   }) {
-    if (this.id != null) {
+    if (this.id != 0) {
       if (SharedPrefs.instance
           .getFavoritesPokemon()
-          .contains(speciesId.toString())) {
+          .contains(jsonEncode(this.toJson()))) {
         isLiked.value = true;
       } else {
         isLiked.value = false;
       }
     }
   }
+
+  MyPokemon.fromJson(Map<String, dynamic> json)
+      : id = json["id"] as int,
+        name = json["name"] as String,
+        speciesId = json["speciesId"] as int;
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "speciesId": speciesId,
+      };
 
   //Can't use for alternative forms
   String getPokedexNo() {
@@ -56,45 +68,10 @@ class MyPokemon {
     return "#" + pokemonNo;
   }
 
-  Widget getGenderWidget() {
-    double txtSize = 15.0;
-    double iconSize = 16.0;
-    if (genderRate == -1) {
-      return Text(
-        "Unknown",
-        style: TextStyle(fontSize: txtSize),
-      );
-    } else if (genderRate == 0) {
-      return Icon(
-        MdiIcons.genderMale,
-        size: iconSize,
-      );
-    } else if (genderRate == 8) {
-      return Icon(
-        MdiIcons.genderFemale,
-        size: iconSize,
-      );
-    } else {
-      return Row(
-        children: <Widget>[
-          Icon(
-            MdiIcons.genderMale,
-            size: iconSize,
-          ),
-          Icon(
-            MdiIcons.genderFemale,
-            size: iconSize,
-          ),
-        ],
-      );
-    }
-  }
-
   void like() {
     var favorites = SharedPrefs.instance.getFavoritesPokemon();
-    if (!favorites.contains(speciesId.toString())) {
-      favorites.add(speciesId.toString());
-      favorites.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
+    if (!favorites.contains(jsonEncode(this.toJson()))) {
+      favorites.add(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
           .then((e) => isLiked.value = true);
@@ -103,8 +80,8 @@ class MyPokemon {
 
   void unlike() {
     var favorites = SharedPrefs.instance.getFavoritesPokemon();
-    if (favorites.contains(speciesId.toString())) {
-      favorites.remove(speciesId.toString());
+    if (favorites.contains(jsonEncode(this.toJson()))) {
+      favorites.remove(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
           .then((e) => isLiked.value = false);

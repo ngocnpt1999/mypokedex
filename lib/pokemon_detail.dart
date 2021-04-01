@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
@@ -85,10 +86,44 @@ class PokemonDetailPage extends StatelessWidget {
     );
   }
 
+  Widget _genderWidget(int genderRate) {
+    double txtSize = 15.0;
+    double iconSize = 16.0;
+    if (genderRate == -1) {
+      return Text(
+        "Unknown",
+        style: TextStyle(fontSize: txtSize),
+      );
+    } else if (genderRate == 0) {
+      return Icon(
+        MdiIcons.genderMale,
+        size: iconSize,
+      );
+    } else if (genderRate == 8) {
+      return Icon(
+        MdiIcons.genderFemale,
+        size: iconSize,
+      );
+    } else {
+      return Row(
+        children: <Widget>[
+          Icon(
+            MdiIcons.genderMale,
+            size: iconSize,
+          ),
+          Icon(
+            MdiIcons.genderFemale,
+            size: iconSize,
+          ),
+        ],
+      );
+    }
+  }
+
   Widget _buildPokeBar() {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (pokemon.id == null) {
+      if (pokemon.id == 0) {
         return Card(
           elevation: 4.0,
           child: _circularProgressIndicator(),
@@ -184,7 +219,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.0),
                               ),
                             ),
-                            pokemon.getGenderWidget(),
+                            _genderWidget(pokemon.genderRate),
                           ],
                         ),
                       ),
@@ -232,7 +267,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
-            if (pokemon.id == null) {
+            if (pokemon.id == 0) {
               return _circularProgressIndicator();
             } else {
               return Padding(
@@ -363,7 +398,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var pokemon = _pageController.pokemon.value;
-            if (pokemon.id == null) {
+            if (pokemon.id == 0) {
               return _circularProgressIndicator();
             } else {
               var abilities = pokemon.abilities;

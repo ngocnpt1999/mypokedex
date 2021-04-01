@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
 
 class HomeAction {
@@ -20,36 +19,12 @@ class ListPokemonFilter {
       List<PokemonTileController> controller, String filter) {
     switch (filter) {
       case ascendingID:
-        controller
-            .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
+        controller.sort((a, b) =>
+            a.pokemon.value.speciesId.compareTo(b.pokemon.value.speciesId));
         break;
       case descendingID:
-        controller
-            .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case alphabetAZ:
-        controller.sort(
-            (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      case alphabetZA:
-        controller.sort(
-            (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
-        break;
-      default:
-        break;
-    }
-  }
-
-  static void rxFilterSort(
-      RxList<PokemonTileController> controller, String filter) {
-    switch (filter) {
-      case ascendingID:
-        controller
-            .sort((a, b) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
-        break;
-      case descendingID:
-        controller
-            .sort((b, a) => a.pokemon.value.id.compareTo(b.pokemon.value.id));
+        controller.sort((b, a) =>
+            a.pokemon.value.speciesId.compareTo(b.pokemon.value.speciesId));
         break;
       case alphabetAZ:
         controller.sort(

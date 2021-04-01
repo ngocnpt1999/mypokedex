@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
+import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/list_favorite_pokemon.dart';
 import 'package:mypokedex/list_pokemon.dart';
 import 'package:mypokedex/model/actions.dart';
@@ -56,7 +57,7 @@ class PokemonTileController extends GetxController {
     this.isHideArtwork.value = isHideArtwork;
   }
 
-  var pokemon = MyPokemon(id: null, name: null, speciesId: null).obs;
+  var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
 
   var isHideArtwork = false.obs;
 }
@@ -93,19 +94,20 @@ class ListPokemonController extends GetxController {
   void loadMore() async {
     if (_loading == false) {
       _loading = true;
-      var pkmNames = pkmTileControllers.length + _limit >= _totalPkm
+      var jsonPkms = pkmTileControllers.length + _limit >= _totalPkm
           ? SharedPrefs.instance
               .getPokedex(filter: _filter)
               .sublist(pkmTileControllers.length)
           : SharedPrefs.instance.getPokedex(filter: _filter).sublist(
               pkmTileControllers.length, pkmTileControllers.length + _limit);
-      if (pkmNames.length == 0) {
+      if (jsonPkms.length == 0) {
         _loading = false;
         return;
       }
       var tempControllers = <PokemonTileController>[];
-      pkmNames.forEach((name) {
-        _api.pokemon.get(name: name).then((pkm) {
+      jsonPkms.forEach((js) {
+        var value = jsonDecode(js) as Map<String, dynamic>;
+        _api.pokemon.get(id: value["id"] as int).then((pkm) {
           tempControllers.add(PokemonTileController(
             pokemon: MyPokemon(
               id: pkm.id,
@@ -116,7 +118,7 @@ class ListPokemonController extends GetxController {
             ),
             isHideArtwork: _isHideAllArtwork,
           ));
-          if (tempControllers.length == pkmNames.length) {
+          if (tempControllers.length == jsonPkms.length) {
             ListPokemonFilter.filterSort(tempControllers, _filter);
             pkmTileControllers.addAll(tempControllers);
             _loading = false;
@@ -128,7 +130,7 @@ class ListPokemonController extends GetxController {
       Duration oneSec = Duration(seconds: 1);
       Timer countdown;
       countdown = Timer.periodic(oneSec, (timer) {
-        if (tempControllers.length == pkmNames.length) {
+        if (tempControllers.length == jsonPkms.length) {
           timer.cancel();
           countdown.cancel();
         } else if (start == 0) {
@@ -215,32 +217,33 @@ class ListFavoritePokemonController extends GetxController {
     if (_loading == false) {
       _loading = true;
       int totalPkm = SharedPrefs.instance.getFavoritesPokemon().length;
-      var pkmIds = pkmTileControllers.length + _limit >= totalPkm
+      var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
-              .getFavoritesPokemon()
+              .getFavoritesPokemon(filter: _filter)
               .sublist(pkmTileControllers.length)
-          : SharedPrefs.instance.getFavoritesPokemon().sublist(
+          : SharedPrefs.instance.getFavoritesPokemon(filter: _filter).sublist(
               pkmTileControllers.length, pkmTileControllers.length + _limit);
-      if (pkmIds.length == 0) {
+      if (jsonPkms.length == 0) {
         _loading = false;
         return;
       }
       var tempControllers = <PokemonTileController>[];
-      pkmIds.forEach((id) {
-        _api.pokemon.get(id: int.parse(id)).then((pkm) {
+      jsonPkms.forEach((js) {
+        var value = jsonDecode(js) as Map<String, dynamic>;
+        _api.pokemon.get(id: value["id"] as int).then((pkm) {
           tempControllers.add(PokemonTileController(
             pokemon: MyPokemon(
               id: pkm.id,
               name: pkm.name,
-              speciesId: pkm.id,
+              speciesId: value["speciesId"] as int,
               artwork: pkm.sprites.other.officialArtwork.frontDefault,
               types: pkm.types,
             ),
             isHideArtwork: _isHideAllArtwork,
           ));
-          if (tempControllers.length == pkmIds.length) {
+          if (tempControllers.length == jsonPkms.length) {
+            ListPokemonFilter.filterSort(tempControllers, _filter);
             pkmTileControllers.addAll(tempControllers);
-            ListPokemonFilter.rxFilterSort(pkmTileControllers, _filter);
             _loading = false;
           }
         });
@@ -250,7 +253,7 @@ class ListFavoritePokemonController extends GetxController {
       Duration oneSec = Duration(seconds: 1);
       Timer countdown;
       countdown = Timer.periodic(oneSec, (timer) {
-        if (tempControllers.length == pkmIds.length) {
+        if (tempControllers.length == jsonPkms.length) {
           timer.cancel();
           countdown.cancel();
         } else if (start == 0) {
@@ -310,14 +313,14 @@ class PokemonDetailController extends GetxController {
 
   var isHideArtwork = false.obs;
 
-  var pokemon = MyPokemon(id: null, name: null, speciesId: null).obs;
+  var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
 
   var evolutions = <MyPokemon>[].obs;
 
   var alternativeForms = <MyPokemon>[].obs;
 
   void init({int id, String name}) {
-    pokemon.value = MyPokemon(id: null, name: null, speciesId: null);
+    pokemon.value = MyPokemon(id: 0, name: "", speciesId: 0);
     evolutions.clear();
     alternativeForms.clear();
     //
@@ -346,12 +349,6 @@ class PokemonDetailController extends GetxController {
     });
   }
 
-  int getPkmIdFromUrl(String url) {
-    var re = RegExp(r'(?<=species/)(.*)(?=/)');
-    var match = re.firstMatch(url);
-    return int.parse(match.group(0));
-  }
-
   void _getEvolutionData(PokemonSpecies pkmSpec) async {
     var response = await http.get(pkmSpec.evolutionChain.url);
     if (response.statusCode == 200) {
@@ -362,7 +359,9 @@ class PokemonDetailController extends GetxController {
       do {
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
-        _api.pokemon.get(id: getPkmIdFromUrl(evo.species.url)).then((pkm) {
+        _api.pokemon
+            .get(id: Utility.getPkmSpecIdFromUrl(evo.species.url))
+            .then((pkm) {
           evolutions.add(MyPokemon(
             id: pkm.id,
             name: pkm.name,
@@ -378,7 +377,9 @@ class PokemonDetailController extends GetxController {
           for (int i = 1; i < numOfEvo; i++) {
             int _tempEvoNo = evoNo;
             _api.pokemon
-                .get(id: getPkmIdFromUrl(evo.evolvesTo[i].species.url))
+                .get(
+                    id: Utility.getPkmSpecIdFromUrl(
+                        evo.evolvesTo[i].species.url))
                 .then((pkm) {
               evolutions.add(MyPokemon(
                 id: pkm.id,

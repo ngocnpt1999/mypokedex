@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
@@ -76,14 +78,18 @@ class SearchPokemon extends SearchDelegate {
     );
   }
 
-  void _getSuggestions(List<String> pokeNames) {
+  void _getSuggestions(List<String> pkmNames) {
     if (query.isEmpty) {
-      pokeNames.addAll(_recents);
+      pkmNames.addAll(_recents);
     } else {
-      pokeNames.addAll(SharedPrefs.instance
-          .getPokedex()
-          .where((e) => e.startsWith(query.toLowerCase()))
-          .take(_max));
+      var jsonPkms = SharedPrefs.instance.getPokedex().where((element) {
+        var value = jsonDecode(element) as Map<String, dynamic>;
+        return value["name"].toString().startsWith(query.toLowerCase());
+      }).take(_max);
+      jsonPkms.forEach((element) {
+        var value = jsonDecode(element) as Map<String, dynamic>;
+        pkmNames.add(value["name"].toString());
+      });
     }
   }
 }

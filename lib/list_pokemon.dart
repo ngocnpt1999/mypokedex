@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/controller/utility.dart';
+import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
@@ -73,12 +77,14 @@ class ListPokemonPage extends StatelessWidget {
           barrierDismissible: false,
         );
         var api = PokeApi();
-        List<String> pkmNames = [];
+        List<String> jsonPkms = [];
         api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
           response.results.forEach((element) {
-            pkmNames.add(element.name);
+            int id = Utility.getPkmIdFromUrl(element.url);
+            var pkm = MyPokemon(id: id, name: element.name, speciesId: id);
+            jsonPkms.add(jsonEncode(pkm.toJson()));
           });
-          SharedPrefs.instance.setPokedex(pkmNames).then((e) {
+          SharedPrefs.instance.setPokedex(jsonPkms).then((e) {
             Get.back();
             _pageController.loadMore();
           });
