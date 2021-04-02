@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
 
@@ -15,8 +14,7 @@ class ListFavoritePokemonPage extends StatelessWidget {
       _pageController.loadMore();
     }
     return Obx(() {
-      if (_pageController.pkmTileControllers.length == 0 &&
-          SharedPrefs.instance.getFavoritesPokemon().length == 0) {
+      if (_pageController.hasFavorites.value == false) {
         return Center(
           child: Text("No results"),
         );

@@ -9,6 +9,7 @@ import 'package:mypokedex/list_favorite_pokemon.dart';
 import 'package:mypokedex/list_pokemon.dart';
 import 'package:mypokedex/model/actions.dart';
 import 'package:mypokedex/model/mypokemon.dart';
+import 'package:mypokedex/model/pokemon_generation.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,6 +25,8 @@ class HomeController extends GetxController {
   ];
 
   var selectedIndex = 0.obs;
+
+  var selectedGen = 0.obs;
 
   void changeTab(int index) {
     selectedIndex.value = index;
@@ -41,6 +44,14 @@ class HomeController extends GetxController {
     ListFavoritePokemonController listFrvPkmController = Get.find();
     listPkmController.revealAllArtwork();
     listFrvPkmController.revealAllArtwork();
+  }
+
+  void changeGen(int gene) {
+    selectedGen.value = gene;
+    ListPokemonController listPkmController = Get.find();
+    ListFavoritePokemonController listFrvPkmController = Get.find();
+    listPkmController.changeGen(ListPokemonFilter.generations[gene]);
+    listFrvPkmController.changeGen(ListPokemonFilter.generations[gene]);
   }
 
   void changeFilter(String filter) {
@@ -65,7 +76,9 @@ class PokemonTileController extends GetxController {
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
-      if (pkmTileControllers.length < _totalPkm) {
+      int totalPkm =
+          SharedPrefs.instance.getPokedex(generation: _generation).length;
+      if (pkmTileControllers.length < totalPkm) {
         double maxPosition = scrollController.position.maxScrollExtent;
         double currentPosition = scrollController.position.pixels;
         if (maxPosition - currentPosition <= Get.height / 3) {
@@ -83,30 +96,34 @@ class ListPokemonController extends GetxController {
 
   bool _isHideAllArtwork = false;
 
+  String _generation = PokemonGeneration.allGen;
+
   String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
 
-  int _totalPkm = 809;
-
-  bool _loading = false;
+  bool _isLoading = false;
 
   void loadMore() async {
-    if (_loading == false) {
-      _loading = true;
-      var jsonPkms = pkmTileControllers.length + _limit >= _totalPkm
+    if (_isLoading == false) {
+      _isLoading = true;
+      int totalPkm =
+          SharedPrefs.instance.getPokedex(generation: _generation).length;
+      var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
-              .getPokedex(filter: _filter)
+              .getPokedex(generation: _generation, filter: _filter)
               .sublist(pkmTileControllers.length)
-          : SharedPrefs.instance.getPokedex(filter: _filter).sublist(
-              pkmTileControllers.length, pkmTileControllers.length + _limit);
+          : SharedPrefs.instance
+              .getPokedex(generation: _generation, filter: _filter)
+              .sublist(pkmTileControllers.length,
+                  pkmTileControllers.length + _limit);
       if (jsonPkms.length == 0) {
-        _loading = false;
+        _isLoading = false;
         return;
       }
       var tempControllers = <PokemonTileController>[];
-      jsonPkms.forEach((js) {
-        var value = jsonDecode(js) as Map<String, dynamic>;
+      jsonPkms.forEach((element) {
+        var value = jsonDecode(element) as Map<String, dynamic>;
         _api.pokemon.get(id: value["id"] as int).then((pkm) {
           tempControllers.add(PokemonTileController(
             pokemon: MyPokemon(
@@ -119,9 +136,9 @@ class ListPokemonController extends GetxController {
             isHideArtwork: _isHideAllArtwork,
           ));
           if (tempControllers.length == jsonPkms.length) {
-            ListPokemonFilter.filterSort(tempControllers, _filter);
+            ListPokemonFilter.sortPkmTile(tempControllers, _filter);
             pkmTileControllers.addAll(tempControllers);
-            _loading = false;
+            _isLoading = false;
           }
         });
       });
@@ -134,7 +151,7 @@ class ListPokemonController extends GetxController {
           timer.cancel();
           countdown.cancel();
         } else if (start == 0) {
-          _loading = false;
+          _isLoading = false;
           timer.cancel();
           countdown.cancel();
         } else {
@@ -167,6 +184,13 @@ class ListPokemonController extends GetxController {
     loadMore();
   }
 
+  void changeGen(String generation) {
+    if (generation != _generation) {
+      _generation = generation;
+      refresh();
+    }
+  }
+
   void changeFilter(String filter) {
     if (filter != _filter) {
       _filter = filter;
@@ -175,7 +199,9 @@ class ListPokemonController extends GetxController {
   }
 
   bool endOfData() {
-    if (pkmTileControllers.length == _totalPkm) {
+    int totalPkm =
+        SharedPrefs.instance.getPokedex(generation: _generation).length;
+    if (pkmTileControllers.length == totalPkm) {
       return true;
     }
     return false;
@@ -186,7 +212,9 @@ class ListFavoritePokemonController extends GetxController {
   ListFavoritePokemonController() {
     scrollController.addListener(() {
       if (pkmTileControllers.length <
-          SharedPrefs.instance.getFavoritesPokemon().length) {
+          SharedPrefs.instance
+              .getFavoritesPokemon(generation: _generation)
+              .length) {
         double maxPosition = scrollController.position.maxScrollExtent;
         double currentPosition = scrollController.position.pixels;
         if (maxPosition - currentPosition <= Get.height / 3) {
@@ -202,34 +230,47 @@ class ListFavoritePokemonController extends GetxController {
 
   var pkmTileControllers = <PokemonTileController>[].obs;
 
+  var hasFavorites = false.obs;
+
   bool _isHideAllArtwork = false;
+
+  String _generation = PokemonGeneration.allGen;
 
   String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
 
-  bool _loading = false;
+  bool _isLoading = false;
 
   void loadMore() async {
     if (SharedPrefs.instance.getFavoritesPokemon().length == 0) {
       return;
     }
-    if (_loading == false) {
-      _loading = true;
-      int totalPkm = SharedPrefs.instance.getFavoritesPokemon().length;
+    if (_isLoading == false) {
+      _isLoading = true;
+      int totalPkm = SharedPrefs.instance
+          .getFavoritesPokemon(generation: _generation)
+          .length;
+      if (totalPkm == 0) {
+        hasFavorites.value = false;
+        return;
+      }
+      hasFavorites.value = true;
       var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
-              .getFavoritesPokemon(filter: _filter)
+              .getFavoritesPokemon(generation: _generation, filter: _filter)
               .sublist(pkmTileControllers.length)
-          : SharedPrefs.instance.getFavoritesPokemon(filter: _filter).sublist(
-              pkmTileControllers.length, pkmTileControllers.length + _limit);
+          : SharedPrefs.instance
+              .getFavoritesPokemon(generation: _generation, filter: _filter)
+              .sublist(pkmTileControllers.length,
+                  pkmTileControllers.length + _limit);
       if (jsonPkms.length == 0) {
-        _loading = false;
+        _isLoading = false;
         return;
       }
       var tempControllers = <PokemonTileController>[];
-      jsonPkms.forEach((js) {
-        var value = jsonDecode(js) as Map<String, dynamic>;
+      jsonPkms.forEach((element) {
+        var value = jsonDecode(element) as Map<String, dynamic>;
         _api.pokemon.get(id: value["id"] as int).then((pkm) {
           tempControllers.add(PokemonTileController(
             pokemon: MyPokemon(
@@ -242,9 +283,9 @@ class ListFavoritePokemonController extends GetxController {
             isHideArtwork: _isHideAllArtwork,
           ));
           if (tempControllers.length == jsonPkms.length) {
-            ListPokemonFilter.filterSort(tempControllers, _filter);
+            ListPokemonFilter.sortPkmTile(tempControllers, _filter);
             pkmTileControllers.addAll(tempControllers);
-            _loading = false;
+            _isLoading = false;
           }
         });
       });
@@ -257,7 +298,7 @@ class ListFavoritePokemonController extends GetxController {
           timer.cancel();
           countdown.cancel();
         } else if (start == 0) {
-          _loading = false;
+          _isLoading = false;
           timer.cancel();
           countdown.cancel();
         } else {
@@ -290,6 +331,13 @@ class ListFavoritePokemonController extends GetxController {
     loadMore();
   }
 
+  void changeGen(String generation) {
+    if (generation != _generation) {
+      _generation = generation;
+      refresh();
+    }
+  }
+
   void changeFilter(String filter) {
     if (filter != _filter) {
       _filter = filter;
@@ -299,7 +347,9 @@ class ListFavoritePokemonController extends GetxController {
 
   bool endOfData() {
     if (pkmTileControllers.length ==
-        SharedPrefs.instance.getFavoritesPokemon().length) {
+        SharedPrefs.instance
+            .getFavoritesPokemon(generation: _generation)
+            .length) {
       return true;
     }
     return false;

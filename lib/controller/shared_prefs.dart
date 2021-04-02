@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:mypokedex/model/actions.dart';
+import 'package:mypokedex/model/pokemon_generation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs {
@@ -22,29 +23,15 @@ class SharedPrefs {
     return isFinish;
   }
 
-  List<String> getPokedex({String filter = ListPokemonFilter.ascendingID}) {
+  List<String> getPokedex(
+      {String generation = PokemonGeneration.allGen,
+      String filter = ListPokemonFilter.ascendingID}) {
     if (!_prefs.containsKey("pokedex")) {
       return <String>[];
     }
-    var list = _prefs.getStringList("pokedex");
-    var func = (String a, String b) {
-      var mapA = jsonDecode(a) as Map<String, dynamic>;
-      var mapB = jsonDecode(b) as Map<String, dynamic>;
-      return (mapA["name"] as String).compareTo(mapB["name"] as String);
-    };
-    switch (filter) {
-      case ListPokemonFilter.descendingID:
-        list = list.reversed.toList();
-        break;
-      case ListPokemonFilter.alphabetAZ:
-        list.sort((a, b) => func(a, b));
-        break;
-      case ListPokemonFilter.alphabetZA:
-        list.sort((b, a) => func(a, b));
-        break;
-      default:
-        break;
-    }
+    var list = ListPokemonFilter.filterByGen(
+        _prefs.getStringList("pokedex"), generation);
+    list = ListPokemonFilter.filterByIdOrAlphabet(list, filter);
     return list;
   }
 
@@ -71,29 +58,14 @@ class SharedPrefs {
   }
 
   List<String> getFavoritesPokemon(
-      {String filter = ListPokemonFilter.ascendingID}) {
+      {String generation = PokemonGeneration.allGen,
+      String filter = ListPokemonFilter.ascendingID}) {
     if (!_prefs.containsKey("favoritesPokemon")) {
       return <String>[];
     }
-    var list = _prefs.getStringList("favoritesPokemon");
-    var func = (String a, String b) {
-      var mapA = jsonDecode(a) as Map<String, dynamic>;
-      var mapB = jsonDecode(b) as Map<String, dynamic>;
-      return (mapA["name"] as String).compareTo(mapB["name"] as String);
-    };
-    switch (filter) {
-      case ListPokemonFilter.descendingID:
-        list = list.reversed.toList();
-        break;
-      case ListPokemonFilter.alphabetAZ:
-        list.sort((a, b) => func(a, b));
-        break;
-      case ListPokemonFilter.alphabetZA:
-        list.sort((b, a) => func(a, b));
-        break;
-      default:
-        break;
-    }
+    var list = ListPokemonFilter.filterByGen(
+        _prefs.getStringList("favoritesPokemon"), generation);
+    list = ListPokemonFilter.filterByIdOrAlphabet(list, filter);
     return list;
   }
 }

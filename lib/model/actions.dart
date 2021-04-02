@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/model/pokemon_generation.dart';
 
 class HomeAction {
   static const String hideAll = "Hide All";
@@ -15,7 +18,97 @@ class ListPokemonFilter {
   static const String alphabetAZ = "Alphabet (A-Z)";
   static const String alphabetZA = "Alphabet (Z-A)";
 
-  static void filterSort(
+  static const generations = <String>[
+    PokemonGeneration.allGen,
+    PokemonGeneration.genI,
+    PokemonGeneration.genII,
+    PokemonGeneration.genIII,
+    PokemonGeneration.genIV,
+    PokemonGeneration.genV,
+    PokemonGeneration.genVI,
+    PokemonGeneration.genVII,
+  ];
+
+  static List<String> filterByGen(List<String> list, String generation) {
+    switch (generation) {
+      case PokemonGeneration.genI:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id <= 151;
+        }).toList();
+        break;
+      case PokemonGeneration.genII:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 151 && id <= 251;
+        }).toList();
+        break;
+      case PokemonGeneration.genIII:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 251 && id <= 386;
+        }).toList();
+        break;
+      case PokemonGeneration.genIV:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 386 && id <= 493;
+        }).toList();
+        break;
+      case PokemonGeneration.genV:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 493 && id <= 649;
+        }).toList();
+        break;
+      case PokemonGeneration.genVI:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 649 && id <= 721;
+        }).toList();
+        break;
+      case PokemonGeneration.genVII:
+        list = list.where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          int id = value["speciesId"] as int;
+          return id > 721 && id <= 809;
+        }).toList();
+        break;
+      default:
+        break;
+    }
+    return list;
+  }
+
+  static List<String> filterByIdOrAlphabet(List<String> list, String filter) {
+    var func = (String a, String b) {
+      var mapA = jsonDecode(a) as Map<String, dynamic>;
+      var mapB = jsonDecode(b) as Map<String, dynamic>;
+      return (mapA["name"] as String).compareTo(mapB["name"] as String);
+    };
+    switch (filter) {
+      case ListPokemonFilter.descendingID:
+        list = list.reversed.toList();
+        break;
+      case ListPokemonFilter.alphabetAZ:
+        list.sort((a, b) => func(a, b));
+        break;
+      case ListPokemonFilter.alphabetZA:
+        list.sort((b, a) => func(a, b));
+        break;
+      default:
+        break;
+    }
+    return list;
+  }
+
+  static void sortPkmTile(
       List<PokemonTileController> controller, String filter) {
     switch (filter) {
       case ascendingID:
