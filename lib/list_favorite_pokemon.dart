@@ -18,19 +18,20 @@ class ListFavoritePokemonPage extends StatelessWidget {
         return Center(
           child: Text("No results"),
         );
-      }
-      if (_pageController.pkmTileControllers.length == 0) {
-        return Center(
-          child: CircularProgressIndicator(),
+      } else {
+        if (_pageController.pkmTileControllers.length == 0) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return Scrollbar(
+          child: ListView.builder(
+            controller: _pageController.scrollController,
+            itemCount: _pageController.pkmTileControllers.length + 1,
+            itemBuilder: _buildFavoritePokemonTile,
+          ),
         );
       }
-      return Scrollbar(
-        child: ListView.builder(
-          controller: _pageController.scrollController,
-          itemCount: _pageController.pkmTileControllers.length + 1,
-          itemBuilder: _buildFavoritePokemonTile,
-        ),
-      );
     });
   }
 

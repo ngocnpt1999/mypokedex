@@ -122,23 +122,32 @@ class ListPokemonController extends GetxController {
         return;
       }
       var tempControllers = <PokemonTileController>[];
+      var addPokemon = (Pokemon pkm) {
+        tempControllers.add(PokemonTileController(
+          pokemon: MyPokemon(
+            id: pkm.id,
+            name: pkm.name,
+            speciesId: Utility.getPkmSpecIdFromUrl(pkm.species.url),
+            artwork: pkm.sprites.other.officialArtwork.frontDefault,
+            types: pkm.types,
+          ),
+          isHideArtwork: _isHideAllArtwork,
+        ));
+        if (tempControllers.length == jsonPkms.length) {
+          ListPokemonFilter.sortPkmTile(tempControllers, _filter);
+          pkmTileControllers.addAll(tempControllers);
+          _isLoading = false;
+        }
+      };
       jsonPkms.forEach((element) {
         var value = jsonDecode(element) as Map<String, dynamic>;
         _api.pokemon.get(id: value["id"] as int).then((pkm) {
-          tempControllers.add(PokemonTileController(
-            pokemon: MyPokemon(
-              id: pkm.id,
-              name: pkm.name,
-              speciesId: pkm.id,
-              artwork: pkm.sprites.other.officialArtwork.frontDefault,
-              types: pkm.types,
-            ),
-            isHideArtwork: _isHideAllArtwork,
-          ));
-          if (tempControllers.length == jsonPkms.length) {
-            ListPokemonFilter.sortPkmTile(tempControllers, _filter);
-            pkmTileControllers.addAll(tempControllers);
-            _isLoading = false;
+          addPokemon(pkm);
+        }).catchError((ex) {
+          if (ex is FormatException) {
+            _api.pokemon.get(name: value["name"].toString()).then((pkm) {
+              addPokemon(pkm);
+            });
           }
         });
       });
@@ -243,9 +252,6 @@ class ListFavoritePokemonController extends GetxController {
   bool _isLoading = false;
 
   void loadMore() async {
-    if (SharedPrefs.instance.getFavoritesPokemon().length == 0) {
-      return;
-    }
     if (_isLoading == false) {
       _isLoading = true;
       int totalPkm = SharedPrefs.instance
@@ -253,6 +259,7 @@ class ListFavoritePokemonController extends GetxController {
           .length;
       if (totalPkm == 0) {
         hasFavorites.value = false;
+        _isLoading = false;
         return;
       }
       hasFavorites.value = true;
@@ -269,23 +276,32 @@ class ListFavoritePokemonController extends GetxController {
         return;
       }
       var tempControllers = <PokemonTileController>[];
+      var addFavoritePkm = (Pokemon pkm) {
+        tempControllers.add(PokemonTileController(
+          pokemon: MyPokemon(
+            id: pkm.id,
+            name: pkm.name,
+            speciesId: Utility.getPkmSpecIdFromUrl(pkm.species.url),
+            artwork: pkm.sprites.other.officialArtwork.frontDefault,
+            types: pkm.types,
+          ),
+          isHideArtwork: _isHideAllArtwork,
+        ));
+        if (tempControllers.length == jsonPkms.length) {
+          ListPokemonFilter.sortPkmTile(tempControllers, _filter);
+          pkmTileControllers.addAll(tempControllers);
+          _isLoading = false;
+        }
+      };
       jsonPkms.forEach((element) {
         var value = jsonDecode(element) as Map<String, dynamic>;
         _api.pokemon.get(id: value["id"] as int).then((pkm) {
-          tempControllers.add(PokemonTileController(
-            pokemon: MyPokemon(
-              id: pkm.id,
-              name: pkm.name,
-              speciesId: value["speciesId"] as int,
-              artwork: pkm.sprites.other.officialArtwork.frontDefault,
-              types: pkm.types,
-            ),
-            isHideArtwork: _isHideAllArtwork,
-          ));
-          if (tempControllers.length == jsonPkms.length) {
-            ListPokemonFilter.sortPkmTile(tempControllers, _filter);
-            pkmTileControllers.addAll(tempControllers);
-            _isLoading = false;
+          addFavoritePkm(pkm);
+        }).catchError((ex) {
+          if (ex is FormatException) {
+            _api.pokemon.get(name: value["name"].toString()).then((pkm) {
+              addFavoritePkm(pkm);
+            });
           }
         });
       });
@@ -374,19 +390,19 @@ class PokemonDetailController extends GetxController {
     evolutions.clear();
     alternativeForms.clear();
     //
-    _api.pokemon.get(id: id, name: name).then((pkm) {
+    var initPokemon = (Pokemon pkm) {
       _api.pokemonSpecies.get(name: pkm.species.name).then((pkmSpec) {
-        var info =
-            pkmSpec.flavorTextEntries.lastWhere((e) => e.language.name == "en");
-        var category =
-            pkmSpec.genera.firstWhere((e) => e.language.name == "en");
+        var entries = pkmSpec.flavorTextEntries
+            .lastWhere((element) => element.language.name == "en");
+        var category = pkmSpec.genera
+            .firstWhere((element) => element.language.name == "en");
         pokemon.value = MyPokemon(
           id: pkm.id,
           name: pkm.name,
           speciesId: pkmSpec.id,
           genus: category.genus,
           artwork: pkm.sprites.other.officialArtwork.frontDefault,
-          entry: info.flavorText,
+          entry: entries.flavorText,
           height: pkm.height,
           weight: pkm.weight,
           types: pkm.types,
@@ -396,6 +412,22 @@ class PokemonDetailController extends GetxController {
         _getEvolutionData(pkmSpec);
         _getAlternativeForms(pkmSpec);
       });
+    };
+    _api.pokemon.get(id: id, name: name).then((pkm) {
+      initPokemon(pkm);
+    }).catchError((ex) async {
+      if (ex is FormatException) {
+        String index = id != null ? id.toString() : name;
+        var response =
+            await http.get("https://pokeapi.co/api/v2/pokemon/$index/");
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonData = jsonDecode(response.body);
+          Pokemon pkm = Pokemon.fromJson(jsonData);
+          initPokemon(pkm);
+        } else {
+          throw Exception("Failed!!!");
+        }
+      }
     });
   }
 
@@ -406,40 +438,45 @@ class PokemonDetailController extends GetxController {
       EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
       var evo = evoChain.chain;
       int evoNo = 1;
+      var addEvolution = (Pokemon pkm, int no) {
+        evolutions.add(MyPokemon(
+          id: pkm.id,
+          name: pkm.name,
+          speciesId: pkm.id,
+          artwork: pkm.sprites.other.officialArtwork.frontDefault,
+          types: pkm.types,
+          evolutionNo: no,
+        ));
+        evolutions.sort((a, b) => a.id.compareTo(b.id));
+      };
       do {
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
-        _api.pokemon
-            .get(id: Utility.getPkmSpecIdFromUrl(evo.species.url))
-            .then((pkm) {
-          evolutions.add(MyPokemon(
-            id: pkm.id,
-            name: pkm.name,
-            speciesId: pkm.id,
-            artwork: pkm.sprites.other.officialArtwork.frontDefault,
-            types: pkm.types,
-            evolutionNo: tempEvoNo,
-          ));
-          evolutions.sort((a, b) => a.id.compareTo(b.id));
+        int id = Utility.getPkmSpecIdFromUrl(evo.species.url);
+        String name = evo.species.name;
+        _api.pokemon.get(id: id).then((pkm) {
+          addEvolution(pkm, tempEvoNo);
+        }).catchError((ex) {
+          if (ex is FormatException) {
+            _api.pokemon.get(name: name).then((pkm) {
+              addEvolution(pkm, tempEvoNo);
+            });
+          }
         });
         evoNo++;
         if (numOfEvo > 1) {
           for (int i = 1; i < numOfEvo; i++) {
             int _tempEvoNo = evoNo;
-            _api.pokemon
-                .get(
-                    id: Utility.getPkmSpecIdFromUrl(
-                        evo.evolvesTo[i].species.url))
-                .then((pkm) {
-              evolutions.add(MyPokemon(
-                id: pkm.id,
-                name: pkm.name,
-                speciesId: pkm.id,
-                artwork: pkm.sprites.other.officialArtwork.frontDefault,
-                types: pkm.types,
-                evolutionNo: _tempEvoNo,
-              ));
-              evolutions.sort((a, b) => a.id.compareTo(b.id));
+            int _id = Utility.getPkmSpecIdFromUrl(evo.evolvesTo[i].species.url);
+            String _name = evo.evolvesTo[i].species.name;
+            _api.pokemon.get(id: _id).then((pkm) {
+              addEvolution(pkm, _tempEvoNo);
+            }).catchError((ex) {
+              if (ex is FormatException) {
+                _api.pokemon.get(name: _name).then((pkm) {
+                  addEvolution(pkm, _tempEvoNo);
+                });
+              }
             });
           }
         }
@@ -452,18 +489,29 @@ class PokemonDetailController extends GetxController {
   }
 
   void _getAlternativeForms(PokemonSpecies pkmSpec) {
+    var addForm = (Pokemon pkm) {
+      String art = pkm.sprites.other.officialArtwork.frontDefault;
+      if (art.isNotEmpty) {
+        alternativeForms.add(MyPokemon(
+          id: pkm.id,
+          name: pkm.name,
+          speciesId: pkmSpec.id,
+          artwork: art,
+          types: pkm.types,
+        ));
+        alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+      }
+    };
     pkmSpec.varieties.forEach((element) {
-      _api.pokemon.get(name: element.pokemon.name).then((pkm) {
-        String art = pkm.sprites.other.officialArtwork.frontDefault;
-        if (!art.isBlank && art.isNotEmpty) {
-          alternativeForms.add(MyPokemon(
-            id: pkm.id,
-            name: pkm.name,
-            speciesId: pkmSpec.id,
-            artwork: art,
-            types: pkm.types,
-          ));
-          alternativeForms.sort((a, b) => a.id.compareTo(b.id));
+      _api.pokemon
+          .get(id: Utility.getPkmIdFromUrl(element.pokemon.url))
+          .then((pkm) {
+        addForm(pkm);
+      }).catchError((ex) {
+        if (ex is FormatException) {
+          _api.pokemon.get(name: element.pokemon.name).then((pkm) {
+            addForm(pkm);
+          });
         }
       });
     });

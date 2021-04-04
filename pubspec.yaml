@@ -21,14 +21,14 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  get: ^4.1.1
+  get: ^4.1.2
   pokeapi_dart: ^0.0.1+1
   transparent_image: ^1.0.0
   http: ^0.12.2
   shared_preferences: ^2.0.3
   google_fonts: ^1.1.2
   hawk_fab_menu: ^0.3.2
-  material_design_icons_flutter: ^4.0.5855
+  material_design_icons_flutter: ^4.0.5955
   sliding_sheet: ^0.5.0
   flutter:
     sdk: flutter

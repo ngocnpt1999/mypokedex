@@ -57,15 +57,15 @@ class PokemonDetailPage extends StatelessWidget {
                   child: ListView(
                     shrinkWrap: true,
                     children: <Widget>[
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       speciesCard,
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       abilitiesCard,
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       evolutionsCard,
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                       alternativeFormsCard,
-                      Container(height: 5.0),
+                      Container(height: 8.0),
                     ],
                   ),
                 ),
@@ -479,7 +479,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var evolutions = _pageController.evolutions;
-            if (evolutions == null || evolutions.length == 0) {
+            if (evolutions.length == 0) {
               return _circularProgressIndicator();
             } else {
               List<Widget> evoNo_1 = [];
@@ -550,7 +550,7 @@ class PokemonDetailPage extends StatelessWidget {
           color: Color(0xFFB6B49C),
           child: Obx(() {
             var forms = _pageController.alternativeForms;
-            if (forms == null || forms.length == 0) {
+            if (forms.length == 0) {
               return _circularProgressIndicator();
             } else {
               var formWidgets = <Widget>[];

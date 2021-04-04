@@ -113,7 +113,7 @@ packages:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.1"
+    version: "4.1.2"
   google_fonts:
     dependency: "direct main"
     description:
@@ -169,7 +169,7 @@ packages:
       name: material_design_icons_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.5855"
+    version: "4.0.5955"
   meta:
     dependency: transitive
     description:
