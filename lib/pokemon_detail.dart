@@ -35,7 +35,7 @@ class PokemonDetailPage extends StatelessWidget {
               }
             },
             icon: Icon(Icons.arrow_back_rounded),
-            label: "Previous Pokemon",
+            label: " Previous Pokemon ",
           ),
           HawkFabMenuItem(
             ontap: () {
@@ -45,7 +45,16 @@ class PokemonDetailPage extends StatelessWidget {
               }
             },
             icon: Icon(Icons.arrow_forward_rounded),
-            label: "Next Pokemon",
+            label: " Next Pokemon ",
+          ),
+          HawkFabMenuItem(
+            ontap: () {
+              Future.delayed(Duration(milliseconds: 500)).then((value) {
+                Get.back();
+              });
+            },
+            icon: Icon(Icons.close_rounded),
+            label: " Return Home ",
           ),
         ],
         body: SafeArea(
