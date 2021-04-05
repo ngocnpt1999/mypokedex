@@ -425,6 +425,7 @@ class PokemonDetailController extends GetxController {
           Pokemon pkm = Pokemon.fromJson(jsonData);
           initPokemon(pkm);
         } else {
+          print("Can't init pokemon");
           throw Exception("Failed!!!");
         }
       }
@@ -432,10 +433,7 @@ class PokemonDetailController extends GetxController {
   }
 
   void _getEvolutionData(PokemonSpecies pkmSpec) async {
-    var response = await http.get(pkmSpec.evolutionChain.url);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
-      EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
+    var func = (EvolutionChain evoChain) {
       var evo = evoChain.chain;
       int evoNo = 1;
       var addEvolution = (Pokemon pkm, int no) {
@@ -482,10 +480,24 @@ class PokemonDetailController extends GetxController {
         }
         evo = numOfEvo > 0 ? evo.evolvesTo[0] : null;
       } while (evo != null);
-    } else {
-      print("Can't get evolution chain");
-      throw Exception("Failed!!!");
-    }
+    };
+    _api.evolutionChains
+        .get(Utility.getEvoChainIdFromUrl(pkmSpec.evolutionChain.url))
+        .then((evoChain) {
+      func(evoChain);
+    }).catchError((ex) async {
+      if (ex is FormatException) {
+        var response = await http.get(pkmSpec.evolutionChain.url);
+        if (response.statusCode == 200) {
+          Map<String, dynamic> jsonData = jsonDecode(response.body);
+          EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
+          func(evoChain);
+        } else {
+          print("Can't get evolution chain");
+          throw Exception("Failed!!!");
+        }
+      }
+    });
   }
 
   void _getAlternativeForms(PokemonSpecies pkmSpec) {

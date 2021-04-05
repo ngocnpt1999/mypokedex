@@ -40,7 +40,7 @@ class PokemonDetailPage extends StatelessWidget {
           HawkFabMenuItem(
             ontap: () {
               int specId = _pageController.pokemon.value.speciesId;
-              if (specId != null) {
+              if (specId != null && specId < 809) {
                 _pageController.init(id: specId + 1);
               }
             },
