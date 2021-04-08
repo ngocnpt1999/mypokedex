@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mypokedex/controller/pokeapi_http.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/list_favorite_pokemon.dart';
@@ -11,7 +12,6 @@ import 'package:mypokedex/model/actions.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_generation.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
-import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
   HomeController();
@@ -88,8 +88,6 @@ class ListPokemonController extends GetxController {
     });
   }
 
-  var _api = PokeApi();
-
   var scrollController = ScrollController();
 
   var pkmTileControllers = <PokemonTileController>[].obs;
@@ -141,14 +139,8 @@ class ListPokemonController extends GetxController {
       };
       jsonPkms.forEach((element) {
         var value = jsonDecode(element) as Map<String, dynamic>;
-        _api.pokemon.get(id: value["id"] as int).then((pkm) {
+        MyPokeApi.getPokemon(id: value["id"] as int).then((pkm) {
           addPokemon(pkm);
-        }).catchError((ex) {
-          if (ex is FormatException) {
-            _api.pokemon.get(name: value["name"].toString()).then((pkm) {
-              addPokemon(pkm);
-            });
-          }
         });
       });
       //Loading... countdown
@@ -233,8 +225,6 @@ class ListFavoritePokemonController extends GetxController {
     });
   }
 
-  var _api = PokeApi();
-
   var scrollController = ScrollController();
 
   var pkmTileControllers = <PokemonTileController>[].obs;
@@ -295,14 +285,8 @@ class ListFavoritePokemonController extends GetxController {
       };
       jsonPkms.forEach((element) {
         var value = jsonDecode(element) as Map<String, dynamic>;
-        _api.pokemon.get(id: value["id"] as int).then((pkm) {
+        MyPokeApi.getPokemon(id: value["id"] as int).then((pkm) {
           addFavoritePkm(pkm);
-        }).catchError((ex) {
-          if (ex is FormatException) {
-            _api.pokemon.get(name: value["name"].toString()).then((pkm) {
-              addFavoritePkm(pkm);
-            });
-          }
         });
       });
       //Loading... countdown
@@ -375,8 +359,6 @@ class ListFavoritePokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   PokemonDetailController();
 
-  var _api = PokeApi();
-
   var isHideArtwork = false.obs;
 
   var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
@@ -391,7 +373,7 @@ class PokemonDetailController extends GetxController {
     alternativeForms.clear();
     //
     var initPokemon = (Pokemon pkm) {
-      _api.pokemonSpecies.get(name: pkm.species.name).then((pkmSpec) {
+      MyPokeApi.getPokemonSpecies(name: pkm.species.name).then((pkmSpec) {
         var entries = pkmSpec.flavorTextEntries
             .lastWhere((element) => element.language.name == "en");
         var category = pkmSpec.genera
@@ -413,27 +395,13 @@ class PokemonDetailController extends GetxController {
         _getAlternativeForms(pkmSpec);
       });
     };
-    _api.pokemon.get(id: id, name: name).then((pkm) {
+    MyPokeApi.getPokemon(id: id, name: name).then((pkm) {
       initPokemon(pkm);
-    }).catchError((ex) async {
-      if (ex is FormatException) {
-        String index = id != null ? id.toString() : name;
-        var response =
-            await http.get("https://pokeapi.co/api/v2/pokemon/$index/");
-        if (response.statusCode == 200) {
-          Map<String, dynamic> jsonData = jsonDecode(response.body);
-          Pokemon pkm = Pokemon.fromJson(jsonData);
-          initPokemon(pkm);
-        } else {
-          print("Can't init pokemon");
-          throw Exception("Failed!!!");
-        }
-      }
     });
   }
 
   void _getEvolutionData(PokemonSpecies pkmSpec) async {
-    var func = (EvolutionChain evoChain) {
+    var handleEvo = (EvolutionChain evoChain) {
       var evo = evoChain.chain;
       int evoNo = 1;
       var addEvolution = (Pokemon pkm, int no) {
@@ -451,52 +419,26 @@ class PokemonDetailController extends GetxController {
         int numOfEvo = evo.evolvesTo.length;
         int tempEvoNo = evoNo;
         int id = Utility.getPkmSpecIdFromUrl(evo.species.url);
-        String name = evo.species.name;
-        _api.pokemon.get(id: id).then((pkm) {
+        MyPokeApi.getPokemon(id: id).then((pkm) {
           addEvolution(pkm, tempEvoNo);
-        }).catchError((ex) {
-          if (ex is FormatException) {
-            _api.pokemon.get(name: name).then((pkm) {
-              addEvolution(pkm, tempEvoNo);
-            });
-          }
         });
         evoNo++;
         if (numOfEvo > 1) {
           for (int i = 1; i < numOfEvo; i++) {
             int _tempEvoNo = evoNo;
             int _id = Utility.getPkmSpecIdFromUrl(evo.evolvesTo[i].species.url);
-            String _name = evo.evolvesTo[i].species.name;
-            _api.pokemon.get(id: _id).then((pkm) {
+            MyPokeApi.getPokemon(id: _id).then((pkm) {
               addEvolution(pkm, _tempEvoNo);
-            }).catchError((ex) {
-              if (ex is FormatException) {
-                _api.pokemon.get(name: _name).then((pkm) {
-                  addEvolution(pkm, _tempEvoNo);
-                });
-              }
             });
           }
         }
         evo = numOfEvo > 0 ? evo.evolvesTo[0] : null;
       } while (evo != null);
     };
-    _api.evolutionChains
-        .get(Utility.getEvoChainIdFromUrl(pkmSpec.evolutionChain.url))
+    MyPokeApi.getEvolutionChain(
+            id: Utility.getEvoChainIdFromUrl(pkmSpec.evolutionChain.url))
         .then((evoChain) {
-      func(evoChain);
-    }).catchError((ex) async {
-      if (ex is FormatException) {
-        var response = await http.get(pkmSpec.evolutionChain.url);
-        if (response.statusCode == 200) {
-          Map<String, dynamic> jsonData = jsonDecode(response.body);
-          EvolutionChain evoChain = EvolutionChain.fromJson(jsonData);
-          func(evoChain);
-        } else {
-          print("Can't get evolution chain");
-          throw Exception("Failed!!!");
-        }
-      }
+      handleEvo(evoChain);
     });
   }
 
@@ -515,16 +457,9 @@ class PokemonDetailController extends GetxController {
       }
     };
     pkmSpec.varieties.forEach((element) {
-      _api.pokemon
-          .get(id: Utility.getPkmIdFromUrl(element.pokemon.url))
+      MyPokeApi.getPokemon(id: Utility.getPkmIdFromUrl(element.pokemon.url))
           .then((pkm) {
         addForm(pkm);
-      }).catchError((ex) {
-        if (ex is FormatException) {
-          _api.pokemon.get(name: element.pokemon.name).then((pkm) {
-            addForm(pkm);
-          });
-        }
       });
     });
   }

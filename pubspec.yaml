@@ -21,7 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  get: ^4.1.2
+  get: ^3.26.0
   pokeapi_dart: ^0.0.1+1
   transparent_image: ^1.0.0
   http: ^0.12.2

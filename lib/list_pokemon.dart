@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mypokedex/controller/pokeapi_http.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/controller/utility.dart';
@@ -76,9 +77,8 @@ class ListPokemonPage extends StatelessWidget {
           ),
           barrierDismissible: false,
         );
-        var api = PokeApi();
         List<String> jsonPkms = [];
-        api.pokemon.getPage(offset: 0, limit: _totalPkm).then((response) {
+        var handleData = (NamedApiResourceList response) {
           response.results.forEach((element) {
             int id = Utility.getPkmIdFromUrl(element.url);
             var pkm = MyPokemon(id: id, name: element.name, speciesId: id);
@@ -88,6 +88,9 @@ class ListPokemonPage extends StatelessWidget {
             Get.back();
             _pageController.loadMore();
           });
+        };
+        MyPokeApi.getPokemonPage(offset: 0, limit: _totalPkm).then((response) {
+          handleData(response);
         });
       } else {
         if (_pageController.pkmTileControllers.length == 0) {
