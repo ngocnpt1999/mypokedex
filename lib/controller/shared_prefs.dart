@@ -15,11 +15,11 @@ class SharedPrefs {
 
   SharedPreferences _prefs;
 
-  Future<SharedPreferences> createPrefs() async {
+  Future<bool> clearCache() async {
     if (_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
     }
-    return _prefs;
+    return await _prefs.clear();
   }
 
   Future<List<bool>> init() async {

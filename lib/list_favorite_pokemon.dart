@@ -10,7 +10,8 @@ class ListFavoritePokemonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_pageController.pkmTileControllers.length == 0) {
+    if (!_pageController.isRun) {
+      _pageController.isRun = true;
       _pageController.loadMore();
     }
     return Obx(() {

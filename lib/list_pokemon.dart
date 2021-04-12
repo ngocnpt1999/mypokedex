@@ -11,7 +11,10 @@ class ListPokemonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _fetchData();
+    if (!_pageController.isRun) {
+      _pageController.isRun = true;
+      _fetchData();
+    }
     return Obx(() {
       if (_pageController.pkmTileControllers.length == 0) {
         return Center(
@@ -48,36 +51,30 @@ class ListPokemonPage extends StatelessWidget {
   }
 
   void _fetchData() {
-    SharedPrefs.instance.createPrefs().then((value) {
-      if (SharedPrefs.instance.getPokedex().length == 0) {
-        Get.dialog(
-          AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(),
-                Container(
-                  height: 5.0,
-                ),
-                Text(
-                  "Fetching data...",
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+    SharedPrefs.instance.clearCache().then((value) {
+      Get.dialog(
+        AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Container(
+                height: 5.0,
+              ),
+              Text(
+                "Fetching data...",
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          barrierDismissible: false,
-        );
-        SharedPrefs.instance.init().then((value) {
-          Get.back();
-          _pageController.loadMore();
-        });
-      } else {
-        if (_pageController.pkmTileControllers.length == 0) {
-          _pageController.loadMore();
-        }
-      }
+        ),
+        barrierDismissible: false,
+      );
+      SharedPrefs.instance.init().then((value) {
+        Get.back();
+        _pageController.loadMore();
+      });
     });
   }
 }

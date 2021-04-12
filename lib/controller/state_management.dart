@@ -92,6 +92,8 @@ class ListPokemonController extends GetxController {
     });
   }
 
+  var isRun = false;
+
   var scrollController = ScrollController();
 
   var pkmTileControllers = <PokemonTileController>[].obs;
@@ -233,6 +235,8 @@ class ListFavoritePokemonController extends GetxController {
       }
     });
   }
+
+  var isRun = false;
 
   var scrollController = ScrollController();
 
