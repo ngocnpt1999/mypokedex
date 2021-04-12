@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/pokemon_generation.dart';
+import 'package:mypokedex/model/pokemon_type.dart';
 
 class HomeAction {
   static const String hideAll = "Hide All";
@@ -27,6 +29,28 @@ class ListPokemonFilter {
     PokemonGeneration.genV,
     PokemonGeneration.genVI,
     PokemonGeneration.genVII,
+  ];
+
+  static const types = <String>[
+    MyPokemonType.allType,
+    MyPokemonType.bug,
+    MyPokemonType.dark,
+    MyPokemonType.dragon,
+    MyPokemonType.electric,
+    MyPokemonType.fairy,
+    MyPokemonType.fighting,
+    MyPokemonType.fire,
+    MyPokemonType.flying,
+    MyPokemonType.ghost,
+    MyPokemonType.grass,
+    MyPokemonType.ground,
+    MyPokemonType.ice,
+    MyPokemonType.normal,
+    MyPokemonType.poison,
+    MyPokemonType.psychic,
+    MyPokemonType.rock,
+    MyPokemonType.steel,
+    MyPokemonType.water,
   ];
 
   static List<String> filterByGen(List<String> list, String generation) {
@@ -82,6 +106,18 @@ class ListPokemonFilter {
         break;
       default:
         break;
+    }
+    return list;
+  }
+
+  static List<String> filterByType(List<String> list, String typeName) {
+    if (typeName != MyPokemonType.allType) {
+      var typepkms = SharedPrefs.instance.getTypePokemons(typeName);
+      list = list.where((element) {
+        var value = jsonDecode(element) as Map<String, dynamic>;
+        int id = value["id"] as int;
+        return typepkms.contains(id.toString());
+      }).toList();
     }
     return list;
   }

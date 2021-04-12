@@ -36,7 +36,7 @@ class PokemonTile extends StatelessWidget {
         child: Card(
           elevation: 3.0,
           color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-              .withOpacity(0.5),
+              .withOpacity(0.7),
           child: InkWell(
             onTap: () {
               Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {

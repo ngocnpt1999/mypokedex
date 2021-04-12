@@ -1,19 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mypokedex/controller/pokeapi_http.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
-import 'package:mypokedex/controller/utility.dart';
-import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
-import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class ListPokemonPage extends StatelessWidget {
   ListPokemonPage();
-
-  final int _totalPkm = 809;
 
   final _pageController = Get.put(ListPokemonController());
 
@@ -56,7 +48,7 @@ class ListPokemonPage extends StatelessWidget {
   }
 
   void _fetchData() {
-    SharedPrefs.instance.init().then((value) {
+    SharedPrefs.instance.createPrefs().then((value) {
       if (SharedPrefs.instance.getPokedex().length == 0) {
         Get.dialog(
           AlertDialog(
@@ -77,20 +69,9 @@ class ListPokemonPage extends StatelessWidget {
           ),
           barrierDismissible: false,
         );
-        List<String> jsonPkms = [];
-        var handleData = (NamedApiResourceList response) {
-          response.results.forEach((element) {
-            int id = Utility.getPkmIdFromUrl(element.url);
-            var pkm = MyPokemon(id: id, name: element.name, speciesId: id);
-            jsonPkms.add(jsonEncode(pkm.toJson()));
-          });
-          SharedPrefs.instance.setPokedex(jsonPkms).then((e) {
-            Get.back();
-            _pageController.loadMore();
-          });
-        };
-        MyPokeApi.getPokemonPage(offset: 0, limit: _totalPkm).then((response) {
-          handleData(response);
+        SharedPrefs.instance.init().then((value) {
+          Get.back();
+          _pageController.loadMore();
         });
       } else {
         if (_pageController.pkmTileControllers.length == 0) {

@@ -40,7 +40,7 @@ class PokemonCard extends StatelessWidget {
     return Card(
       elevation: 3.0,
       color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
-          .withOpacity(0.5),
+          .withOpacity(0.8),
       child: InkWell(
         onTap: () {
           PokemonDetailController controller = Get.find();

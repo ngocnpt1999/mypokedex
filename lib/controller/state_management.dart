@@ -8,9 +8,10 @@ import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/list_favorite_pokemon.dart';
 import 'package:mypokedex/list_pokemon.dart';
-import 'package:mypokedex/model/actions.dart';
+import 'package:mypokedex/controller/actions.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_generation.dart';
+import 'package:mypokedex/model/pokemon_type.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class HomeController extends GetxController {
@@ -24,12 +25,14 @@ class HomeController extends GetxController {
     ListFavoritePokemonPage(),
   ];
 
-  var selectedIndex = 0.obs;
+  var selectedTabIndex = 0.obs;
 
-  var selectedGen = 0.obs;
+  var selectedGeneration = PokemonGeneration.allGen.obs;
+
+  var selectedType = MyPokemonType.allType.obs;
 
   void changeTab(int index) {
-    selectedIndex.value = index;
+    selectedTabIndex.value = index;
   }
 
   void hideAllArtwork() {
@@ -46,19 +49,19 @@ class HomeController extends GetxController {
     listFrvPkmController.revealAllArtwork();
   }
 
-  void changeGen(int gene) {
-    selectedGen.value = gene;
+  void changeFilter({String generation, String filter, String typeName}) {
+    if (generation != null) {
+      selectedGeneration.value = generation;
+    }
+    if (typeName != null) {
+      selectedType.value = typeName;
+    }
     ListPokemonController listPkmController = Get.find();
     ListFavoritePokemonController listFrvPkmController = Get.find();
-    listPkmController.changeGen(ListPokemonFilter.generations[gene]);
-    listFrvPkmController.changeGen(ListPokemonFilter.generations[gene]);
-  }
-
-  void changeFilter(String filter) {
-    ListPokemonController listPkmController = Get.find();
-    ListFavoritePokemonController listFrvPkmController = Get.find();
-    listPkmController.changeFilter(filter);
-    listFrvPkmController.changeFilter(filter);
+    listPkmController.changeFilter(
+        generation: generation, filter: filter, typeName: typeName);
+    listFrvPkmController.changeFilter(
+        generation: generation, filter: filter, typeName: typeName);
   }
 }
 
@@ -76,8 +79,9 @@ class PokemonTileController extends GetxController {
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
-      int totalPkm =
-          SharedPrefs.instance.getPokedex(generation: _generation).length;
+      int totalPkm = SharedPrefs.instance
+          .getPokedex(generation: _generation, typeName: _typeName)
+          .length;
       if (pkmTileControllers.length < totalPkm) {
         double maxPosition = scrollController.position.maxScrollExtent;
         double currentPosition = scrollController.position.pixels;
@@ -96,6 +100,8 @@ class ListPokemonController extends GetxController {
 
   String _generation = PokemonGeneration.allGen;
 
+  String _typeName = MyPokemonType.allType;
+
   String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
@@ -105,14 +111,17 @@ class ListPokemonController extends GetxController {
   void loadMore() async {
     if (_isLoading == false) {
       _isLoading = true;
-      int totalPkm =
-          SharedPrefs.instance.getPokedex(generation: _generation).length;
+      int totalPkm = SharedPrefs.instance
+          .getPokedex(generation: _generation, typeName: _typeName)
+          .length;
       var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
-              .getPokedex(generation: _generation, filter: _filter)
+              .getPokedex(
+                  generation: _generation, filter: _filter, typeName: _typeName)
               .sublist(pkmTileControllers.length)
           : SharedPrefs.instance
-              .getPokedex(generation: _generation, filter: _filter)
+              .getPokedex(
+                  generation: _generation, filter: _filter, typeName: _typeName)
               .sublist(pkmTileControllers.length,
                   pkmTileControllers.length + _limit);
       if (jsonPkms.length == 0) {
@@ -185,23 +194,23 @@ class ListPokemonController extends GetxController {
     loadMore();
   }
 
-  void changeGen(String generation) {
-    if (generation != _generation) {
+  void changeFilter({String generation, String filter, String typeName}) {
+    if (generation != null) {
       _generation = generation;
-      refresh();
     }
-  }
-
-  void changeFilter(String filter) {
-    if (filter != _filter) {
+    if (filter != null) {
       _filter = filter;
-      refresh();
     }
+    if (typeName != null) {
+      _typeName = typeName;
+    }
+    refresh();
   }
 
   bool endOfData() {
-    int totalPkm =
-        SharedPrefs.instance.getPokedex(generation: _generation).length;
+    int totalPkm = SharedPrefs.instance
+        .getPokedex(generation: _generation, typeName: _typeName)
+        .length;
     if (pkmTileControllers.length == totalPkm) {
       return true;
     }
@@ -214,7 +223,7 @@ class ListFavoritePokemonController extends GetxController {
     scrollController.addListener(() {
       if (pkmTileControllers.length <
           SharedPrefs.instance
-              .getFavoritesPokemon(generation: _generation)
+              .getFavoritesPokemon(generation: _generation, typeName: _typeName)
               .length) {
         double maxPosition = scrollController.position.maxScrollExtent;
         double currentPosition = scrollController.position.pixels;
@@ -235,6 +244,8 @@ class ListFavoritePokemonController extends GetxController {
 
   String _generation = PokemonGeneration.allGen;
 
+  String _typeName = MyPokemonType.allType;
+
   String _filter = ListPokemonFilter.ascendingID;
 
   int _limit = 15;
@@ -245,7 +256,7 @@ class ListFavoritePokemonController extends GetxController {
     if (_isLoading == false) {
       _isLoading = true;
       int totalPkm = SharedPrefs.instance
-          .getFavoritesPokemon(generation: _generation)
+          .getFavoritesPokemon(generation: _generation, typeName: _typeName)
           .length;
       if (totalPkm == 0) {
         hasFavorites.value = false;
@@ -255,10 +266,12 @@ class ListFavoritePokemonController extends GetxController {
       hasFavorites.value = true;
       var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
-              .getFavoritesPokemon(generation: _generation, filter: _filter)
+              .getFavoritesPokemon(
+                  generation: _generation, filter: _filter, typeName: _typeName)
               .sublist(pkmTileControllers.length)
           : SharedPrefs.instance
-              .getFavoritesPokemon(generation: _generation, filter: _filter)
+              .getFavoritesPokemon(
+                  generation: _generation, filter: _filter, typeName: _typeName)
               .sublist(pkmTileControllers.length,
                   pkmTileControllers.length + _limit);
       if (jsonPkms.length == 0) {
@@ -331,24 +344,23 @@ class ListFavoritePokemonController extends GetxController {
     loadMore();
   }
 
-  void changeGen(String generation) {
-    if (generation != _generation) {
+  void changeFilter({String generation, String filter, String typeName}) {
+    if (generation != null) {
       _generation = generation;
-      refresh();
     }
-  }
-
-  void changeFilter(String filter) {
-    if (filter != _filter) {
+    if (filter != null) {
       _filter = filter;
-      refresh();
     }
+    if (typeName != null) {
+      _typeName = typeName;
+    }
+    refresh();
   }
 
   bool endOfData() {
     if (pkmTileControllers.length ==
         SharedPrefs.instance
-            .getFavoritesPokemon(generation: _generation)
+            .getFavoritesPokemon(generation: _generation, typeName: _typeName)
             .length) {
       return true;
     }
@@ -363,12 +375,15 @@ class PokemonDetailController extends GetxController {
 
   var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
 
+  var weakness = <String, double>{}.obs;
+
   var evolutions = <MyPokemon>[].obs;
 
   var alternativeForms = <MyPokemon>[].obs;
 
   void init({int id, String name}) {
     pokemon.value = MyPokemon(id: 0, name: "", speciesId: 0);
+    weakness.clear();
     evolutions.clear();
     alternativeForms.clear();
     //
@@ -391,6 +406,7 @@ class PokemonDetailController extends GetxController {
           abilities: pkm.abilities,
           genderRate: pkmSpec.genderRate,
         );
+        _getTypeWeakness(pkm.types);
         _getEvolutionData(pkmSpec);
         _getAlternativeForms(pkmSpec);
       });
@@ -400,7 +416,35 @@ class PokemonDetailController extends GetxController {
     });
   }
 
-  void _getEvolutionData(PokemonSpecies pkmSpec) async {
+  void _getTypeWeakness(List<PokemonType> types) {
+    types.forEach((type) {
+      MyPokeApi.getPokemonType(name: type.type.name).then((value) {
+        value.damageRelations.doubleDamageFrom.forEach((element) {
+          if (weakness.containsKey(element.name)) {
+            weakness[element.name] = weakness[element.name] * 2.0;
+          } else {
+            weakness[element.name] = 2.0;
+          }
+        });
+        value.damageRelations.halfDamageFrom.forEach((element) {
+          if (weakness.containsKey(element.name)) {
+            weakness[element.name] = weakness[element.name] * 0.5;
+          } else {
+            weakness[element.name] = 0.5;
+          }
+        });
+        value.damageRelations.noDamageFrom.forEach((element) {
+          if (weakness.containsKey(element.name)) {
+            weakness[element.name] = weakness[element.name] * 0;
+          } else {
+            weakness[element.name] = 0;
+          }
+        });
+      });
+    });
+  }
+
+  void _getEvolutionData(PokemonSpecies pkmSpec) {
     var handleEvo = (EvolutionChain evoChain) {
       var evo = evoChain.chain;
       int evoNo = 1;

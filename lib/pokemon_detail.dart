@@ -18,10 +18,26 @@ class PokemonDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget pokemonBar = _buildPokeBar();
-    Widget speciesCard = _buildPokeSpecies();
-    Widget abilitiesCard = _buildPokeAbilities();
-    Widget evolutionsCard = _buildEvolutionChain();
-    Widget alternativeFormsCard = _buildAlternativeForms();
+    Widget speciesCard = _buildWidget(
+      header: "Species",
+      content: _pokemonSpecies(),
+    );
+    Widget weaknessCard = _buildWidget(
+      header: "Weakness",
+      content: _pokemonWeakness(),
+    );
+    Widget abilitiesCard = _buildWidget(
+      header: "Abilities",
+      content: _pokemonAbilities(),
+    );
+    Widget evolutionsCard = _buildWidget(
+      header: "Evolutions",
+      content: _evolutionChain(),
+    );
+    Widget alternativeFormsCard = _buildWidget(
+      header: "Alternative forms",
+      content: _alternativeForms(),
+    );
     return Scaffold(
       backgroundColor: Color(0xFFF88379),
       body: HawkFabMenu(
@@ -68,6 +84,8 @@ class PokemonDetailPage extends StatelessWidget {
                     children: <Widget>[
                       Container(height: 8.0),
                       speciesCard,
+                      Container(height: 8.0),
+                      weaknessCard,
                       Container(height: 8.0),
                       abilitiesCard,
                       Container(height: 8.0),
@@ -143,28 +161,13 @@ class PokemonDetailPage extends StatelessWidget {
               Expanded(
                 child: Card(
                   elevation: 3.0,
-                  child: Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: Row(
-                      children: <Widget>[
-                        Image.asset(
-                          "assets/images/" + value.type.name + ".png",
-                          width: 18.0,
-                          height: 18.0,
-                          fit: BoxFit.contain,
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              value.type.name.capitalizeFirstofEach
-                                  .toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12.0),
-                            ),
-                          ),
-                        ),
-                      ],
+                  color: Color(PokemonTypeColors.colors[value.type.name]),
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      value.type.name.capitalizeFirstofEach.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12.0),
                     ),
                   ),
                 ),
@@ -259,11 +262,11 @@ class PokemonDetailPage extends StatelessWidget {
     });
   }
 
-  Widget _buildPokeSpecies() {
+  Widget _buildWidget({String header, Widget content}) {
     return Column(
       children: <Widget>[
         Text(
-          "Species",
+          header,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18.0,
@@ -274,179 +277,209 @@ class PokemonDetailPage extends StatelessWidget {
         Card(
           elevation: 4.0,
           color: Color(0xFFB6B49C),
-          child: Obx(() {
-            var pokemon = _pageController.pokemon.value;
-            if (pokemon.id == 0) {
-              return _circularProgressIndicator();
-            } else {
-              return Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Card(
-                                      elevation: 3.0,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5.0),
-                                        child: Text(
-                                          pokemon.entry,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                "Pokedex entry",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Card(
-                                      elevation: 3.0,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5.0),
-                                        child: Text(
-                                          (pokemon.weight / 10.0).toString() +
-                                              " kg",
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                "Weight",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Card(
-                                      elevation: 3.0,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5.0),
-                                        child: Text(
-                                          (pokemon.height / 10.0).toString() +
-                                              " m",
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                "Height",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }
-          }),
+          child: content,
         ),
       ],
     );
   }
 
-  Widget _buildPokeAbilities() {
-    return Column(
-      children: <Widget>[
-        Text(
-          "Abilities",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Container(height: 5.0),
-        Card(
-          elevation: 4.0,
-          color: Color(0xFFB6B49C),
-          child: Obx(() {
-            var pokemon = _pageController.pokemon.value;
-            if (pokemon.id == 0) {
-              return _circularProgressIndicator();
-            } else {
-              var abilities = pokemon.abilities;
-              List<Widget> abiCards = [];
-              abilities.forEach((value) {
-                if (value.isHidden) {
-                  return;
-                }
-                abiCards.add(Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Card(
-                        elevation: 3.0,
-                        child: Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
-                            value.ability.name.capitalizeFirstofEach,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18.0,
+  Widget _pokemonSpecies() {
+    return Obx(() {
+      var pokemon = _pageController.pokemon.value;
+      if (pokemon.id == 0) {
+        return _circularProgressIndicator();
+      } else {
+        return Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Card(
+                                elevation: 3.0,
+                                child: Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: Text(
+                                    pokemon.entry,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
                             ),
+                          ],
+                        ),
+                        Text(
+                          "Pokedex entry",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12.0,
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Card(
+                                elevation: 3.0,
+                                child: Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: Text(
+                                    (pokemon.weight / 10.0).toString() + " kg",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Weight",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Card(
+                                elevation: 3.0,
+                                child: Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: Text(
+                                    (pokemon.height / 10.0).toString() + " m",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Height",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _pokemonWeakness() {
+    return Obx(() {
+      var weakness = _pageController.weakness;
+      if (weakness.length == 0) {
+        return _circularProgressIndicator();
+      } else {
+        var typeWidgets = <Widget>[];
+        weakness.forEach((key, value) {
+          if (value >= 2) {
+            typeWidgets.add(Container(
+              width: Get.width / 3.5,
+              child: Card(
+                elevation: 3.0,
+                color: Color(PokemonTypeColors.colors[key]),
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    key.capitalizeFirstofEach.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12.0),
+                  ),
+                ),
+              ),
+            ));
+          }
+        });
+        return Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Center(
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    children: typeWidgets,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _pokemonAbilities() {
+    return Obx(() {
+      var pokemon = _pageController.pokemon.value;
+      if (pokemon.id == 0) {
+        return _circularProgressIndicator();
+      } else {
+        var abilities = pokemon.abilities;
+        List<Widget> abiCards = [];
+        abilities.forEach((value) {
+          if (value.isHidden) {
+            return;
+          }
+          abiCards.add(Row(
+            children: <Widget>[
+              Expanded(
+                child: Card(
+                  elevation: 3.0,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      value.ability.name.capitalizeFirstofEach,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18.0,
                       ),
                     ),
-                  ],
-                ));
-              });
-              return Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Column(
-                  children: abiCards,
+                  ),
                 ),
-              );
-            }
-          }),
-        ),
-      ],
-    );
+              ),
+            ],
+          ));
+        });
+        return Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Column(
+            children: abiCards,
+          ),
+        );
+      }
+    });
   }
 
   void _divideEvolutionNoRows(List<Widget> evoNo) {
@@ -471,127 +504,93 @@ class PokemonDetailPage extends StatelessWidget {
     evoNo.addAll(tempWidgets);
   }
 
-  Widget _buildEvolutionChain() {
-    return Column(
-      children: <Widget>[
-        Text(
-          "Evolutions",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
+  Widget _evolutionChain() {
+    return Obx(() {
+      var evolutions = _pageController.evolutions;
+      if (evolutions.length == 0) {
+        return _circularProgressIndicator();
+      } else {
+        List<Widget> evoNo_1 = [];
+        List<Widget> evoNo_2 = [];
+        List<Widget> evoNo_3 = [];
+        evolutions.forEach((pokemon) {
+          var pkmCard = PokemonCard(
+            pokemon: pokemon,
+            imgSize: Get.width / 5,
+          );
+          if (pokemon.evolutionNo == 1) {
+            evoNo_1.add(pkmCard);
+          } else if (pokemon.evolutionNo == 2) {
+            evoNo_2.add(pkmCard);
+          } else {
+            evoNo_3.add(pkmCard);
+          }
+        });
+        if (evoNo_2.length > 2) {
+          _divideEvolutionNoRows(evoNo_2);
+        }
+        if (evoNo_3.length > 2) {
+          _divideEvolutionNoRows(evoNo_3);
+        }
+        List<Widget> evoWidgets = [
+          Column(children: evoNo_1),
+          Column(children: evoNo_2),
+          Column(children: evoNo_3),
+        ];
+        var forwardIcon = Icon(
+          Icons.arrow_forward,
+          size: 26.0,
+        );
+        if (evoNo_2.length > 0) {
+          evoWidgets.insert(1, forwardIcon);
+        }
+        if (evoNo_3.length > 0) {
+          evoWidgets.insert(evoWidgets.length - 1, forwardIcon);
+        }
+        return Padding(
+          padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: evoWidgets,
           ),
-        ),
-        Container(height: 5.0),
-        Card(
-          elevation: 4.0,
-          color: Color(0xFFB6B49C),
-          child: Obx(() {
-            var evolutions = _pageController.evolutions;
-            if (evolutions.length == 0) {
-              return _circularProgressIndicator();
-            } else {
-              List<Widget> evoNo_1 = [];
-              List<Widget> evoNo_2 = [];
-              List<Widget> evoNo_3 = [];
-              evolutions.forEach((pokemon) {
-                var pkmCard = PokemonCard(
-                  pokemon: pokemon,
-                  imgSize: Get.width / 5,
-                );
-                if (pokemon.evolutionNo == 1) {
-                  evoNo_1.add(pkmCard);
-                } else if (pokemon.evolutionNo == 2) {
-                  evoNo_2.add(pkmCard);
-                } else {
-                  evoNo_3.add(pkmCard);
-                }
-              });
-              if (evoNo_2.length > 2) {
-                _divideEvolutionNoRows(evoNo_2);
-              }
-              if (evoNo_3.length > 2) {
-                _divideEvolutionNoRows(evoNo_3);
-              }
-              List<Widget> evoWidgets = [
-                Column(children: evoNo_1),
-                Column(children: evoNo_2),
-                Column(children: evoNo_3),
-              ];
-              var forwardIcon = Icon(
-                Icons.arrow_forward,
-                size: 26.0,
-              );
-              if (evoNo_2.length > 0) {
-                evoWidgets.insert(1, forwardIcon);
-              }
-              if (evoNo_3.length > 0) {
-                evoWidgets.insert(evoWidgets.length - 1, forwardIcon);
-              }
-              return Padding(
-                padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: evoWidgets,
-                ),
-              );
-            }
-          }),
-        ),
-      ],
-    );
+        );
+      }
+    });
   }
 
-  Widget _buildAlternativeForms() {
-    return Column(
-      children: <Widget>[
-        Text(
-          "Alternative forms",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
+  Widget _alternativeForms() {
+    return Obx(() {
+      var forms = _pageController.alternativeForms;
+      if (forms.length == 0) {
+        return _circularProgressIndicator();
+      } else {
+        var formWidgets = <Widget>[];
+        forms.forEach((pokemon) {
+          formWidgets.add(PokemonCard(
+            pokemon: pokemon,
+            imgSize: Get.width / 3.5,
+            textNameSize: 15.0,
+          ));
+        });
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 15.0,
+            bottom: 15.0,
+            left: 5.0,
+            right: 5.0,
           ),
-        ),
-        Container(height: 5.0),
-        Card(
-          elevation: 4.0,
-          color: Color(0xFFB6B49C),
-          child: Obx(() {
-            var forms = _pageController.alternativeForms;
-            if (forms.length == 0) {
-              return _circularProgressIndicator();
-            } else {
-              var formWidgets = <Widget>[];
-              forms.forEach((pokemon) {
-                formWidgets.add(PokemonCard(
-                  pokemon: pokemon,
-                  imgSize: Get.width / 3,
-                  textNameSize: 15.0,
-                ));
-              });
-              return Padding(
-                padding: EdgeInsets.only(
-                  top: 15.0,
-                  bottom: 15.0,
-                  left: 5.0,
-                  right: 5.0,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: formWidgets,
                 ),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        children: formWidgets,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-          }),
-        ),
-      ],
-    );
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 }

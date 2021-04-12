@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mypokedex/model/actions.dart';
+import 'package:mypokedex/controller/actions.dart';
+import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/widget/search.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
@@ -100,7 +101,7 @@ class MyHomePage extends StatelessWidget {
                 label: 'Favorite',
               ),
             ],
-            currentIndex: _pageController.selectedIndex.value,
+            currentIndex: _pageController.selectedTabIndex.value,
             onTap: (index) {
               _pageController.changeTab(index);
             },
@@ -111,28 +112,32 @@ class MyHomePage extends StatelessWidget {
           HawkFabMenuItem(
             label: ListPokemonFilter.ascendingID,
             ontap: () {
-              _pageController.changeFilter(ListPokemonFilter.ascendingID);
+              _pageController.changeFilter(
+                  filter: ListPokemonFilter.ascendingID);
             },
             icon: Icon(Icons.sort_rounded),
           ),
           HawkFabMenuItem(
             label: ListPokemonFilter.descendingID,
             ontap: () {
-              _pageController.changeFilter(ListPokemonFilter.descendingID);
+              _pageController.changeFilter(
+                  filter: ListPokemonFilter.descendingID);
             },
             icon: Icon(Icons.sort_rounded),
           ),
           HawkFabMenuItem(
             label: ListPokemonFilter.alphabetAZ,
             ontap: () {
-              _pageController.changeFilter(ListPokemonFilter.alphabetAZ);
+              _pageController.changeFilter(
+                  filter: ListPokemonFilter.alphabetAZ);
             },
             icon: Icon(Icons.sort_by_alpha_rounded),
           ),
           HawkFabMenuItem(
             label: ListPokemonFilter.alphabetZA,
             ontap: () {
-              _pageController.changeFilter(ListPokemonFilter.alphabetZA);
+              _pageController.changeFilter(
+                  filter: ListPokemonFilter.alphabetZA);
             },
             icon: Icon(Icons.sort_by_alpha_rounded),
           ),
@@ -147,69 +152,16 @@ class MyHomePage extends StatelessWidget {
                   child: Card(
                     elevation: 2.0,
                     child: InkWell(
-                      onTap: () async {
-                        await showSlidingBottomSheet(
-                          context,
-                          builder: (context) => SlidingSheetDialog(
-                            elevation: 8.0,
-                            cornerRadius: 16.0,
-                            snapSpec: SnapSpec(
-                              snappings: [1.0],
-                            ),
-                            builder: (context, state) => Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Material(
-                                  child: Text(
-                                    "Select Generation",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  height: 8.0,
-                                ),
-                                ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                  ),
-                                  itemCount:
-                                      ListPokemonFilter.generations.length,
-                                  itemBuilder: (context, index) => Card(
-                                    elevation: 4.0,
-                                    color: Colors.grey[300],
-                                    child: InkWell(
-                                      onTap: () {
-                                        _pageController.changeGen(index);
-                                        Get.back();
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Text(
-                                          ListPokemonFilter.generations[index],
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                      onTap: () {
+                        _showSheet(context,
+                            header: "Select Generation",
+                            selections: ListPokemonFilter.generations);
                       },
                       child: Obx(() => Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Text(
-                              ListPokemonFilter.generations[
-                                  _pageController.selectedGen.value],
+                              _pageController.selectedGeneration.value
+                                  .toUpperCase(),
                               textAlign: TextAlign.center,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
@@ -218,14 +170,102 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 6,
+                  flex: 3,
+                  child: Card(
+                    elevation: 2.0,
+                    child: InkWell(
+                      onTap: () {
+                        _showSheet(context,
+                            header: "Select Type",
+                            selections: ListPokemonFilter.types);
+                      },
+                      child: Obx(() => Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              _pageController.selectedType.value.toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          )),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
                   child: Container(),
                 ),
               ],
             ),
             Expanded(
-              child: Obx(() =>
-                  _pageController.pages[_pageController.selectedIndex.value]),
+              child: Obx(() => _pageController
+                  .pages[_pageController.selectedTabIndex.value]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _showSheet(BuildContext context,
+      {String header, List<String> selections}) async {
+    await showSlidingBottomSheet(
+      context,
+      builder: (context) => SlidingSheetDialog(
+        elevation: 8.0,
+        cornerRadius: 16.0,
+        snapSpec: SnapSpec(
+          snappings: [1.0],
+        ),
+        builder: (context, state) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Material(
+              child: Text(
+                header,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            Container(
+              height: 8.0,
+            ),
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.only(
+                left: 20.0,
+                right: 20.0,
+              ),
+              itemCount: selections.length,
+              itemBuilder: (context, index) => Card(
+                elevation: 4.0,
+                color: ListPokemonFilter.generations.contains(selections[index])
+                    ? Colors.grey[300]
+                    : Color(PokemonTypeColors.colors[selections[index]]),
+                child: InkWell(
+                  onTap: () {
+                    if (ListPokemonFilter.generations
+                        .contains(selections[index])) {
+                      _pageController.changeFilter(
+                          generation: selections[index]);
+                    } else {
+                      _pageController.changeFilter(typeName: selections[index]);
+                    }
+                    Get.back();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      selections[index].toUpperCase(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
