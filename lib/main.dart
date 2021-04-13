@@ -171,24 +171,26 @@ class MyHomePage extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 3,
-                  child: Card(
-                    elevation: 2.0,
-                    child: InkWell(
-                      onTap: () {
-                        _showSheet(context,
-                            header: "Select Type",
-                            selections: ListPokemonFilter.types);
-                      },
-                      child: Obx(() => Padding(
+                  child: Obx(() => Card(
+                        elevation: 2.0,
+                        color: Color(PokemonTypeColors
+                            .colors[_pageController.selectedType.value]),
+                        child: InkWell(
+                          onTap: () {
+                            _showSheet(context,
+                                header: "Select Type",
+                                selections: ListPokemonFilter.types);
+                          },
+                          child: Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Text(
                               _pageController.selectedType.value.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          )),
-                    ),
-                  ),
+                          ),
+                        ),
+                      )),
                 ),
                 Expanded(
                   flex: 3,

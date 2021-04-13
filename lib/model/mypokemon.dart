@@ -74,7 +74,7 @@ class MyPokemon {
       favorites.add(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
-          .then((e) => isLiked.value = true);
+          .then((value) => isLiked.value = true);
     }
   }
 
@@ -84,7 +84,7 @@ class MyPokemon {
       favorites.remove(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
-          .then((e) => isLiked.value = false);
+          .then((value) => isLiked.value = false);
     }
   }
 }

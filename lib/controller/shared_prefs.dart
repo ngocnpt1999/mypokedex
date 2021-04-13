@@ -15,11 +15,32 @@ class SharedPrefs {
 
   SharedPreferences _prefs;
 
-  Future<bool> clearCache() async {
+  Future<List<bool>> clearCache() async {
     if (_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
     }
-    return await _prefs.clear();
+    var deleteList = <Future<bool>>[
+      deletePokedex(),
+      deleteTypePokemons(MyPokemonType.bug),
+      deleteTypePokemons(MyPokemonType.dark),
+      deleteTypePokemons(MyPokemonType.dragon),
+      deleteTypePokemons(MyPokemonType.electric),
+      deleteTypePokemons(MyPokemonType.fairy),
+      deleteTypePokemons(MyPokemonType.fighting),
+      deleteTypePokemons(MyPokemonType.fire),
+      deleteTypePokemons(MyPokemonType.flying),
+      deleteTypePokemons(MyPokemonType.ghost),
+      deleteTypePokemons(MyPokemonType.grass),
+      deleteTypePokemons(MyPokemonType.ground),
+      deleteTypePokemons(MyPokemonType.ice),
+      deleteTypePokemons(MyPokemonType.normal),
+      deleteTypePokemons(MyPokemonType.poison),
+      deleteTypePokemons(MyPokemonType.psychic),
+      deleteTypePokemons(MyPokemonType.rock),
+      deleteTypePokemons(MyPokemonType.steel),
+      deleteTypePokemons(MyPokemonType.water),
+    ];
+    return await Future.wait(deleteList);
   }
 
   Future<List<bool>> init() async {
@@ -74,6 +95,12 @@ class SharedPrefs {
     return list;
   }
 
+  Future<bool> deletePokedex() async {
+    var prefs = await SharedPreferences.getInstance();
+    var isFinish = await prefs.remove("pokedex");
+    return isFinish;
+  }
+
   Future<bool> initTypePokemons(String typeName) async {
     var type = await MyPokeApi.getPokemonType(name: typeName);
     List<String> pokemons = [];
@@ -91,6 +118,12 @@ class SharedPrefs {
     }
     var list = _prefs.getStringList("type_$typeName");
     return list;
+  }
+
+  Future<bool> deleteTypePokemons(String typeName) async {
+    var prefs = await SharedPreferences.getInstance();
+    var isFinish = await prefs.remove("type_$typeName");
+    return isFinish;
   }
 
   Future<bool> setRecentSearch(List<String> recents) async {
