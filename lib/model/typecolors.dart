@@ -1,6 +1,6 @@
 class PokemonTypeColors {
   static final Map<String, dynamic> colors = {
-    "all type": 0xFFE0E0E0,
+    "all type": 0xFFFFFFFF,
     "grass": 0xFF93D372,
     "fire": 0xFFF39959,
     "water": 0xFF86A6F3,

@@ -410,6 +410,9 @@ class PokemonDetailController extends GetxController {
         }
       });
     }
+    var entries = tempWeakness.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+    tempWeakness = Map.fromEntries(entries);
     return tempWeakness;
   }
 

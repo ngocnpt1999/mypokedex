@@ -167,7 +167,6 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Text(
                       value.type.name.capitalizeFirstofEach.toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12.0),
                     ),
                   ),
                 ),
@@ -317,9 +316,7 @@ class PokemonDetailPage extends StatelessWidget {
                         Text(
                           "Pokedex entry",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                          ),
+                          style: TextStyle(fontSize: 12.0),
                         ),
                       ],
                     ),
@@ -350,9 +347,7 @@ class PokemonDetailPage extends StatelessWidget {
                         Text(
                           "Weight",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                          ),
+                          style: TextStyle(fontSize: 12.0),
                         ),
                       ],
                     ),
@@ -379,9 +374,7 @@ class PokemonDetailPage extends StatelessWidget {
                         Text(
                           "Height",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                          ),
+                          style: TextStyle(fontSize: 12.0),
                         ),
                       ],
                     ),
@@ -405,16 +398,30 @@ class PokemonDetailPage extends StatelessWidget {
         weakness.forEach((key, value) {
           if (value >= 2) {
             typeWidgets.add(Container(
-              width: Get.width / 3.5,
-              child: Card(
-                elevation: 3.0,
-                color: Color(PokemonTypeColors.colors[key]),
-                child: Container(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    key.capitalizeFirstofEach.toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12.0),
+              width: Get.width / 2.2,
+              child: Tooltip(
+                message: "Deals $value" + "x damage",
+                child: Card(
+                  elevation: 3.0,
+                  color: Color(PokemonTypeColors.colors[key]),
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(5.0, 8.0, 5.0, 8.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(child: Container()),
+                        Text(
+                          key.capitalizeFirstofEach.toUpperCase(),
+                          textAlign: TextAlign.center,
+                        ),
+                        Expanded(
+                          child: Text(
+                            value.toString() + "x",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(fontSize: 11.0),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
