@@ -153,9 +153,12 @@ class MyHomePage extends StatelessWidget {
                     elevation: 2.0,
                     child: InkWell(
                       onTap: () {
-                        _showSheet(context,
-                            header: "Select Generation",
-                            selections: ListPokemonFilter.generations);
+                        _showBottomSheet(
+                          context,
+                          header: "Select Generation",
+                          selections: ListPokemonFilter.generations,
+                          snappings: [1.0],
+                        );
                       },
                       child: Obx(() => Padding(
                             padding: EdgeInsets.all(10.0),
@@ -177,9 +180,12 @@ class MyHomePage extends StatelessWidget {
                             .colors[_pageController.selectedType.value]),
                         child: InkWell(
                           onTap: () {
-                            _showSheet(context,
-                                header: "Select Type",
-                                selections: ListPokemonFilter.types);
+                            _showBottomSheet(
+                              context,
+                              header: "Select Type",
+                              selections: ListPokemonFilter.types,
+                              snappings: [0.55, 1.0],
+                            );
                           },
                           child: Padding(
                             padding: EdgeInsets.all(10.0),
@@ -208,15 +214,17 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  _showSheet(BuildContext context,
-      {String header, List<String> selections}) async {
+  _showBottomSheet(BuildContext context,
+      {String header,
+      List<String> selections,
+      List<double> snappings = const [0.4, 1.0]}) async {
     await showSlidingBottomSheet(
       context,
       builder: (context) => SlidingSheetDialog(
         elevation: 8.0,
         cornerRadius: 16.0,
         snapSpec: SnapSpec(
-          snappings: [1.0],
+          snappings: snappings,
         ),
         builder: (context, state) => Column(
           mainAxisSize: MainAxisSize.min,
