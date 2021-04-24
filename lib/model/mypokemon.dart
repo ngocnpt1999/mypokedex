@@ -10,7 +10,7 @@ class MyPokemon {
   String name;
   int speciesId;
   String genus;
-  String entry;
+  String describe;
   String artwork;
   int height;
   int weight;
@@ -18,15 +18,22 @@ class MyPokemon {
   List<PokemonAbility> abilities;
   int genderRate; //The chance of this Pokémon being female, in eighths; or -1 for genderless
   int evolutionNo;
+  //Base Stats
+  int baseHP;
+  int baseAtk;
+  int baseDef;
+  int baseSpAtk;
+  int baseSpDef;
+  int baseSpeed;
   //
-  var isLiked = false.obs;
+  var isFavorite = false.obs;
 
   MyPokemon({
     @required this.id,
     @required this.name,
     @required this.speciesId,
     this.genus,
-    this.entry,
+    this.describe,
     this.artwork,
     this.height,
     this.weight,
@@ -34,14 +41,20 @@ class MyPokemon {
     this.abilities,
     this.genderRate,
     this.evolutionNo,
+    this.baseHP = 0,
+    this.baseAtk = 0,
+    this.baseDef = 0,
+    this.baseSpAtk = 0,
+    this.baseSpDef = 0,
+    this.baseSpeed = 0,
   }) {
     if (this.id != 0) {
       if (SharedPrefs.instance
           .getFavoritesPokemon()
           .contains(jsonEncode(this.toJson()))) {
-        isLiked.value = true;
+        isFavorite.value = true;
       } else {
-        isLiked.value = false;
+        isFavorite.value = false;
       }
     }
   }
@@ -74,17 +87,17 @@ class MyPokemon {
       favorites.add(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
-          .then((value) => isLiked.value = true);
+          .then((value) => isFavorite.value = true);
     }
   }
 
-  void unlike() {
+  void dislike() {
     var favorites = SharedPrefs.instance.getFavoritesPokemon();
     if (favorites.contains(jsonEncode(this.toJson()))) {
       favorites.remove(jsonEncode(this.toJson()));
       SharedPrefs.instance
           .setFavoritesPokemon(favorites)
-          .then((value) => isLiked.value = false);
+          .then((value) => isFavorite.value = false);
     }
   }
 }

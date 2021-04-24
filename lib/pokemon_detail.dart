@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 import 'package:mypokedex/widget/pokemon_card.dart';
+import 'package:random_string/random_string.dart';
 
 class PokemonDetailPage extends StatelessWidget {
   PokemonDetailPage({int id, String name}) {
@@ -21,6 +23,10 @@ class PokemonDetailPage extends StatelessWidget {
     Widget speciesCard = _buildWidget(
       header: "Species",
       content: _pokemonSpecies(),
+    );
+    Widget statsCard = _buildWidget(
+      header: "Base Stats",
+      content: _pokemonStats(context),
     );
     Widget weaknessCard = _buildWidget(
       header: "Weakness",
@@ -38,69 +44,74 @@ class PokemonDetailPage extends StatelessWidget {
       header: "Alternative forms",
       content: _alternativeForms(),
     );
-    return Scaffold(
-      backgroundColor: Color(0xFFF88379),
-      body: HawkFabMenu(
-        icon: AnimatedIcons.menu_close,
-        items: <HawkFabMenuItem>[
-          HawkFabMenuItem(
-            ontap: () {
-              int specId = _pageController.pokemon.value.speciesId;
-              if (specId != null && specId > 1) {
-                _pageController.init(id: specId - 1);
-              }
-            },
-            icon: Icon(Icons.arrow_back_rounded),
-            label: " Previous Pokemon ",
-          ),
-          HawkFabMenuItem(
-            ontap: () {
-              int specId = _pageController.pokemon.value.speciesId;
-              if (specId != null && specId < 809) {
-                _pageController.init(id: specId + 1);
-              }
-            },
-            icon: Icon(Icons.arrow_forward_rounded),
-            label: " Next Pokemon ",
-          ),
-          HawkFabMenuItem(
-            ontap: () {
-              Future.delayed(Duration(milliseconds: 500)).then((value) {
-                Get.back();
-              });
-            },
-            icon: Icon(Icons.close_rounded),
-            label: " Return Home ",
-          ),
-        ],
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              pokemonBar,
-              Expanded(
-                child: Scrollbar(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Container(height: 8.0),
-                      speciesCard,
-                      Container(height: 8.0),
-                      weaknessCard,
-                      Container(height: 8.0),
-                      abilitiesCard,
-                      Container(height: 8.0),
-                      evolutionsCard,
-                      Container(height: 8.0),
-                      alternativeFormsCard,
-                      Container(height: 8.0),
-                    ],
+    return WillPopScope(
+      child: Scaffold(
+        backgroundColor: Color(0xFFF88379),
+        body: HawkFabMenu(
+          icon: AnimatedIcons.menu_close,
+          items: <HawkFabMenuItem>[
+            HawkFabMenuItem(
+              ontap: () {
+                int specId = _pageController.pokemon.value.speciesId;
+                if (specId != null && specId > 1) {
+                  _pageController.init(id: specId - 1);
+                }
+              },
+              icon: Icon(Icons.arrow_back_rounded),
+              label: " Previous Pokemon ",
+            ),
+            HawkFabMenuItem(
+              ontap: () {
+                int specId = _pageController.pokemon.value.speciesId;
+                if (specId != null && specId < 809) {
+                  _pageController.init(id: specId + 1);
+                }
+              },
+              icon: Icon(Icons.arrow_forward_rounded),
+              label: " Next Pokemon ",
+            ),
+            HawkFabMenuItem(
+              ontap: () {
+                Future.delayed(Duration(milliseconds: 500)).then((value) {
+                  Get.back();
+                });
+              },
+              icon: Icon(Icons.close_rounded),
+              label: " Return Home ",
+            ),
+          ],
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                pokemonBar,
+                Expanded(
+                  child: Scrollbar(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(height: 8.0),
+                        speciesCard,
+                        Container(height: 8.0),
+                        statsCard,
+                        Container(height: 8.0),
+                        weaknessCard,
+                        Container(height: 8.0),
+                        abilitiesCard,
+                        Container(height: 8.0),
+                        evolutionsCard,
+                        Container(height: 8.0),
+                        alternativeFormsCard,
+                        Container(height: 8.0),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+      onWillPop: () async => true,
     );
   }
 
@@ -188,15 +199,15 @@ class PokemonDetailPage extends StatelessWidget {
                           children: <Widget>[
                             InkWell(
                               onTap: () {
-                                if (pokemon.isLiked.value) {
-                                  pokemon.unlike();
+                                if (pokemon.isFavorite.value) {
+                                  pokemon.dislike();
                                 } else {
                                   pokemon.like();
                                 }
                               },
                               child: Icon(
                                 Icons.star_rounded,
-                                color: pokemon.isLiked.value
+                                color: pokemon.isFavorite.value
                                     ? Colors.yellow
                                     : Color(0xffd3d3d3),
                               ),
@@ -305,7 +316,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Text(
-                                    pokemon.entry,
+                                    pokemon.describe,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -381,6 +392,197 @@ class PokemonDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ],
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _listStatsBar(
+      {Color progressColor, List<MapEntry<String, int>> stats}) {
+    int highestStat = stats
+        .reduce((current, next) => current.value > next.value ? current : next)
+        .value;
+    String key = randomString(10);
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: stats.length,
+      itemBuilder: (context, index) => Row(
+        children: <Widget>[
+          Expanded(
+            child: Stack(
+              alignment: AlignmentDirectional.centerStart,
+              children: <Widget>[
+                FAProgressBar(
+                  key: ValueKey(key + index.toString()),
+                  displayText: "",
+                  currentValue: stats[index].value,
+                  maxValue: highestStat,
+                  progressColor: progressColor,
+                  animatedDuration: Duration(milliseconds: 500),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        stats[index].key,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 7,
+                      child: Container(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      separatorBuilder: (context, index) => Container(height: 8.0),
+    );
+  }
+
+  Widget _pokemonStats(BuildContext context) {
+    return Obx(() {
+      var pokemon = _pageController.pokemon.value;
+      if (pokemon.baseHP == 0) {
+        return _circularProgressIndicator();
+      } else {
+        int hp = pokemon.baseHP;
+        int atk = pokemon.baseAtk;
+        int def = pokemon.baseDef;
+        int spAtk = pokemon.baseSpAtk;
+        int spDef = pokemon.baseSpDef;
+        int speed = pokemon.baseSpeed;
+        int iv;
+        int ev;
+        double nature;
+        if (_pageController.activeMinStat.value ||
+            _pageController.activeMaxStat.value) {
+          if (_pageController.activeMinStat.value) {
+            iv = 0;
+            ev = 0;
+            nature = 0.9;
+          } else {
+            iv = 31;
+            ev = 63;
+            nature = 1.1;
+          }
+          hp = hp * 2 + 110 + iv + ev;
+          atk = ((atk * 2 + 5 + iv + ev) * nature).floor();
+          def = ((def * 2 + 5 + iv + ev) * nature).floor();
+          spAtk = ((spAtk * 2 + 5 + iv + ev) * nature).floor();
+          spDef = ((spDef * 2 + 5 + iv + ev) * nature).floor();
+          speed = ((speed * 2 + 5 + iv + ev) * nature).floor();
+        }
+        Map<String, int> statsMap = {
+          "HP": hp,
+          "Attack": atk,
+          "Defense": def,
+          "Sp. Atk": spAtk,
+          "Sp. Def": spDef,
+          "Speed": speed,
+        };
+        var stats = statsMap.entries.toList();
+        Widget listStatsBar = _listStatsBar(
+          progressColor:
+              Color(PokemonTypeColors.colors[pokemon.types[0].type.name]),
+          stats: stats,
+        );
+        return Padding(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Card(
+                      elevation: 3.0,
+                      color: _pageController.activeBaseStat.value
+                          ? Color(PokemonTypeColors
+                                  .colors[pokemon.types[0].type.name])
+                              .withOpacity(0.5)
+                          : Color(PokemonTypeColors
+                              .colors[pokemon.types[0].type.name]),
+                      child: InkWell(
+                        onTap: () {
+                          _pageController.activeBaseStat.value = true;
+                          _pageController.activeMinStat.value = false;
+                          _pageController.activeMaxStat.value = false;
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "Base Stats",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(width: 15.0),
+                  Expanded(
+                    child: Card(
+                      elevation: 3.0,
+                      color: _pageController.activeMinStat.value
+                          ? Color(PokemonTypeColors
+                                  .colors[pokemon.types[0].type.name])
+                              .withOpacity(0.5)
+                          : Color(PokemonTypeColors
+                              .colors[pokemon.types[0].type.name]),
+                      child: InkWell(
+                        onTap: () {
+                          _pageController.activeMinStat.value = true;
+                          _pageController.activeBaseStat.value = false;
+                          _pageController.activeMaxStat.value = false;
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "Min",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(width: 15.0),
+                  Expanded(
+                    child: Card(
+                      elevation: 3.0,
+                      color: _pageController.activeMaxStat.value
+                          ? Color(PokemonTypeColors
+                                  .colors[pokemon.types[0].type.name])
+                              .withOpacity(0.5)
+                          : Color(PokemonTypeColors
+                              .colors[pokemon.types[0].type.name]),
+                      child: InkWell(
+                        onTap: () {
+                          _pageController.activeMaxStat.value = true;
+                          _pageController.activeMinStat.value = false;
+                          _pageController.activeBaseStat.value = false;
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            "Max",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(height: 15.0),
+              listStatsBar,
             ],
           ),
         );

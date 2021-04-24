@@ -346,6 +346,10 @@ class PokemonDetailController extends GetxController {
 
   var isHideArtwork = false.obs;
 
+  var activeBaseStat = true.obs;
+  var activeMinStat = false.obs;
+  var activeMaxStat = false.obs;
+
   var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
 
   var weakness = <String, double>{}.obs;
@@ -359,6 +363,9 @@ class PokemonDetailController extends GetxController {
     weakness.clear();
     evolutions.clear();
     alternativeForms.clear();
+    activeBaseStat.value = true;
+    activeMinStat.value = false;
+    activeMaxStat.value = false;
     //
     var pkm = await MyPokeApi.getPokemon(id: id, name: name);
     var pkmSpec = await MyPokeApi.getPokemonSpecies(name: pkm.species.name);
@@ -372,12 +379,18 @@ class PokemonDetailController extends GetxController {
       speciesId: pkmSpec.id,
       genus: category.genus,
       artwork: pkm.sprites.other.officialArtwork.frontDefault,
-      entry: entries.flavorText,
+      describe: entries.flavorText,
       height: pkm.height,
       weight: pkm.weight,
       types: pkm.types,
       abilities: pkm.abilities,
       genderRate: pkmSpec.genderRate,
+      baseHP: pkm.stats[0].baseStat,
+      baseAtk: pkm.stats[1].baseStat,
+      baseDef: pkm.stats[2].baseStat,
+      baseSpAtk: pkm.stats[3].baseStat,
+      baseSpDef: pkm.stats[4].baseStat,
+      baseSpeed: pkm.stats[5].baseStat,
     );
     weakness.addAll(await _getTypeWeakness(pkm.types));
     evolutions.addAll(await _getEvolutions(pkmSpec));
