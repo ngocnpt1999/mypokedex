@@ -399,67 +399,20 @@ class PokemonDetailPage extends StatelessWidget {
     });
   }
 
-  Widget _listStatsBar(
-      {Color progressColor, List<MapEntry<String, int>> stats}) {
-    int highestStat = stats
-        .reduce((current, next) => current.value > next.value ? current : next)
-        .value;
-    String key = randomString(10);
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: stats.length,
-      itemBuilder: (context, index) => Row(
-        children: <Widget>[
-          Expanded(
-            child: Stack(
-              alignment: AlignmentDirectional.centerStart,
-              children: <Widget>[
-                FAProgressBar(
-                  key: ValueKey(key + index.toString()),
-                  displayText: "",
-                  currentValue: stats[index].value,
-                  maxValue: highestStat,
-                  progressColor: progressColor,
-                  animatedDuration: Duration(milliseconds: 500),
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        stats[index].key,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 7,
-                      child: Container(),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      separatorBuilder: (context, index) => Container(height: 8.0),
-    );
-  }
-
   Widget _pokemonStats(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
       if (pokemon.baseHP == 0) {
         return _circularProgressIndicator();
       } else {
-        int hp = pokemon.baseHP;
-        int atk = pokemon.baseAtk;
-        int def = pokemon.baseDef;
-        int spAtk = pokemon.baseSpAtk;
-        int spDef = pokemon.baseSpDef;
-        int speed = pokemon.baseSpeed;
+        Map<String, int> statsMap = {
+          "HP": pokemon.baseHP,
+          "Attack": pokemon.baseAtk,
+          "Defense": pokemon.baseDef,
+          "Sp. Atk": pokemon.baseSpAtk,
+          "Sp. Def": pokemon.baseSpDef,
+          "Speed": pokemon.baseSpeed,
+        };
         int iv;
         int ev;
         double nature;
@@ -474,27 +427,22 @@ class PokemonDetailPage extends StatelessWidget {
             ev = 63;
             nature = 1.1;
           }
-          hp = hp * 2 + 110 + iv + ev;
-          atk = ((atk * 2 + 5 + iv + ev) * nature).floor();
-          def = ((def * 2 + 5 + iv + ev) * nature).floor();
-          spAtk = ((spAtk * 2 + 5 + iv + ev) * nature).floor();
-          spDef = ((spDef * 2 + 5 + iv + ev) * nature).floor();
-          speed = ((speed * 2 + 5 + iv + ev) * nature).floor();
+          statsMap.forEach((key, value) {
+            if (key == "HP") {
+              statsMap[key] = value * 2 + 110 + iv + ev;
+            } else {
+              statsMap[key] = ((value * 2 + 5 + iv + ev) * nature).floor();
+            }
+          });
         }
-        Map<String, int> statsMap = {
-          "HP": hp,
-          "Attack": atk,
-          "Defense": def,
-          "Sp. Atk": spAtk,
-          "Sp. Def": spDef,
-          "Speed": speed,
-        };
         var stats = statsMap.entries.toList();
-        Widget listStatsBar = _listStatsBar(
-          progressColor:
-              Color(PokemonTypeColors.colors[pokemon.types[0].type.name]),
-          stats: stats,
-        );
+        int highestStat = stats
+            .reduce(
+                (current, next) => current.value > next.value ? current : next)
+            .value;
+        String randomKey = randomString(10);
+        var typeColor =
+            Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
         return Padding(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 12.0),
           child: Column(
@@ -506,11 +454,8 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeBaseStat.value
-                          ? Color(PokemonTypeColors
-                                  .colors[pokemon.types[0].type.name])
-                              .withOpacity(0.5)
-                          : Color(PokemonTypeColors
-                              .colors[pokemon.types[0].type.name]),
+                          ? typeColor.withOpacity(0.5)
+                          : typeColor,
                       child: InkWell(
                         onTap: () {
                           _pageController.activeBaseStat.value = true;
@@ -532,11 +477,8 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeMinStat.value
-                          ? Color(PokemonTypeColors
-                                  .colors[pokemon.types[0].type.name])
-                              .withOpacity(0.5)
-                          : Color(PokemonTypeColors
-                              .colors[pokemon.types[0].type.name]),
+                          ? typeColor.withOpacity(0.5)
+                          : typeColor,
                       child: InkWell(
                         onTap: () {
                           _pageController.activeMinStat.value = true;
@@ -558,11 +500,8 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeMaxStat.value
-                          ? Color(PokemonTypeColors
-                                  .colors[pokemon.types[0].type.name])
-                              .withOpacity(0.5)
-                          : Color(PokemonTypeColors
-                              .colors[pokemon.types[0].type.name]),
+                          ? typeColor.withOpacity(0.5)
+                          : typeColor,
                       child: InkWell(
                         onTap: () {
                           _pageController.activeMaxStat.value = true;
@@ -582,7 +521,47 @@ class PokemonDetailPage extends StatelessWidget {
                 ],
               ),
               Container(height: 15.0),
-              listStatsBar,
+              ListView.separated(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: stats.length,
+                itemBuilder: (context, index) => Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Stack(
+                        alignment: AlignmentDirectional.centerStart,
+                        children: <Widget>[
+                          FAProgressBar(
+                            key: ValueKey(randomKey + index.toString()),
+                            displayText: "",
+                            currentValue: stats[index].value,
+                            maxValue: highestStat,
+                            progressColor: typeColor,
+                            animatedDuration: Duration(milliseconds: 500),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  stats[index].key,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 7,
+                                child: Container(),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                separatorBuilder: (context, index) => Container(height: 8.0),
+              ),
             ],
           ),
         );
