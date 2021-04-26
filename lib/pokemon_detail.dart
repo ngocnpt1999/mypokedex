@@ -316,7 +316,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Text(
-                                    pokemon.describe,
+                                    pokemon.entry,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -405,6 +405,8 @@ class PokemonDetailPage extends StatelessWidget {
       if (pokemon.baseHP == 0) {
         return _circularProgressIndicator();
       } else {
+        var typeColor =
+            Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
         Map<String, int> statsMap = {
           "HP": pokemon.baseHP,
           "Attack": pokemon.baseAtk,
@@ -413,16 +415,38 @@ class PokemonDetailPage extends StatelessWidget {
           "Sp. Def": pokemon.baseSpDef,
           "Speed": pokemon.baseSpeed,
         };
+        int total = 0;
+        statsMap.forEach((key, value) => total += value);
+        Widget footer = RichText(
+          text: TextSpan(
+            text: "Total: ",
+            style: TextStyle(fontSize: 16.0),
+            children: [
+              TextSpan(
+                text: "$total",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        );
         int iv;
         int ev;
         double nature;
         if (_pageController.activeMinStat.value ||
             _pageController.activeMaxStat.value) {
           if (_pageController.activeMinStat.value) {
+            footer = Text(
+              "Minimum values are based on a level 100 Pokémon, a hindering nature, 0 EVs, 0 IVs",
+              style: TextStyle(fontSize: 12.0),
+            );
             iv = 0;
             ev = 0;
             nature = 0.9;
           } else {
+            footer = Text(
+              "Maximum values are based on a level 100 Pokémon, a beneficial nature, 252 EVs, 31 IVs",
+              style: TextStyle(fontSize: 12.0),
+            );
             iv = 31;
             ev = 63;
             nature = 1.1;
@@ -441,8 +465,6 @@ class PokemonDetailPage extends StatelessWidget {
                 (current, next) => current.value > next.value ? current : next)
             .value;
         String randomKey = randomString(10);
-        var typeColor =
-            Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
         return Padding(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 12.0),
           child: Column(
@@ -467,12 +489,17 @@ class PokemonDetailPage extends StatelessWidget {
                           child: Text(
                             "Base Stats",
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: _pageController.activeBaseStat.value
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Container(width: 15.0),
+                  Container(width: 10.0),
                   Expanded(
                     child: Card(
                       elevation: 3.0,
@@ -490,12 +517,17 @@ class PokemonDetailPage extends StatelessWidget {
                           child: Text(
                             "Min",
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: _pageController.activeMinStat.value
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Container(width: 15.0),
+                  Container(width: 10.0),
                   Expanded(
                     child: Card(
                       elevation: 3.0,
@@ -513,6 +545,11 @@ class PokemonDetailPage extends StatelessWidget {
                           child: Text(
                             "Max",
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: _pageController.activeMaxStat.value
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
                           ),
                         ),
                       ),
@@ -538,6 +575,10 @@ class PokemonDetailPage extends StatelessWidget {
                             maxValue: highestStat,
                             progressColor: typeColor,
                             animatedDuration: Duration(milliseconds: 500),
+                            displayTextStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.0,
+                            ),
                           ),
                           Row(
                             children: <Widget>[
@@ -546,7 +587,9 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Text(
                                   stats[index].key,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                  ),
                                 ),
                               ),
                               Expanded(
@@ -561,6 +604,12 @@ class PokemonDetailPage extends StatelessWidget {
                   ],
                 ),
                 separatorBuilder: (context, index) => Container(height: 8.0),
+              ),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0),
+                  child: footer,
+                ),
               ),
             ],
           ),

@@ -379,7 +379,7 @@ class PokemonDetailController extends GetxController {
       speciesId: pkmSpec.id,
       genus: category.genus,
       artwork: pkm.sprites.other.officialArtwork.frontDefault,
-      describe: entries.flavorText,
+      entry: entries.flavorText,
       height: pkm.height,
       weight: pkm.weight,
       types: pkm.types,

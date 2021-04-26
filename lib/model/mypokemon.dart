@@ -10,7 +10,7 @@ class MyPokemon {
   String name;
   int speciesId;
   String genus;
-  String describe;
+  String entry;
   String artwork;
   int height;
   int weight;
@@ -33,7 +33,7 @@ class MyPokemon {
     @required this.name,
     @required this.speciesId,
     this.genus,
-    this.describe,
+    this.entry,
     this.artwork,
     this.height,
     this.weight,
