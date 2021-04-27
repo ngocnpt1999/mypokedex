@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/model/typecolors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
@@ -407,6 +408,7 @@ class PokemonDetailPage extends StatelessWidget {
       } else {
         var typeColor =
             Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
+        var typeDarkColor = Utility.darken(typeColor, 0.4);
         Map<String, int> statsMap = {
           "HP": pokemon.baseHP,
           "Attack": pokemon.baseAtk,
@@ -424,7 +426,11 @@ class PokemonDetailPage extends StatelessWidget {
             children: [
               TextSpan(
                 text: "$total",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: typeDarkColor,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -576,7 +582,7 @@ class PokemonDetailPage extends StatelessWidget {
                             progressColor: typeColor,
                             animatedDuration: Duration(milliseconds: 500),
                             displayTextStyle: TextStyle(
-                              color: Colors.white,
+                              color: typeDarkColor,
                               fontSize: 14.0,
                             ),
                           ),
