@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
+import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mypokedex/controller/actions.dart';
@@ -9,7 +10,10 @@ import 'package:mypokedex/widget/search.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPrefs.instance.init().whenComplete(() {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -40,9 +44,9 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0.0,
+        elevation: 0,
         leading: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(5.0),
           child: Image.asset("assets/icons/icon.png"),
         ),
         title: Text(

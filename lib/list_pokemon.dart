@@ -71,7 +71,7 @@ class ListPokemonPage extends StatelessWidget {
         ),
         barrierDismissible: false,
       );
-      SharedPrefs.instance.init().then((value) {
+      SharedPrefs.instance.fetchData().then((value) {
         Get.back();
         _pageController.loadMore();
       });

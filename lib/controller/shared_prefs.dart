@@ -15,60 +15,34 @@ class SharedPrefs {
 
   SharedPreferences _prefs;
 
-  Future<List<bool>> clearCache() async {
+  Future<SharedPreferences> init() async {
     if (_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
     }
+    return _prefs;
+  }
+
+  Future<List<bool>> clearCache() async {
     var deleteList = <Future<bool>>[
       deletePokedex(),
-      deleteTypePokemons(MyPokemonType.bug),
-      deleteTypePokemons(MyPokemonType.dark),
-      deleteTypePokemons(MyPokemonType.dragon),
-      deleteTypePokemons(MyPokemonType.electric),
-      deleteTypePokemons(MyPokemonType.fairy),
-      deleteTypePokemons(MyPokemonType.fighting),
-      deleteTypePokemons(MyPokemonType.fire),
-      deleteTypePokemons(MyPokemonType.flying),
-      deleteTypePokemons(MyPokemonType.ghost),
-      deleteTypePokemons(MyPokemonType.grass),
-      deleteTypePokemons(MyPokemonType.ground),
-      deleteTypePokemons(MyPokemonType.ice),
-      deleteTypePokemons(MyPokemonType.normal),
-      deleteTypePokemons(MyPokemonType.poison),
-      deleteTypePokemons(MyPokemonType.psychic),
-      deleteTypePokemons(MyPokemonType.rock),
-      deleteTypePokemons(MyPokemonType.steel),
-      deleteTypePokemons(MyPokemonType.water),
     ];
+    for (int i = 1; i < ListPokemonFilter.types.length; i++) {
+      deleteList.add(deleteTypePokemons(ListPokemonFilter.types[i]));
+    }
     return await Future.wait(deleteList);
   }
 
-  Future<List<bool>> init() async {
+  Future<List<bool>> fetchData() async {
     var initList = <Future<bool>>[
-      initPokedex(),
-      initTypePokemons(MyPokemonType.bug),
-      initTypePokemons(MyPokemonType.dark),
-      initTypePokemons(MyPokemonType.dragon),
-      initTypePokemons(MyPokemonType.electric),
-      initTypePokemons(MyPokemonType.fairy),
-      initTypePokemons(MyPokemonType.fighting),
-      initTypePokemons(MyPokemonType.fire),
-      initTypePokemons(MyPokemonType.flying),
-      initTypePokemons(MyPokemonType.ghost),
-      initTypePokemons(MyPokemonType.grass),
-      initTypePokemons(MyPokemonType.ground),
-      initTypePokemons(MyPokemonType.ice),
-      initTypePokemons(MyPokemonType.normal),
-      initTypePokemons(MyPokemonType.poison),
-      initTypePokemons(MyPokemonType.psychic),
-      initTypePokemons(MyPokemonType.rock),
-      initTypePokemons(MyPokemonType.steel),
-      initTypePokemons(MyPokemonType.water),
+      fetchPokedex(),
     ];
+    for (int i = 1; i < ListPokemonFilter.types.length; i++) {
+      initList.add(fetchTypePokemons(ListPokemonFilter.types[i]));
+    }
     return await Future.wait(initList);
   }
 
-  Future<bool> initPokedex() async {
+  Future<bool> fetchPokedex() async {
     int totalPkm = 809;
     var response = await MyPokeApi.getPokemonPage(offset: 0, limit: totalPkm);
     List<String> pokedex = [];
@@ -96,12 +70,11 @@ class SharedPrefs {
   }
 
   Future<bool> deletePokedex() async {
-    var prefs = await SharedPreferences.getInstance();
-    var isFinish = await prefs.remove("pokedex");
+    var isFinish = await _prefs.remove("pokedex");
     return isFinish;
   }
 
-  Future<bool> initTypePokemons(String typeName) async {
+  Future<bool> fetchTypePokemons(String typeName) async {
     var type = await MyPokeApi.getPokemonType(name: typeName);
     List<String> pokemons = [];
     type.pokemon.forEach((element) {
@@ -121,8 +94,7 @@ class SharedPrefs {
   }
 
   Future<bool> deleteTypePokemons(String typeName) async {
-    var prefs = await SharedPreferences.getInstance();
-    var isFinish = await prefs.remove("type_$typeName");
+    var isFinish = await _prefs.remove("type_$typeName");
     return isFinish;
   }
 
