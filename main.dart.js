@@ -68771,7 +68771,7 @@ b=P.u(["HP",a8,"Attack",a9.cy,"Defense",a9.db,"Sp. Atk",a9.dx,"Sp. Def",a9.dy,"S
 a5.a=0
 b.Z(0,new Y.a3i(a5))
 a8=A.c1(a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,16,a4,a4,a4,a4,!0,a4,a4,a4,a4,a4,a4)
-a=T.akU(a4,a4,C.cS,!0,a4,new Q.eJ("Total: ",H.d([new Q.eJ(""+a5.a,a4,A.c1(a4,a4,c,a4,a4,a4,a4,a4,a4,a4,a4,16,a4,C.a9,a4,a4,!0,a4,a4,a4,a4,a4,a4))],t.cn),a8),C.ay,a4,a4,1,C.b_)
+a=T.akU(a4,a4,C.cS,!0,a4,new Q.eJ("TOTAL ",H.d([new Q.eJ(""+a5.a,a4,A.c1(a4,a4,c,a4,a4,a4,a4,a4,a4,a4,a4,16,a4,C.a9,a4,a4,!0,a4,a4,a4,a4,a4,a4))],t.cn),a8),C.ay,a4,a4,1,C.b_)
 a5.b=a5.c=a5.d=null
 a8=a7.fx
 if(!a8.gk(a8)){s=a7.fy
@@ -68794,7 +68794,7 @@ a3=M.aD(a4,a4,C.k,a4,a4,a4,a4,a4,a4,a4,a4,a4,10)
 a7=a7.fy
 a8=a7.gk(a7)?P.aL(C.t.aw(127.5),q,o,m):r
 q=t.t
-return new T.bH(new V.al(20,10,20,12),T.du(H.d([T.cr(H.d([s,e,a5,a3,T.bY(V.e5(R.ez(!1,!0,M.aD(a4,L.bl("Max",a4,a4,a4,a4,A.c1(a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a7.gk(a7)?C.a9:C.G,a4,a4,!0,a4,a4,a4,a4,a4,a4),C.a2,a4),C.k,a4,a4,a4,a4,a4,a4,new V.al(10,10,10,10),a4,a4,a4),a4,!0,a4,a4,a4,a4,a4,a4,a4,a4,a4,new Y.a3n(a6),a4,a4,a4),a8,3),1)],q),C.v,C.w,C.x),M.aD(a4,a4,C.k,a4,a4,a4,a4,15,a4,a4,a4,a4,a4),B.apJ(new Y.a3o(a2,a0,a1,r,c),a0.length,new L.x4(a4),new Y.a3p(),!0),T.dR(new T.bH(new V.al(15,20,15,0),a,a4),a4,a4)],q),C.v,C.w,C.ca),a4)}},
+return new T.bH(new V.al(20,10,20,0),T.du(H.d([T.cr(H.d([s,e,a5,a3,T.bY(V.e5(R.ez(!1,!0,M.aD(a4,L.bl("Max",a4,a4,a4,a4,A.c1(a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a4,a7.gk(a7)?C.a9:C.G,a4,a4,!0,a4,a4,a4,a4,a4,a4),C.a2,a4),C.k,a4,a4,a4,a4,a4,a4,new V.al(10,10,10,10),a4,a4,a4),a4,!0,a4,a4,a4,a4,a4,a4,a4,a4,a4,new Y.a3n(a6),a4,a4,a4),a8,3),1)],q),C.v,C.w,C.x),M.aD(a4,a4,C.k,a4,a4,a4,a4,15,a4,a4,a4,a4,a4),B.apJ(new Y.a3o(a2,a0,a1,r,c),a0.length,new L.x4(a4),new Y.a3p(),!0),T.dR(new T.bH(new V.al(15,20,15,20),a,a4),a4,a4)],q),C.v,C.w,C.ca),a4)}},
 $C:"$0",
 $R:0,
 $S:23}

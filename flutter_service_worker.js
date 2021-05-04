@@ -34,9 +34,9 @@ const RESOURCES = {
 "favicon.png": "ccf220e179942f323321aef3bf26af02",
 "icons/Icon-192.png": "46d238516db5d49cc88a170219ddd07f",
 "icons/Icon-512.png": "5829d64517a1dcb483a85a3056353a85",
-"index.html": "96112dd71c566832ef1b5a8425cad532",
-"/": "96112dd71c566832ef1b5a8425cad532",
-"main.dart.js": "c0e118a9aeea425964c7d06233a59a58",
+"index.html": "540406fa2e4a7286d78cb392f7f2ed84",
+"/": "540406fa2e4a7286d78cb392f7f2ed84",
+"main.dart.js": "563ce39c8bc3f7c9e620faa190433396",
 "manifest.json": "d491b1306d028536419c3997a605b4de",
 "splash/img/dark-1x.png": "fcda59fbf98bbfd31d7ef2bdf7ab35e4",
 "splash/img/dark-2x.png": "8ebdb826888292c2944720dc540d2169",
@@ -44,7 +44,7 @@ const RESOURCES = {
 "splash/img/light-1x.png": "fcda59fbf98bbfd31d7ef2bdf7ab35e4",
 "splash/img/light-2x.png": "8ebdb826888292c2944720dc540d2169",
 "splash/img/light-3x.png": "fbe7ba45b09536b558fe533fe8680243",
-"splash/style.css": "86126e7e4072786170390b7ceee604b3",
+"splash/style.css": "6b69cb06c7aa9b12ff83f688e0c80cde",
 "version.json": "b92667e2cf8fb9283bc068de06be00af"
 };
 
