@@ -421,7 +421,7 @@ class PokemonDetailPage extends StatelessWidget {
         statsMap.forEach((key, value) => total += value);
         Widget footer = RichText(
           text: TextSpan(
-            text: "Total: ",
+            text: "TOTAL ",
             style: TextStyle(fontSize: 16.0),
             children: [
               TextSpan(
@@ -472,7 +472,7 @@ class PokemonDetailPage extends StatelessWidget {
             .value;
         String randomKey = randomString(10);
         return Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 12.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -613,7 +613,7 @@ class PokemonDetailPage extends StatelessWidget {
               ),
               Center(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0),
+                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 20.0),
                   child: footer,
                 ),
               ),
