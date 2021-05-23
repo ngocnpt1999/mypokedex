@@ -72,4 +72,17 @@ class MyPokeApi {
       throw Exception("Failed!!!");
     }
   }
+
+  static Future<Ability> getPokemonAbility({int id, String name}) async {
+    String index = id != null ? id.toString() : name;
+    var response = await http.get("https://pokeapi.co/api/v2/ability/$index/");
+    if (response.statusCode == _success) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      var value = Ability.fromJson(jsonData);
+      return value;
+    } else {
+      print(response.statusCode);
+      throw Exception("Failed!!!");
+    }
+  }
 }

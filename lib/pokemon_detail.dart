@@ -6,6 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/model/typecolors.dart';
+import 'package:mypokedex/widget/pokemon_ability_detail.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 import 'package:mypokedex/widget/pokemon_card.dart';
@@ -35,7 +36,7 @@ class PokemonDetailPage extends StatelessWidget {
     );
     Widget abilitiesCard = _buildWidget(
       header: "Abilities",
-      content: _pokemonAbilities(),
+      content: _pokemonAbilities(context),
     );
     Widget evolutionsCard = _buildWidget(
       header: "Evolutions",
@@ -683,42 +684,72 @@ class PokemonDetailPage extends StatelessWidget {
     });
   }
 
-  Widget _pokemonAbilities() {
+  Widget _pokemonAbilities(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
       if (pokemon.id == 0) {
         return _circularProgressIndicator();
       } else {
+        var typeColor =
+            Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
         var abilities = pokemon.abilities;
-        List<Widget> abiCards = [];
+        List<Widget> abilityCards = [];
         abilities.forEach((value) {
-          if (value.isHidden) {
-            return;
-          }
-          abiCards.add(Row(
+          Widget widget = Row(
             children: <Widget>[
               Expanded(
                 child: Card(
                   elevation: 3.0,
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      value.ability.name.capitalizeFirstofEach,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18.0,
+                  color: typeColor,
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => PokemonAbilityDetail(
+                            name: value.ability.name,
+                            title: value.ability.name,
+                          ));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: value.isHidden
+                                ? Text(
+                                    "Hidden",
+                                    style: TextStyle(fontSize: 12.0),
+                                  )
+                                : Container(),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              value.ability.name.capitalizeFirstofEach,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              alignment: Alignment.centerRight,
+                              child: Icon(Icons.info_outline_rounded),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
             ],
-          ));
+          );
+          abilityCards.add(widget);
         });
         return Padding(
           padding: EdgeInsets.all(5.0),
           child: Column(
-            children: abiCards,
+            children: abilityCards,
           ),
         );
       }

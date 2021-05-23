@@ -18,6 +18,9 @@ class HomeController extends GetxController {
 
   // ignore: unused_field
   var _pokemonDetailController = Get.put(PokemonDetailController());
+  // ignore: unused_field
+  var _pokemonAbilityDetailController =
+      Get.put(PokemonAbilityDetailController());
 
   var pages = <Widget>[
     ListPokemonPage(),
@@ -91,7 +94,7 @@ class ListPokemonController extends GetxController {
     });
   }
 
-  var isRun = false;
+  var isRunning = false;
 
   var scrollController = ScrollController();
 
@@ -220,7 +223,7 @@ class ListFavoritePokemonController extends GetxController {
     });
   }
 
-  var isRun = false;
+  var isRunning = false;
 
   var scrollController = ScrollController();
 
@@ -484,5 +487,57 @@ class PokemonDetailController extends GetxController {
       }
     }
     return forms;
+  }
+}
+
+class PokemonAbilityDetailController extends GetxController {
+  PokemonAbilityDetailController();
+
+  var description = "".obs;
+
+  var effect = "".obs;
+
+  var shortEffect = "".obs;
+
+  var pkmTileControllers = <PokemonTileController>[].obs;
+
+  void init({int id, String name}) async {
+    description.value = "";
+    effect.value = "";
+    shortEffect.value = "";
+    pkmTileControllers.clear();
+    //
+    var ability = await MyPokeApi.getPokemonAbility(id: id, name: name);
+    description.value = ability.flavorTextEntries
+        .lastWhere((element) => element.language.name == "en")
+        .flavorText;
+    var effectEntry = ability.effectEntries
+        .firstWhere((element) => element.language.name == "en");
+    effect.value = effectEntry.effect;
+    shortEffect.value = effectEntry.shortEffect;
+    var tempControllers = <PokemonTileController>[];
+    var futures = <Future<Pokemon>>[];
+    ability.pokemon.forEach((element) {
+      int id = Utility.getPkmIdFromUrl(element.pokemon.url);
+      if (id <= 809) {
+        futures.add(MyPokeApi.getPokemon(id: id));
+      }
+    });
+    Future.wait(futures).then((pokemons) {
+      pokemons.forEach((pkm) {
+        if (pkm != null) {
+          tempControllers.add(PokemonTileController(
+            pokemon: MyPokemon(
+              id: pkm.id,
+              name: pkm.name,
+              speciesId: Utility.getPkmSpecIdFromUrl(pkm.species.url),
+              artwork: pkm.sprites.other.officialArtwork.frontDefault,
+              types: pkm.types,
+            ),
+          ));
+        }
+      });
+      pkmTileControllers.addAll(tempControllers);
+    });
   }
 }

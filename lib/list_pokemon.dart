@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/pokemon_detail.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
 
 class ListPokemonPage extends StatelessWidget {
@@ -11,8 +12,8 @@ class ListPokemonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!_pageController.isRun) {
-      _pageController.isRun = true;
+    if (!_pageController.isRunning) {
+      _pageController.isRunning = true;
       _fetchData();
     }
     return Obx(() {
@@ -46,6 +47,13 @@ class ListPokemonPage extends StatelessWidget {
     } else {
       return PokemonTile(
         tileController: _pageController.pkmTileControllers[index],
+        onTap: () {
+          var pokemon = _pageController.pkmTileControllers[index].pokemon.value;
+          Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
+            ListFavoritePokemonController controller = Get.find();
+            controller.refresh();
+          });
+        },
       );
     }
   }

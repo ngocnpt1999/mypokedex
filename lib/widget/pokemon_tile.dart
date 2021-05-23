@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/typecolors.dart';
-import 'package:mypokedex/pokemon_detail.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
 class PokemonTile extends StatelessWidget {
-  PokemonTile({this.tileController});
+  PokemonTile({this.tileController, this.onTap});
 
   final PokemonTileController tileController;
+
+  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +39,7 @@ class PokemonTile extends StatelessWidget {
           color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
               .withOpacity(0.7),
           child: InkWell(
-            onTap: () {
-              Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
-                ListFavoritePokemonController controller = Get.find();
-                controller.refresh();
-              });
-            },
+            onTap: onTap,
             child: Padding(
               padding: EdgeInsets.all(5.0),
               child: Row(
