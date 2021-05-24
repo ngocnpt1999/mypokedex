@@ -124,8 +124,9 @@ class PokemonAbilityDetail extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Container(height: 5.0),
+          Container(height: 8.0),
           content,
+          Container(height: 5.0),
         ],
       );
     });

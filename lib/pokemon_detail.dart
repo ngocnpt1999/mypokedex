@@ -6,7 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/controller/utility.dart';
 import 'package:mypokedex/model/typecolors.dart';
-import 'package:mypokedex/widget/pokemon_ability_detail.dart';
+import 'package:mypokedex/pokemon_ability_detail.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 import 'package:mypokedex/widget/pokemon_card.dart';
