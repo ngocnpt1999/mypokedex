@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
+import 'package:mypokedex/extension/stringx.dart';
 
 class PokemonAbilityDetail extends StatelessWidget {
   PokemonAbilityDetail({int id, String name, this.title = ""}) {
@@ -16,7 +17,7 @@ class PokemonAbilityDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title.capitalizeFirst),
+        title: Text(title.capitalizeFirstofEach),
       ),
       body: ListView(
         shrinkWrap: true,
@@ -64,7 +65,7 @@ class PokemonAbilityDetail extends StatelessWidget {
     }
     return Card(
       elevation: 3.0,
-      color: Color(0xFFB6B49C),
+      color: Color(0xFFD3D3D3),
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: Row(

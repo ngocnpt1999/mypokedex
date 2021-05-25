@@ -211,7 +211,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 Icons.star_rounded,
                                 color: pokemon.isFavorite.value
                                     ? Colors.yellow
-                                    : Color(0xffd3d3d3),
+                                    : Color(0xFFD3D3D3),
                               ),
                             ),
                             Container(width: 5.0),
@@ -288,7 +288,7 @@ class PokemonDetailPage extends StatelessWidget {
         Container(height: 5.0),
         Card(
           elevation: 4.0,
-          color: Color(0xFFB6B49C),
+          color: Color(0xFFD3D3D3),
           child: content,
         ),
       ],

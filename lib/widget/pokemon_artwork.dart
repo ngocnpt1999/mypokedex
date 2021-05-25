@@ -38,7 +38,7 @@ class PokemonArtwork extends StatelessWidget {
           blendMode: BlendMode.srcATop,
           shaderCallback: (Rect bounds) {
             return LinearGradient(
-              colors: [Color(0xffd3d3d3), Color(0xffd3d3d3)],
+              colors: [Color(0xFFD3D3D3), Color(0xFFD3D3D3)],
             ).createShader(bounds);
           },
           child: img,
