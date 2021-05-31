@@ -706,6 +706,7 @@ class PokemonDetailPage extends StatelessWidget {
                       Get.to(() => PokemonAbilityDetail(
                             name: value.ability.name,
                             title: value.ability.name,
+                            subtitle: pokemon.name + "'s ability",
                           ));
                     },
                     child: Padding(
