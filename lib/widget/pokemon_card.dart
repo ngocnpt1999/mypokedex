@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/model/mypokemon.dart';
-import 'package:mypokedex/model/typecolors.dart';
+import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
 

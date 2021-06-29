@@ -7,7 +7,7 @@ import 'package:mypokedex/widget/pokemon_tile.dart';
 class ListFavoritePokemonPage extends StatelessWidget {
   ListFavoritePokemonPage();
 
-  final _pageController = Get.put(ListFavoritePokemonController());
+  final ListFavoritePokemonController _pageController = Get.find();
 
   @override
   Widget build(BuildContext context) {

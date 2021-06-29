@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mypokedex/controller/state_management.dart';
-import 'package:mypokedex/controller/utility.dart';
-import 'package:mypokedex/model/typecolors.dart';
+import 'package:mypokedex/extension/utility.dart';
+import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/pokemon_ability_detail.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
@@ -89,6 +89,7 @@ class PokemonDetailPage extends StatelessWidget {
                 Expanded(
                   child: Scrollbar(
                     child: ListView(
+                      controller: _pageController.scrollController,
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(height: 8.0),

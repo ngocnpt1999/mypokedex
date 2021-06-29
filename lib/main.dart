@@ -4,9 +4,9 @@ import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mypokedex/controller/actions.dart';
-import 'package:mypokedex/model/typecolors.dart';
-import 'package:mypokedex/widget/search.dart';
+import 'package:mypokedex/extension/actions.dart';
+import 'package:mypokedex/model/pokemon_type_colors.dart';
+import 'package:mypokedex/widget/search_pokemon.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 void main() {

@@ -4,28 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/pokeapi_http.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
-import 'package:mypokedex/controller/utility.dart';
+import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/list_favorite_pokemon.dart';
 import 'package:mypokedex/list_pokemon.dart';
-import 'package:mypokedex/controller/actions.dart';
+import 'package:mypokedex/extension/actions.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_generation.dart';
 import 'package:mypokedex/model/pokemon_type.dart';
 import 'package:pokeapi_dart/pokeapi_dart.dart';
 
 class HomeController extends GetxController {
-  HomeController();
+  HomeController() {
+    initControllers();
+    pages = <Widget>[
+      ListPokemonPage(),
+      ListFavoritePokemonPage(),
+    ];
+  }
 
-  // ignore: unused_field
-  var _pokemonDetailController = Get.put(PokemonDetailController());
-  // ignore: unused_field
-  var _pokemonAbilityDetailController =
-      Get.put(PokemonAbilityDetailController());
+  void initControllers() {
+    Get.put(ListPokemonController());
+    Get.put(ListFavoritePokemonController());
+    Get.put(PokemonDetailController());
+    Get.put(PokemonAbilityDetailController());
+  }
 
-  var pages = <Widget>[
-    ListPokemonPage(),
-    ListFavoritePokemonPage(),
-  ];
+  var pages = <Widget>[];
 
   var selectedTabIndex = 0.obs;
 
@@ -347,6 +351,8 @@ class ListFavoritePokemonController extends GetxController {
 class PokemonDetailController extends GetxController {
   PokemonDetailController();
 
+  ScrollController scrollController = ScrollController();
+
   var isHideArtwork = false.obs;
 
   var activeBaseStat = true.obs;
@@ -362,6 +368,11 @@ class PokemonDetailController extends GetxController {
   var alternativeForms = <MyPokemon>[].obs;
 
   void init({int id, String name}) async {
+    if (scrollController.hasClients) {
+      if (scrollController.position.pixels > 0) {
+        scrollController.jumpTo(0);
+      }
+    }
     pokemon.value = MyPokemon(id: 0, name: "", speciesId: 0);
     weakness.clear();
     evolutions.clear();

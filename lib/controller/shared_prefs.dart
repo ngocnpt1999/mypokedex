@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:mypokedex/controller/pokeapi_http.dart';
-import 'package:mypokedex/controller/utility.dart';
-import 'package:mypokedex/controller/actions.dart';
+import 'package:mypokedex/extension/utility.dart';
+import 'package:mypokedex/extension/actions.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_generation.dart';
 import 'package:mypokedex/model/pokemon_type.dart';

@@ -8,7 +8,7 @@ import 'package:mypokedex/widget/pokemon_tile.dart';
 class ListPokemonPage extends StatelessWidget {
   ListPokemonPage();
 
-  final _pageController = Get.put(ListPokemonController());
+  final ListPokemonController _pageController = Get.find();
 
   @override
   Widget build(BuildContext context) {
