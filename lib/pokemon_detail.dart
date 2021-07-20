@@ -21,6 +21,7 @@ class PokemonDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget spacer = Container(height: 8.0);
     Widget pokemonBar = _buildPokeBar();
     Widget speciesCard = _buildWidget(
       header: "Species",
@@ -92,19 +93,19 @@ class PokemonDetailPage extends StatelessWidget {
                       controller: _pageController.scrollController,
                       shrinkWrap: true,
                       children: <Widget>[
-                        Container(height: 8.0),
+                        spacer,
                         speciesCard,
-                        Container(height: 8.0),
+                        spacer,
                         statsCard,
-                        Container(height: 8.0),
+                        spacer,
                         weaknessCard,
-                        Container(height: 8.0),
+                        spacer,
                         abilitiesCard,
-                        Container(height: 8.0),
+                        spacer,
                         evolutionsCard,
-                        Container(height: 8.0),
+                        spacer,
                         alternativeFormsCard,
-                        Container(height: 8.0),
+                        spacer,
                       ],
                     ),
                   ),
