@@ -25,7 +25,7 @@ class PokemonAbilityDetail extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
-            subtitle.capitalizeFirst,
+            subtitle.capitalizeFirstofEach,
             style: TextStyle(fontSize: 12.0),
           ),
         ),

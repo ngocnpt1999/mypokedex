@@ -411,7 +411,8 @@ class PokemonDetailPage extends StatelessWidget {
       } else {
         var typeColor =
             Color(PokemonTypeColors.colors[pokemon.types[0].type.name]);
-        var typeDarkColor = Utility.darken(typeColor, 0.4);
+        var typeDarkenColor = Utility.darken(typeColor, 0.4);
+        var pressColor = Utility.darken(typeColor, 0.2);
         Map<String, int> statsMap = {
           "HP": pokemon.baseHP,
           "Attack": pokemon.baseAtk,
@@ -430,7 +431,7 @@ class PokemonDetailPage extends StatelessWidget {
               TextSpan(
                 text: "$total",
                 style: TextStyle(
-                  color: typeDarkColor,
+                  color: typeDarkenColor,
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -485,7 +486,7 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeBaseStat.value
-                          ? typeColor.withOpacity(0.5)
+                          ? pressColor
                           : typeColor,
                       child: InkWell(
                         onTap: () {
@@ -513,7 +514,7 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeMinStat.value
-                          ? typeColor.withOpacity(0.5)
+                          ? pressColor
                           : typeColor,
                       child: InkWell(
                         onTap: () {
@@ -541,7 +542,7 @@ class PokemonDetailPage extends StatelessWidget {
                     child: Card(
                       elevation: 3.0,
                       color: _pageController.activeMaxStat.value
-                          ? typeColor.withOpacity(0.5)
+                          ? pressColor
                           : typeColor,
                       child: InkWell(
                         onTap: () {
@@ -585,7 +586,7 @@ class PokemonDetailPage extends StatelessWidget {
                             progressColor: typeColor,
                             animatedDuration: Duration(milliseconds: 500),
                             displayTextStyle: TextStyle(
-                              color: typeDarkColor,
+                              color: typeDarkenColor,
                               fontSize: 14.0,
                             ),
                           ),
