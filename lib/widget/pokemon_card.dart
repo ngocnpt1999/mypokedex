@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
@@ -63,7 +64,7 @@ class PokemonCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(pokemon.getPokedexNo()),
+              Text(Utility.getPokedexNo(pokemon.speciesId)),
               rowTypes,
             ],
           ),

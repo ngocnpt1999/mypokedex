@@ -70,17 +70,6 @@ class MyPokemon {
         "speciesId": speciesId,
       };
 
-  //Can't use for alternative forms
-  String getPokedexNo() {
-    String pokemonNo = speciesId.toString();
-    if (speciesId >= 10 && speciesId < 100) {
-      pokemonNo = "0" + pokemonNo;
-    } else if (speciesId < 10) {
-      pokemonNo = "00" + pokemonNo;
-    }
-    return "#" + pokemonNo;
-  }
-
   void like() {
     var favorites = SharedPrefs.instance.getFavoritesPokemon();
     if (!favorites.contains(jsonEncode(this.toJson()))) {

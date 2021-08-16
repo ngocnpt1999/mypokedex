@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/pokemon_detail.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
@@ -46,50 +47,73 @@ class SearchPokemon extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> pkmNames = [];
-    _getSuggestions(pkmNames);
-    return ListView.separated(
-      itemCount: pkmNames.length,
-      itemBuilder: (context, index) => ListTile(
-        onTap: () async {
-          if (!_recents.contains(pkmNames[index])) {
-            _recents.insert(0, pkmNames[index]);
-            if (_recents.length > _max) {
-              _recents.removeLast();
-            }
-          } else {
-            _recents.remove(pkmNames[index]);
-            _recents.insert(0, pkmNames[index]);
-          }
-          await SharedPrefs.instance.setRecentSearch(_recents);
-          Get.back();
-          Get.to(() => PokemonDetailPage(name: pkmNames[index])).then((value) {
-            ListFavoritePokemonController controller = Get.find();
-            controller.refresh();
-          });
-        },
-        leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
-        title: Text(
-          pkmNames[index].capitalizeFirstofEach,
-        ),
-        trailing: query.isEmpty ? Icon(Icons.north_west_rounded) : null,
-      ),
-      separatorBuilder: (context, index) => Divider(),
+    List<String> listPkm = [];
+    _getSuggestions(listPkm);
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: listPkm.length,
+      itemBuilder: (context, index) {
+        var jsonPkm = jsonDecode(listPkm[index]) as Map<String, dynamic>;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              onTap: () async {
+                if (!_recents.contains(listPkm[index])) {
+                  _recents.insert(0, listPkm[index]);
+                  if (_recents.length > _max) {
+                    _recents.removeLast();
+                  }
+                } else {
+                  _recents.remove(listPkm[index]);
+                  _recents.insert(0, listPkm[index]);
+                }
+                await SharedPrefs.instance.setRecentSearch(_recents);
+                Get.back();
+                Get.to(() =>
+                        PokemonDetailPage(name: jsonPkm["name"].toString()))
+                    .then((value) {
+                  ListFavoritePokemonController controller = Get.find();
+                  controller.refresh();
+                });
+              },
+              leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
+              title: Text(jsonPkm["name"].toString().capitalizeFirstofEach),
+              subtitle: Text(Utility.getPokedexNo(jsonPkm["speciesId"] as int)),
+              trailing: query.isEmpty ? Icon(Icons.north_west_rounded) : null,
+            ),
+            Divider(),
+          ],
+        );
+      },
     );
   }
 
-  void _getSuggestions(List<String> pkmNames) {
+  void _getSuggestions(List<String> listPkm) {
     if (query.isEmpty) {
-      pkmNames.addAll(_recents);
+      listPkm.addAll(_recents);
     } else {
-      var jsonPkms = SharedPrefs.instance.getPokedex().where((element) {
-        var value = jsonDecode(element) as Map<String, dynamic>;
-        return value["name"].toString().startsWith(query.toLowerCase());
-      }).take(_max);
-      jsonPkms.forEach((element) {
-        var value = jsonDecode(element) as Map<String, dynamic>;
-        pkmNames.add(value["name"].toString());
-      });
+      String keyword = query.trim().toLowerCase();
+      if (keyword.length > 1 && keyword[0] == "#") {
+        int num = int.tryParse(keyword.substring(1));
+        if (num != null) {
+          var jsonPkm = SharedPrefs.instance.getPokedex().firstWhere((element) {
+            var value = jsonDecode(element) as Map<String, dynamic>;
+            return num == (value["id"] as int);
+          }, orElse: () => null);
+          if (jsonPkm != null) {
+            listPkm.add(jsonPkm);
+          }
+        }
+      } else {
+        var jsonPkms = SharedPrefs.instance.getPokedex().where((element) {
+          var value = jsonDecode(element) as Map<String, dynamic>;
+          return value["name"].toString().startsWith(query.toLowerCase());
+        }).take(_max);
+        jsonPkms.forEach((element) {
+          listPkm.add(element);
+        });
+      }
     }
   }
 }

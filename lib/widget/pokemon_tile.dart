@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/state_management.dart';
+import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
@@ -70,7 +71,7 @@ class PokemonTile extends StatelessWidget {
                         pokemon.name.capitalizeFirstofEach,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(pokemon.getPokedexNo()),
+                      subtitle: Text(Utility.getPokedexNo(pokemon.speciesId)),
                     ),
                   ),
                   Expanded(

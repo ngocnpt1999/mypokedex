@@ -227,7 +227,7 @@ class PokemonDetailPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              pokemon.getPokedexNo(),
+                              Utility.getPokedexNo(pokemon.speciesId),
                               textAlign: TextAlign.end,
                               style: TextStyle(fontSize: 18.0),
                             ),

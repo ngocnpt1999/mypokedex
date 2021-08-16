@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
 class Utility {
+  static String getPokedexNo(int speciesId) {
+    String pokemonNo = speciesId.toString();
+    if (speciesId >= 10 && speciesId < 100) {
+      pokemonNo = "0" + pokemonNo;
+    } else if (speciesId < 10) {
+      pokemonNo = "00" + pokemonNo;
+    }
+    return "#" + pokemonNo;
+  }
+
   static int getPkmIdFromUrl(String url) {
     var re = RegExp(r'(?<=pokemon/)(.*)(?=/)');
     var match = re.firstMatch(url);
