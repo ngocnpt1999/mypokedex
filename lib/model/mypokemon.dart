@@ -17,7 +17,6 @@ class MyPokemon {
   List<PokemonType> types;
   List<PokemonAbility> abilities;
   int genderRate; //The chance of this Pokémon being female, in eighths; or -1 for genderless
-  int evolutionNo;
   //Base Stats
   int baseHP;
   int baseAtk;
@@ -27,6 +26,7 @@ class MyPokemon {
   int baseSpeed;
   //
   var isFavorite = false.obs;
+  int evolutionNo;
 
   MyPokemon({
     @required this.id,

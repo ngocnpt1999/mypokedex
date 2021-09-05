@@ -99,14 +99,14 @@ class PokemonDetailController extends GetxController {
     var evoChain = await MyPokeApi.getEvolutionChain(
         id: Utility.getEvoChainIdFromUrl(pkmSpec.evolutionChain.url));
     var tempEvolutions = <MyPokemon>[];
-    var addEvolution = (Pokemon pkm, int no) {
+    var addEvolution = (Pokemon pkm, int index) {
       tempEvolutions.add(MyPokemon(
         id: pkm.id,
         name: pkm.name,
         speciesId: pkm.id,
         artwork: pkm.sprites.other.officialArtwork.frontDefault,
         types: pkm.types,
-        evolutionNo: no,
+        evolutionNo: index,
       ));
       tempEvolutions.sort((a, b) => a.id.compareTo(b.id));
     };
