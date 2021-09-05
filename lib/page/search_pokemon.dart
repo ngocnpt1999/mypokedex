@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/extension/utility.dart';
-import 'package:mypokedex/pokemon_detail.dart';
+import 'package:mypokedex/page/pokemon_detail.dart';
 import 'package:mypokedex/extension/stringx.dart';
 
 class SearchPokemon extends SearchDelegate {
@@ -54,36 +54,43 @@ class SearchPokemon extends SearchDelegate {
       itemCount: listPkm.length,
       itemBuilder: (context, index) {
         var jsonPkm = jsonDecode(listPkm[index]) as Map<String, dynamic>;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              onTap: () async {
-                if (!_recents.contains(listPkm[index])) {
-                  _recents.insert(0, listPkm[index]);
-                  if (_recents.length > _max) {
-                    _recents.removeLast();
-                  }
-                } else {
-                  _recents.remove(listPkm[index]);
-                  _recents.insert(0, listPkm[index]);
-                }
-                await SharedPrefs.instance.setRecentSearch(_recents);
-                Get.back();
-                Get.to(() =>
-                        PokemonDetailPage(name: jsonPkm["name"].toString()))
-                    .then((value) {
-                  ListFavoritePokemonController controller = Get.find();
-                  controller.refresh();
-                });
-              },
-              leading: query.isEmpty ? Icon(Icons.history_rounded) : null,
-              title: Text(jsonPkm["name"].toString().capitalizeFirstofEach),
-              subtitle: Text(Utility.getPokedexNo(jsonPkm["speciesId"] as int)),
-              trailing: query.isEmpty ? Icon(Icons.north_west_rounded) : null,
-            ),
-            Divider(),
-          ],
+        return ListTile(
+          onTap: () async {
+            if (!_recents.contains(listPkm[index])) {
+              _recents.insert(0, listPkm[index]);
+              if (_recents.length > _max) {
+                _recents.removeLast();
+              }
+            } else {
+              _recents.remove(listPkm[index]);
+              _recents.insert(0, listPkm[index]);
+            }
+            await SharedPrefs.instance.setRecentSearch(_recents);
+            Get.back();
+            Get.to(() => PokemonDetailPage(name: jsonPkm["name"].toString()))
+                .then((value) {
+              ListFavoritePokemonController controller = Get.find();
+              controller.refresh();
+            });
+          },
+          leading: query.isEmpty
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.history_rounded),
+                  ],
+                )
+              : null,
+          title: Text(jsonPkm["name"].toString().capitalizeFirstofEach),
+          subtitle: Text(Utility.getPokedexNo(jsonPkm["speciesId"] as int)),
+          trailing: query.isEmpty
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.north_west_rounded),
+                  ],
+                )
+              : null,
         );
       },
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
 import 'package:mypokedex/controller/state_management.dart';
-import 'package:mypokedex/pokemon_detail.dart';
+import 'package:mypokedex/page/pokemon_detail.dart';
 import 'package:mypokedex/widget/pokemon_tile.dart';
 
 class ListPokemonPage extends StatelessWidget {
