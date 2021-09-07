@@ -121,12 +121,12 @@ class PokemonAbilityDetail extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             itemCount: listPkm.length,
             itemBuilder: (context, index) => PokemonTile(
-                  tileController: listPkm[index],
+                  controller: listPkm[index],
                   onTap: () {
                     var pokemon = listPkm[index].pokemon.value;
                     Get.back();
                     PokemonDetailController controller = Get.find();
-                    controller.init(id: pokemon.id);
+                    controller.init(pokemon: pokemon);
                   },
                 ));
       }

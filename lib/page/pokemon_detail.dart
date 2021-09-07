@@ -5,6 +5,7 @@ import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/extension/utility.dart';
+import 'package:mypokedex/model/mypokemon.dart';
 import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/page/pokemon_ability_detail.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
@@ -13,8 +14,8 @@ import 'package:mypokedex/widget/pokemon_card.dart';
 import 'package:random_string/random_string.dart';
 
 class PokemonDetailPage extends StatelessWidget {
-  PokemonDetailPage({int id, String name}) {
-    _pageController.init(id: id, name: name);
+  PokemonDetailPage({MyPokemon pokemon, int id, String name}) {
+    _pageController.init(pokemon: pokemon, id: id, name: name);
   }
 
   final PokemonDetailController _pageController = Get.find();
@@ -55,8 +56,8 @@ class PokemonDetailPage extends StatelessWidget {
           items: <HawkFabMenuItem>[
             HawkFabMenuItem(
               ontap: () {
-                int specId = _pageController.pokemon.value.speciesId;
-                if (specId != null && specId > 1) {
+                int specId = _pageController.pokemon.value.speciesId.value;
+                if (specId > 1) {
                   _pageController.init(id: specId - 1);
                 }
               },
@@ -65,8 +66,8 @@ class PokemonDetailPage extends StatelessWidget {
             ),
             HawkFabMenuItem(
               ontap: () {
-                int specId = _pageController.pokemon.value.speciesId;
-                if (specId != null && specId < 809) {
+                int specId = _pageController.pokemon.value.speciesId.value;
+                if (specId < 809) {
                   _pageController.init(id: specId + 1);
                 }
               },
@@ -165,7 +166,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _buildPokeBar() {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (pokemon.id == 0) {
+      if (!pokemon.hasSimpleData || !pokemon.hasExpansionData) {
         return Card(
           elevation: 4.0,
           child: _circularProgressIndicator(),
@@ -219,7 +220,7 @@ class PokemonDetailPage extends StatelessWidget {
                             Container(width: 5.0),
                             Expanded(
                               child: Text(
-                                pokemon.name.capitalizeFirstofEach,
+                                pokemon.name.value.capitalizeFirstofEach,
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
@@ -227,7 +228,7 @@ class PokemonDetailPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              Utility.getPokedexNo(pokemon.speciesId),
+                              Utility.getPokedexNo(pokemon.speciesId.value),
                               textAlign: TextAlign.end,
                               style: TextStyle(fontSize: 18.0),
                             ),
@@ -241,11 +242,11 @@ class PokemonDetailPage extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               child: Text(
-                                pokemon.genus,
+                                pokemon.genus.value,
                                 style: TextStyle(fontSize: 15.0),
                               ),
                             ),
-                            _genderWidget(pokemon.genderRate),
+                            _genderWidget(pokemon.genderRate.value),
                           ],
                         ),
                       ),
@@ -263,7 +264,7 @@ class PokemonDetailPage extends StatelessWidget {
                       !_pageController.isHideArtwork.value;
                 },
                 child: PokemonArtwork(
-                  image: pokemon.artwork,
+                  image: pokemon.artwork.value,
                   width: Get.height / 5,
                   height: Get.height / 5,
                   isHideArtwork: _pageController.isHideArtwork.value,
@@ -300,7 +301,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonSpecies() {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (pokemon.id == 0) {
+      if (!pokemon.hasSimpleData || !pokemon.hasExpansionData) {
         return _circularProgressIndicator();
       } else {
         return Padding(
@@ -320,7 +321,7 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Text(
-                                    pokemon.entry,
+                                    pokemon.entry.value,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -351,7 +352,8 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Text(
-                                    (pokemon.weight / 10.0).toString() + " kg",
+                                    (pokemon.weight.value / 10.0).toString() +
+                                        " kg",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -378,7 +380,8 @@ class PokemonDetailPage extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.all(5.0),
                                   child: Text(
-                                    (pokemon.height / 10.0).toString() + " m",
+                                    (pokemon.height.value / 10.0).toString() +
+                                        " m",
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -406,7 +409,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonStats(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (pokemon.baseHP == 0) {
+      if (!pokemon.hasSimpleData) {
         return _circularProgressIndicator();
       } else {
         var typeColor =
@@ -414,12 +417,12 @@ class PokemonDetailPage extends StatelessWidget {
         var typeDarkenColor = Utility.darken(typeColor, 0.4);
         var pressColor = Utility.darken(typeColor, 0.2);
         Map<String, int> statsMap = {
-          "HP": pokemon.baseHP,
-          "Attack": pokemon.baseAtk,
-          "Defense": pokemon.baseDef,
-          "Sp. Atk": pokemon.baseSpAtk,
-          "Sp. Def": pokemon.baseSpDef,
-          "Speed": pokemon.baseSpeed,
+          "HP": pokemon.baseHP.value,
+          "Attack": pokemon.baseAtk.value,
+          "Defense": pokemon.baseDef.value,
+          "Sp. Atk": pokemon.baseSpAtk.value,
+          "Sp. Def": pokemon.baseSpDef.value,
+          "Speed": pokemon.baseSpeed.value,
         };
         int total = 0;
         statsMap.forEach((key, value) => total += value);
@@ -630,8 +633,8 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _pokemonWeakness() {
     return Obx(() {
-      var weakness = _pageController.weakness;
-      if (weakness.length == 0) {
+      var weakness = _pageController.pokemon.value.weakness;
+      if (!_pageController.pokemon.value.hasExpansionData) {
         return _circularProgressIndicator();
       } else {
         var typeWidgets = <Widget>[];
@@ -690,7 +693,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonAbilities(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (pokemon.id == 0) {
+      if (!pokemon.hasSimpleData) {
         return _circularProgressIndicator();
       } else {
         var typeColor =
@@ -784,8 +787,8 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _evolutionChain() {
     return Obx(() {
-      var evolutions = _pageController.evolutions;
-      if (evolutions.length == 0) {
+      var evolutions = _pageController.pokemon.value.evolutions;
+      if (!_pageController.pokemon.value.hasExpansionData) {
         return _circularProgressIndicator();
       } else {
         List<Widget> evoNo_1 = [];
@@ -793,7 +796,7 @@ class PokemonDetailPage extends StatelessWidget {
         List<Widget> evoNo_3 = [];
         evolutions.forEach((pokemon) {
           var pkmCard = PokemonCard(
-            pokemon: pokemon,
+            controller: PokemonCardController(pokemon: pokemon),
             imgSize: Get.width / 5,
           );
           if (pokemon.evolutionNo == 1) {
@@ -838,14 +841,14 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _alternativeForms() {
     return Obx(() {
-      var forms = _pageController.alternativeForms;
-      if (forms.length == 0) {
+      var forms = _pageController.pokemon.value.alternativeForms;
+      if (!_pageController.pokemon.value.hasExpansionData) {
         return _circularProgressIndicator();
       } else {
         var formWidgets = <Widget>[];
         forms.forEach((pokemon) {
           formWidgets.add(PokemonCard(
-            pokemon: pokemon,
+            controller: PokemonCardController(pokemon: pokemon),
             imgSize: Get.width / 3.5,
             textNameSize: 15.0,
           ));

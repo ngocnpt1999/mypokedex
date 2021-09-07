@@ -46,10 +46,10 @@ class ListPokemonPage extends StatelessWidget {
       );
     } else {
       return PokemonTile(
-        tileController: _pageController.pkmTileControllers[index],
+        controller: _pageController.pkmTileControllers[index],
         onTap: () {
           var pokemon = _pageController.pkmTileControllers[index].pokemon.value;
-          Get.to(() => PokemonDetailPage(id: pokemon.id)).then((value) {
+          Get.to(() => PokemonDetailPage(pokemon: pokemon)).then((value) {
             ListFavoritePokemonController controller = Get.find();
             controller.refresh();
           });

@@ -152,8 +152,7 @@ class ListPokemonController extends GetxController {
                 id: pkm.id,
                 name: pkm.name,
                 speciesId: Utility.getPkmSpecIdFromUrl(pkm.species.url),
-                artwork: pkm.sprites.other.officialArtwork.frontDefault,
-                types: pkm.types,
+                allowStats: true,
               ),
               isHideArtwork: _isHideAllArtwork,
             ));
@@ -289,8 +288,7 @@ class ListFavoritePokemonController extends GetxController {
                 id: pkm.id,
                 name: pkm.name,
                 speciesId: Utility.getPkmSpecIdFromUrl(pkm.species.url),
-                artwork: pkm.sprites.other.officialArtwork.frontDefault,
-                types: pkm.types,
+                allowStats: true,
               ),
               isHideArtwork: _isHideAllArtwork,
             ));

@@ -148,20 +148,20 @@ class ListPokemonFilter {
       List<PokemonTileController> controller, String filter) {
     switch (filter) {
       case ascendingID:
-        controller.sort((a, b) =>
-            a.pokemon.value.speciesId.compareTo(b.pokemon.value.speciesId));
+        controller.sort((a, b) => a.pokemon.value.speciesId.value
+            .compareTo(b.pokemon.value.speciesId.value));
         break;
       case descendingID:
-        controller.sort((b, a) =>
-            a.pokemon.value.speciesId.compareTo(b.pokemon.value.speciesId));
+        controller.sort((b, a) => a.pokemon.value.speciesId.value
+            .compareTo(b.pokemon.value.speciesId.value));
         break;
       case alphabetAZ:
-        controller.sort(
-            (a, b) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
+        controller.sort((a, b) =>
+            a.pokemon.value.name.value.compareTo(b.pokemon.value.name.value));
         break;
       case alphabetZA:
-        controller.sort(
-            (b, a) => a.pokemon.value.name.compareTo(b.pokemon.value.name));
+        controller.sort((b, a) =>
+            a.pokemon.value.name.value.compareTo(b.pokemon.value.name.value));
         break;
       default:
         break;

@@ -5,18 +5,34 @@ import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/model/pokemon_type_colors.dart';
 import 'package:mypokedex/widget/pokemon_artwork.dart';
 import 'package:mypokedex/extension/stringx.dart';
+import 'package:shimmer/shimmer.dart';
 
 class PokemonTile extends StatelessWidget {
-  PokemonTile({this.tileController, this.onTap});
+  PokemonTile({this.controller, this.onTap});
 
-  final PokemonTileController tileController;
+  final PokemonTileController controller;
 
   final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      var pokemon = tileController.pokemon.value;
+      var pokemon = controller.pokemon.value;
+      if (!pokemon.hasSimpleData) {
+        return Shimmer.fromColors(
+          child: Padding(
+            padding: EdgeInsets.only(left: 5.0, right: 5.0),
+            child: Card(
+              elevation: 3.0,
+              child: Container(
+                height: Get.width / 5,
+              ),
+            ),
+          ),
+          baseColor: Colors.grey[300],
+          highlightColor: Colors.grey[100],
+        );
+      }
       var types = pokemon.types;
       List<Widget> typeWidgets = [];
       types.forEach((value) => typeWidgets.addAll([
@@ -26,15 +42,10 @@ class PokemonTile extends StatelessWidget {
               width: 25.0,
               fit: BoxFit.contain,
             ),
-            Container(
-              width: 3.0,
-            ),
+            Container(width: 3.0),
           ]));
       return Padding(
-        padding: EdgeInsets.only(
-          left: 5.0,
-          right: 5.0,
-        ),
+        padding: EdgeInsets.only(left: 5.0, right: 5.0),
         child: Card(
           elevation: 3.0,
           color: Color(PokemonTypeColors.colors[pokemon.types[0].type.name])
@@ -49,16 +60,16 @@ class PokemonTile extends StatelessWidget {
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      tileController.isHideArtwork.value =
-                          !tileController.isHideArtwork.value;
+                      controller.isHideArtwork.value =
+                          !controller.isHideArtwork.value;
                     },
                     child: PokemonArtwork(
-                      image: pokemon.artwork,
+                      image: pokemon.artwork.value,
                       imageCacheWidth: 150,
                       imageCacheHeight: 150,
                       width: Get.width / 5,
                       height: Get.width / 5,
-                      isHideArtwork: tileController.isHideArtwork.value,
+                      isHideArtwork: controller.isHideArtwork.value,
                     ),
                   ),
                   Container(
@@ -68,10 +79,11 @@ class PokemonTile extends StatelessWidget {
                     flex: 3,
                     child: ListTile(
                       title: Text(
-                        pokemon.name.capitalizeFirstofEach,
+                        pokemon.name.value.capitalizeFirstofEach,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(Utility.getPokedexNo(pokemon.speciesId)),
+                      subtitle:
+                          Text(Utility.getPokedexNo(pokemon.speciesId.value)),
                     ),
                   ),
                   Expanded(
