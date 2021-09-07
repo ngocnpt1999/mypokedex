@@ -22,13 +22,16 @@ class PokemonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       var pokemon = controller.pokemon.value;
-      if (!pokemon.hasSimpleData) {
+      if (!pokemon.hasStats) {
         return Shimmer.fromColors(
           child: Card(
             elevation: 3.0,
             child: Container(
-              height: imgSize,
-              width: imgSize,
+              padding: EdgeInsets.all(3.0),
+              child: Container(
+                height: imgSize + textNameSize + imgSize / 5,
+                width: imgSize,
+              ),
             ),
           ),
           baseColor: Colors.grey[300],

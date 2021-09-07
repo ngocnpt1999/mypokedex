@@ -18,14 +18,15 @@ class PokemonTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       var pokemon = controller.pokemon.value;
-      if (!pokemon.hasSimpleData) {
+      if (!pokemon.hasStats) {
         return Shimmer.fromColors(
           child: Padding(
             padding: EdgeInsets.only(left: 5.0, right: 5.0),
             child: Card(
               elevation: 3.0,
               child: Container(
-                height: Get.width / 5,
+                padding: EdgeInsets.all(5.0),
+                child: Container(height: Get.width / 5),
               ),
             ),
           ),

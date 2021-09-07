@@ -166,7 +166,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _buildPokeBar() {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (!pokemon.hasSimpleData || !pokemon.hasExpansionData) {
+      if (!pokemon.hasStats) {
         return Card(
           elevation: 4.0,
           child: _circularProgressIndicator(),
@@ -301,7 +301,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonSpecies() {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (!pokemon.hasSimpleData || !pokemon.hasExpansionData) {
+      if (!pokemon.hasStats) {
         return _circularProgressIndicator();
       } else {
         return Padding(
@@ -409,7 +409,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonStats(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (!pokemon.hasSimpleData) {
+      if (!pokemon.hasStats) {
         return _circularProgressIndicator();
       } else {
         var typeColor =
@@ -633,8 +633,8 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _pokemonWeakness() {
     return Obx(() {
-      var weakness = _pageController.pokemon.value.weakness;
-      if (!_pageController.pokemon.value.hasExpansionData) {
+      var weakness = _pageController.weakness;
+      if (weakness.length == 0) {
         return _circularProgressIndicator();
       } else {
         var typeWidgets = <Widget>[];
@@ -693,7 +693,7 @@ class PokemonDetailPage extends StatelessWidget {
   Widget _pokemonAbilities(BuildContext context) {
     return Obx(() {
       var pokemon = _pageController.pokemon.value;
-      if (!pokemon.hasSimpleData) {
+      if (!pokemon.hasStats) {
         return _circularProgressIndicator();
       } else {
         var typeColor =
@@ -787,8 +787,8 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _evolutionChain() {
     return Obx(() {
-      var evolutions = _pageController.pokemon.value.evolutions;
-      if (!_pageController.pokemon.value.hasExpansionData) {
+      var evolutions = _pageController.evolutions;
+      if (evolutions.length == 0) {
         return _circularProgressIndicator();
       } else {
         List<Widget> evoNo_1 = [];
@@ -841,8 +841,8 @@ class PokemonDetailPage extends StatelessWidget {
 
   Widget _alternativeForms() {
     return Obx(() {
-      var forms = _pageController.pokemon.value.alternativeForms;
-      if (!_pageController.pokemon.value.hasExpansionData) {
+      var forms = _pageController.alternativeForms;
+      if (forms.length == 0) {
         return _circularProgressIndicator();
       } else {
         var formWidgets = <Widget>[];
