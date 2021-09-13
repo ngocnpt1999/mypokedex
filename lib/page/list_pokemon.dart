@@ -12,28 +12,34 @@ class ListPokemonPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!_pageController.isRunning) {
-      _pageController.isRunning = true;
+    if (!_pageController.hasData) {
       _fetchData();
     }
-    return Obx(() {
-      if (_pageController.pkmTileControllers.length == 0) {
-        return Center(
-          child: CircularProgressIndicator(),
+    return RefreshIndicator(
+      child: Obx(() {
+        var tileControllers = _pageController.pkmTileControllers;
+        if (tileControllers.length == 0) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return Scrollbar(
+          child: ListView.builder(
+            controller: _pageController.scrollController,
+            itemCount: tileControllers.length + 1,
+            itemBuilder: _buildPokemonTile,
+          ),
         );
-      }
-      return Scrollbar(
-        child: ListView.builder(
-          controller: _pageController.scrollController,
-          itemCount: _pageController.pkmTileControllers.length + 1,
-          itemBuilder: _buildPokemonTile,
-        ),
-      );
-    });
+      }),
+      onRefresh: () async {
+        _pageController.refresh();
+      },
+    );
   }
 
   Widget _buildPokemonTile(BuildContext context, int index) {
-    if (index == _pageController.pkmTileControllers.length) {
+    var tileControllers = _pageController.pkmTileControllers;
+    if (index == tileControllers.length) {
       return Container(
         alignment: Alignment.center,
         padding: EdgeInsets.only(
@@ -46,13 +52,10 @@ class ListPokemonPage extends StatelessWidget {
       );
     } else {
       return PokemonTile(
-        controller: _pageController.pkmTileControllers[index],
+        controller: tileControllers[index],
         onTap: () {
-          var pokemon = _pageController.pkmTileControllers[index].pokemon.value;
-          Get.to(() => PokemonDetailPage(pokemon: pokemon)).then((value) {
-            ListFavoritePokemonController controller = Get.find();
-            controller.refresh();
-          });
+          var pokemon = tileControllers[index].pokemon.value;
+          Get.to(() => PokemonDetailPage(pokemon: pokemon));
         },
       );
     }

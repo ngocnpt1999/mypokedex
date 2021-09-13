@@ -63,7 +63,7 @@ class PokemonCard extends StatelessWidget {
         child: InkWell(
           onTap: () {
             PokemonDetailController controller = Get.find();
-            controller.init(pokemon: pokemon);
+            controller.load(pokemon: pokemon);
           },
           child: Container(
             padding: EdgeInsets.all(3.0),

@@ -73,17 +73,6 @@ class HomeController extends GetxController {
   }
 }
 
-class PokemonTileController extends GetxController {
-  PokemonTileController({MyPokemon pokemon, bool isHideArtwork = false}) {
-    this.pokemon.value = pokemon;
-    this.isHideArtwork.value = isHideArtwork;
-  }
-
-  var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
-
-  var isHideArtwork = false.obs;
-}
-
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
@@ -100,7 +89,13 @@ class ListPokemonController extends GetxController {
     });
   }
 
-  var isRunning = false;
+  bool get hasData {
+    if (this.pkmTileControllers.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   var scrollController = ScrollController();
 
@@ -228,13 +223,28 @@ class ListFavoritePokemonController extends GetxController {
     });
   }
 
-  var isRunning = false;
+  bool get hasData {
+    if (this.pkmTileControllers.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   var scrollController = ScrollController();
 
   var pkmTileControllers = <PokemonTileController>[].obs;
 
-  var hasFavorites = false.obs;
+  bool get hasFavorites {
+    if (SharedPrefs.instance
+            .getFavoritesPokemon(generation: _generation, typeName: _typeName)
+            .length >
+        0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   bool _isHideAllArtwork = false;
 
@@ -255,11 +265,9 @@ class ListFavoritePokemonController extends GetxController {
           .getFavoritesPokemon(generation: _generation, typeName: _typeName)
           .length;
       if (totalPkm == 0) {
-        hasFavorites.value = false;
         _isLoading = false;
         return;
       }
-      hasFavorites.value = true;
       var jsonPkms = pkmTileControllers.length + _limit >= totalPkm
           ? SharedPrefs.instance
               .getFavoritesPokemon(

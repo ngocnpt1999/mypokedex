@@ -17,7 +17,36 @@ class PokemonDetailController extends GetxController {
   var evolutions = <MyPokemon>[].obs;
   var alternativeForms = <MyPokemon>[].obs;
 
-  void init({MyPokemon pokemon, int id, String name}) async {
+  void load({MyPokemon pokemon}) async {
+    _reset();
+    var pkm = await MyPokeApi.getPokemon(
+        id: pokemon.id.value, name: pokemon.name.value);
+    var pkmSpec =
+        await MyPokeApi.getPokemonSpecies(id: pokemon.speciesId.value);
+    this.pokemon.value = pokemon;
+    this.pokemon.value.checkFavorite();
+    this.weakness.addAll(await _getTypeWeakness(pkm.types));
+    this.evolutions.addAll(await _getEvolutions(pkmSpec));
+    this.alternativeForms.addAll(await _getAlternativeForms(pkmSpec));
+  }
+
+  void loadByIdOrName({int id, String name}) async {
+    _reset();
+    var pkm = await MyPokeApi.getPokemon(id: id, name: name);
+    var pkmSpec = await MyPokeApi.getPokemonSpecies(name: pkm.species.name);
+    this.pokemon.value = MyPokemon(
+      id: pkm.id,
+      name: pkm.name,
+      speciesId: pkmSpec.id,
+      allowStats: true,
+    );
+    this.pokemon.value.checkFavorite();
+    this.weakness.addAll(await _getTypeWeakness(pkm.types));
+    this.evolutions.addAll(await _getEvolutions(pkmSpec));
+    this.alternativeForms.addAll(await _getAlternativeForms(pkmSpec));
+  }
+
+  void _reset() {
     if (scrollController.hasClients) {
       if (scrollController.position.pixels > 0) {
         scrollController.jumpTo(0);
@@ -27,29 +56,9 @@ class PokemonDetailController extends GetxController {
     activeBaseStat.value = true;
     activeMinStat.value = false;
     activeMaxStat.value = false;
-    //
-    if (pokemon != null) {
-      var pkm = await MyPokeApi.getPokemon(
-          id: pokemon.id.value, name: pokemon.name.value);
-      var pkmSpec =
-          await MyPokeApi.getPokemonSpecies(id: pokemon.speciesId.value);
-      this.pokemon.value = pokemon;
-      this.weakness.addAll(await _getTypeWeakness(pkm.types));
-      this.evolutions.addAll(await _getEvolutions(pkmSpec));
-      this.alternativeForms.addAll(await _getAlternativeForms(pkmSpec));
-    } else {
-      var pkm = await MyPokeApi.getPokemon(id: id, name: name);
-      var pkmSpec = await MyPokeApi.getPokemonSpecies(name: pkm.species.name);
-      this.pokemon.value = MyPokemon(
-        id: pkm.id,
-        name: pkm.name,
-        speciesId: pkmSpec.id,
-        allowStats: true,
-      );
-      this.weakness.addAll(await _getTypeWeakness(pkm.types));
-      this.evolutions.addAll(await _getEvolutions(pkmSpec));
-      this.alternativeForms.addAll(await _getAlternativeForms(pkmSpec));
-    }
+    weakness.clear();
+    evolutions.clear();
+    alternativeForms.clear();
   }
 
   Future<Map<String, double>> _getTypeWeakness(List<PokemonType> types) async {
@@ -86,7 +95,7 @@ class PokemonDetailController extends GetxController {
 
   Future<List<MyPokemon>> _getEvolutions(PokemonSpecies pkmSpec) async {
     var evoChain = await MyPokeApi.getEvolutionChain(
-        id: Utility.getEvoChainIdFromUrl(pkmSpec.evolutionChain.url));
+        id: Utility.getEvolutionChainIdFromUrl(pkmSpec.evolutionChain.url));
     var tempEvolutions = <MyPokemon>[];
     var addEvolution = (Pokemon pkm, int index) {
       tempEvolutions.add(MyPokemon(
@@ -215,6 +224,17 @@ class PokemonAbilityDetailController extends GetxController {
       hiddenPkmTileControllers.addAll(tempHiddenControllers);
     });
   }
+}
+
+class PokemonTileController extends GetxController {
+  PokemonTileController({MyPokemon pokemon, bool isHideArtwork = false}) {
+    this.pokemon.value = pokemon;
+    this.isHideArtwork.value = isHideArtwork;
+  }
+
+  var pokemon = MyPokemon(id: 0, name: "", speciesId: 0).obs;
+
+  var isHideArtwork = false.obs;
 }
 
 class PokemonCardController extends GetxController {

@@ -14,8 +14,12 @@ import 'package:mypokedex/widget/pokemon_card.dart';
 import 'package:random_string/random_string.dart';
 
 class PokemonDetailPage extends StatelessWidget {
-  PokemonDetailPage({MyPokemon pokemon, int id, String name}) {
-    _pageController.init(pokemon: pokemon, id: id, name: name);
+  PokemonDetailPage({MyPokemon pokemon}) {
+    _pageController.load(pokemon: pokemon);
+  }
+
+  PokemonDetailPage.fromIdOrName({int id, String name}) {
+    _pageController.loadByIdOrName(id: id, name: name);
   }
 
   final PokemonDetailController _pageController = Get.find();
@@ -58,7 +62,7 @@ class PokemonDetailPage extends StatelessWidget {
               ontap: () {
                 int specId = _pageController.pokemon.value.speciesId.value;
                 if (specId > 1) {
-                  _pageController.init(id: specId - 1);
+                  _pageController.loadByIdOrName(id: specId - 1);
                 }
               },
               icon: Icon(Icons.arrow_back_rounded),
@@ -68,7 +72,7 @@ class PokemonDetailPage extends StatelessWidget {
               ontap: () {
                 int specId = _pageController.pokemon.value.speciesId.value;
                 if (specId < 809) {
-                  _pageController.init(id: specId + 1);
+                  _pageController.loadByIdOrName(id: specId + 1);
                 }
               },
               icon: Icon(Icons.arrow_forward_rounded),
@@ -116,7 +120,11 @@ class PokemonDetailPage extends StatelessWidget {
           ),
         ),
       ),
-      onWillPop: () async => true,
+      onWillPop: () async {
+        ListFavoritePokemonController controller = Get.find();
+        controller.refresh();
+        return true;
+      },
     );
   }
 

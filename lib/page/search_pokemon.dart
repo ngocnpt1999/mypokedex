@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mypokedex/controller/shared_prefs.dart';
-import 'package:mypokedex/controller/state_management.dart';
 import 'package:mypokedex/extension/utility.dart';
 import 'package:mypokedex/page/pokemon_detail.dart';
 import 'package:mypokedex/extension/stringx.dart';
@@ -67,11 +66,8 @@ class SearchPokemon extends SearchDelegate {
             }
             await SharedPrefs.instance.setRecentSearch(_recents);
             Get.back();
-            Get.to(() => PokemonDetailPage(name: jsonPkm["name"].toString()))
-                .then((value) {
-              ListFavoritePokemonController controller = Get.find();
-              controller.refresh();
-            });
+            Get.to(() => PokemonDetailPage.fromIdOrName(
+                name: jsonPkm["name"].toString()));
           },
           leading: query.isEmpty
               ? Column(

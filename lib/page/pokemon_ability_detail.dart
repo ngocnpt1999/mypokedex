@@ -126,7 +126,7 @@ class PokemonAbilityDetail extends StatelessWidget {
                     var pokemon = listPkm[index].pokemon.value;
                     Get.back();
                     PokemonDetailController controller = Get.find();
-                    controller.init(pokemon: pokemon);
+                    controller.load(pokemon: pokemon);
                   },
                 ));
       }

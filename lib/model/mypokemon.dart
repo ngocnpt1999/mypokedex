@@ -66,15 +66,6 @@ class MyPokemon {
     if (allowStats) {
       _initStats();
     }
-    if (this.id.value > 0) {
-      if (SharedPrefs.instance
-          .getFavoritesPokemon()
-          .contains(jsonEncode(this.toJson()))) {
-        this.isFavorite.value = true;
-      } else {
-        this.isFavorite.value = false;
-      }
-    }
   }
 
   void _initStats() async {
@@ -100,6 +91,18 @@ class MyPokemon {
     this.genus.value = category.genus;
     this.entry.value = entries.flavorText;
     this.genderRate.value = pkmSpec.genderRate;
+  }
+
+  void checkFavorite() {
+    if (this.id.value > 0) {
+      if (SharedPrefs.instance
+          .getFavoritesPokemon()
+          .contains(jsonEncode(this.toJson()))) {
+        this.isFavorite.value = true;
+      } else {
+        this.isFavorite.value = false;
+      }
+    }
   }
 
   factory MyPokemon.fromJson(Map<String, dynamic> json, bool allowStats) {
