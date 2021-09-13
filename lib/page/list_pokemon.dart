@@ -24,6 +24,7 @@ class ListPokemonPage extends StatelessWidget {
           );
         }
         return Scrollbar(
+          controller: _pageController.scrollController,
           child: ListView.builder(
             controller: _pageController.scrollController,
             itemCount: tileControllers.length + 1,

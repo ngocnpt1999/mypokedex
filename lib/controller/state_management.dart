@@ -76,14 +76,16 @@ class HomeController extends GetxController {
 class ListPokemonController extends GetxController {
   ListPokemonController() {
     scrollController.addListener(() {
-      int totalPkm = SharedPrefs.instance
-          .getPokedex(generation: _generation, typeName: _typeName)
-          .length;
-      if (pkmTileControllers.length < totalPkm) {
-        double maxPosition = scrollController.position.maxScrollExtent;
-        double currentPosition = scrollController.position.pixels;
-        if (maxPosition - currentPosition <= Get.height / 3) {
-          loadMore();
+      if (scrollController.hasClients) {
+        int totalPkm = SharedPrefs.instance
+            .getPokedex(generation: _generation, typeName: _typeName)
+            .length;
+        if (pkmTileControllers.length < totalPkm) {
+          double maxPosition = scrollController.position.maxScrollExtent;
+          double currentPosition = scrollController.position.pixels;
+          if (maxPosition - currentPosition <= Get.height / 3) {
+            loadMore();
+          }
         }
       }
     });
@@ -210,14 +212,17 @@ class ListPokemonController extends GetxController {
 class ListFavoritePokemonController extends GetxController {
   ListFavoritePokemonController() {
     scrollController.addListener(() {
-      if (pkmTileControllers.length <
-          SharedPrefs.instance
-              .getFavoritesPokemon(generation: _generation, typeName: _typeName)
-              .length) {
-        double maxPosition = scrollController.position.maxScrollExtent;
-        double currentPosition = scrollController.position.pixels;
-        if (maxPosition - currentPosition <= Get.height / 3) {
-          loadMore();
+      if (scrollController.hasClients) {
+        if (pkmTileControllers.length <
+            SharedPrefs.instance
+                .getFavoritesPokemon(
+                    generation: _generation, typeName: _typeName)
+                .length) {
+          double maxPosition = scrollController.position.maxScrollExtent;
+          double currentPosition = scrollController.position.pixels;
+          if (maxPosition - currentPosition <= Get.height / 3) {
+            loadMore();
+          }
         }
       }
     });

@@ -81,6 +81,8 @@ class PokemonDetailPage extends StatelessWidget {
             HawkFabMenuItem(
               ontap: () {
                 Future.delayed(Duration(milliseconds: 500)).then((value) {
+                  ListFavoritePokemonController controller = Get.find();
+                  controller.refresh();
                   Get.back();
                 });
               },
